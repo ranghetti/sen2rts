@@ -5,6 +5,9 @@
 #' @param fun (optional) aggregation function to be used in case of polygonal
 #'  `in_sf` features (see `exactextractr::exact_extract()`);
 #'  it is ignored in case of point features.
+#' @param in_sf_id (optional) charachter vector corresponding to  the name/names
+#'  of the `in_sf` column with the features IDs.
+#'  If NA (default) the row number is used.
 #' @param time_window (optional) time window to import
 #'  (used for filtering among `inpath` content).
 #' @param max_cells_in_memory (optional) argument passed to
@@ -16,6 +19,7 @@
 #'  which can be created using function `scl_weights()`.
 #' @return The output time series in `s2ts` format.
 #' @author Luigi Ranghetti, phD (2020) \email{luigi@@ranghetti.info}
+#' @importFrom raster getZ
 #' @export
 
 #' inpath <- "~/nas-s4a/projects/SATFARMING/BF_datasets/.out_sen2r/Bonifiche_Ferraresi/Jolanda/raster/EO/SIs/S2A/MSAVI2"
@@ -27,8 +31,9 @@
 
 extract_s2ts <- function(
   s2cube,
-  polygons,
+  in_sf,
   fun = "mean",
+  in_sf_id = NA,
   max_cells_in_memory = 3e+07,
   scl_s2cube = NULL,
   scl_weights = NA
@@ -65,16 +70,18 @@ extract_s2ts <- function(
     }
     
   }
-browser()
   
   
   # Extract values 
   extract_raw0 <- exactextractr::exact_extract(
     in_stack, extent, 
-    # fun = fun, 
+    fun = fun,
     max_cells_in_memory = max_cells_in_memory,
     parallel = TRUE
   )
+  colnames(extract_raw0) <- getZ(in_stack_sel)
+  
+  melt(as.data.table(extract_raw0), variable.name = "temp", value.name = "prod") # FIXME prod to actual prod_type
   
   
   
@@ -82,6 +89,3 @@ browser()
   #TODO ritorna anche un attributo con i pesi delle date
   
 }
-
-
-
