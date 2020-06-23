@@ -2,7 +2,7 @@
 #' @description TODO
 #' @param inpath Path of the directory in which sen2r files are.
 #' @param out_format (optional) Output format (one among `"RasterStack"`, 
-#'  `"stars"`, `"stars_proxy"` and `"vrt"`).
+#'  `"stars"`, `"stars_proxy"` and `"path"`).
 #' @param prod_type (optional) sen2r product type to import
 #'  (used for filtering among `inpath` content).
 #' @param time_window (optional) time window to import
@@ -15,6 +15,7 @@
 #'  (used for filtering among `inpath` content).
 #' @param bbox (optional) object of class `sf`, `sfc` or `bbox` used to import
 #'  a subset of the original raster extent.
+#' @param .use_vrt (optional) pass through a temporary VRT before creating `stars`?
 #' @return The output raster cube in the selected format.
 #' @author Luigi Ranghetti, phD (2020) \email{luigi@@ranghetti.info}
 #' @export
@@ -48,7 +49,8 @@ read_s2cube <- function(
   s2_orbits = NA,
   s2_sensors = c("2A", "2B"),
   file_ext = NA,
-  bbox = NA
+  bbox = NA,
+  .use_vrt = FALSE
 ) {
   
   # Check inpath and read metadata
@@ -60,10 +62,10 @@ read_s2cube <- function(
   in_meta <- in_meta[order(sensing_date),]
   
   # Check arguments
-  if (!out_format %in% c("RasterStack", "stars_proxy", "stars", "vrt")) {
+  if (!out_format %in% c("RasterStack", "stars_proxy", "stars", "path")) {
     print_message(
       type = "error",
-      "\"out_format\" must be one among 'RasterStack', 'stars_proxy', 'stars' and 'vrt'."
+      "\"out_format\" must be one among 'RasterStack', 'stars_proxy', 'stars', 'path'."
     )
   }
   #TODO
@@ -101,24 +103,27 @@ read_s2cube <- function(
   }
   
   # pass through a VRT
-  vrt_path <- tempfile(fileext = ".vrt")
-  sf::gdal_utils(
-    "buildvrt",
-    source = in_meta$path,
-    destination = vrt_path,
-    options = c(
-      "-separate",
-      "-resolution", "highest"
-    ),
-    quiet = TRUE
-  )
+  if (.use_vrt == TRUE) {
+    vrt_path <- tempfile(fileext = ".vrt")
+    sf::gdal_utils(
+      "buildvrt",
+      source = in_meta$path,
+      destination = vrt_path,
+      options = c(
+        "-separate",
+        "-resolution", "highest"
+      ),
+      quiet = TRUE
+    )
+  } else {
+    vrt_path <- in_meta$path
+  }
   
   # obtain rasterIO from bbox
   if (!is.na(bbox)) {
     
     # read grid metadata
     inraster_meta <- sen2r::raster_metadata(in_meta$path[1], format = "list")[[1]]
-    st_transform(bbox, inraster_meta$proj)
     
     # check bbox format
     if (inherits(bbox, c("sf", "sfc"))) {
@@ -156,11 +161,14 @@ read_s2cube <- function(
     in_cube <- setZ(in_cube, in_meta$sensing_date)
   } else if (out_format %in% c("stars", "stars_proxy")) {
     in_cube <- read_stars(vrt_path, proxy = out_format=="stars_proxy", RasterIO = RasterIO)
-    in_cube <- st_set_dimensions(in_cube, "band", in_meta$sensing_date)
-    in_cube <- st_set_dimensions(in_cube, names = c("x", "y", "time"))
-    # in_cube <- st_redimension(in_cube, along = list(time = in_meta$sensing_date))
+    if (.use_vrt == TRUE) {
+      in_cube <- st_set_dimensions(in_cube, "band", in_meta$sensing_date)
+      in_cube <- st_set_dimensions(in_cube, names = c("x", "y", "time"))
+    } else {
+      in_cube <- st_redimension(in_cube, along = list(time = in_meta$sensing_date))
+    }
     names(in_cube) <- in_meta[1, paste0("S2_",extent_name,"_",prod_type)]
-  } else if (out_format == "vrt") {
+  } else if (out_format == "path") {
     in_cube <- vrt_path
   }
   

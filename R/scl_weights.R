@@ -1,18 +1,18 @@
 
 
 scl_weights <- function(
-    no_data = 0,
-    saturated_or_defective = 0,
-    dark_area_pixels = 0.1,
-    cloud_shadows = 0.25,
-    vegetation = 1,
-    not_vegetated = 1,
-    water = 1,
-    unclassified = 0.5,
-    cloud_medium_probability = 0.25,
-    cloud_high_probability = 0.1,
-    thin_cirrus = 0.5,
-    snow = 1
+  no_data                  = 0.00, #  0
+  saturated_or_defective   = 0.00, #  1
+  dark_area_pixels         = 0.00, #  2
+  cloud_shadows            = 0.25, #  3
+  vegetation               = 1.00, #  4
+  not_vegetated            = 1.00, #  5
+  water                    = 1.00, #  6
+  unclassified             = 0.50, #  7
+  cloud_medium_probability = 0.10, #  8
+  cloud_high_probability   = 0.00, #  9
+  thin_cirrus              = 0.50, # 10
+  snow                     = 1.00  # 11
 ) {
   
   if (any(
@@ -46,5 +46,5 @@ scl_weights <- function(
     "thin_cirrus" = thin_cirrus,
     "snow" = snow
   )
-
+  
 }

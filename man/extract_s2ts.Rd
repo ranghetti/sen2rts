@@ -5,38 +5,48 @@
 \title{Extract time series from sen2r archives}
 \usage{
 extract_s2ts(
-  s2cube,
-  polygons,
-  fun = "mean",
+  in_paths,
+  in_sf,
+  fun = mean,
+  in_sf_id = NA,
   max_cells_in_memory = 3e+07,
-  scl_s2cube = NULL,
+  scl_paths = NULL,
   scl_weights = NA
 )
 }
 \arguments{
-\item{s2cube}{Raster time series in \code{s2cube} format}
+\item{in_paths}{Paths of the sen2r files (eventually obtained using
+\code{read_in_cube(..., out_format = "path")}).}
+
+\item{in_sf}{Object with polygonal or point geometries}
 
 \item{fun}{(optional) aggregation function to be used in case of polygonal
-\code{in_sf} features (see \code{exactextractr::exact_extract()});
-it is ignored in case of point features.}
+\code{in_sf} features (see \code{exactextractr::exact_extract()}).
+If \code{scl_paths} is defined it is not used for aggregation of output values
+(\code{weighted.mean()} is always used for that), but for aggregation of weights
+made to compute the \code{"quality"} attribute.}
+
+\item{in_sf_id}{(optional) charachter vector corresponding to the name/names
+of the \code{in_sf} column with the features IDs.
+If NA (default) the row number is used.}
 
 \item{max_cells_in_memory}{(optional) argument passed to
 \code{exactextractr::exact_extract()} (it is ignored in case of point features).}
 
-\item{scl_s2cube}{(optional) Object of class \code{s2cube} containing the SCL maps
-for each date in \code{s2cube}; if provided, it is used to weight pixels
+\item{scl_paths}{(optional) Paths of the SCL files (they must correspond
+to \code{in_paths}); if provided, it is used to weight pixels
 during the aggregation and to provide an output quality flag.}
 
 \item{scl_weights}{(optional) weights to be used for each SCL class,
 which can be created using function \code{scl_weights()}.}
 
-\item{in_sf}{Object with polygonal or point geometries}
-
-\item{time_window}{(optional) time window to import
-(used for filtering among \code{inpath} content).}
+\item{min_cov}{(optional) quality threshold (0-1) for output values to be
+returned (default is 0, meaning that all values are returned).}
 }
 \value{
 The output time series in \code{s2ts} format.
+If \code{scl_paths} was provided, an attribute \code{"quality"}
+is also returned, containing relative quality values (0-1).
 }
 \description{
 TODO

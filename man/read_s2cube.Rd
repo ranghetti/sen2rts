@@ -12,14 +12,15 @@ read_s2cube(
   s2_orbits = NA,
   s2_sensors = c("2A", "2B"),
   file_ext = NA,
-  bbox = NA
+  bbox = NA,
+  .use_vrt = FALSE
 )
 }
 \arguments{
 \item{inpath}{Path of the directory in which sen2r files are.}
 
 \item{out_format}{(optional) Output format (one among \code{"RasterStack"},
-\code{"stars"}, \code{"stars_proxy"} and \code{"vrt"}).}
+\code{"stars"}, \code{"stars_proxy"} and \code{"path"}).}
 
 \item{prod_type}{(optional) sen2r product type to import
 (used for filtering among \code{inpath} content).}
@@ -38,6 +39,8 @@ read_s2cube(
 
 \item{bbox}{(optional) object of class \code{sf}, \code{sfc} or \code{bbox} used to import
 a subset of the original raster extent.}
+
+\item{.use_vrt}{(optional) pass through a temporary VRT before creating \code{stars}?}
 }
 \value{
 The output raster cube in the selected format.
