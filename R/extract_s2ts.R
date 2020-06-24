@@ -4,15 +4,13 @@
 #'  `read_in_cube(..., out_format = "path")`).
 #' @param in_sf Object with polygonal or point geometries
 #' @param fun (optional) aggregation function to be used in case of polygonal
-#'  `in_sf` features (see `exactextractr::exact_extract()`).
+#'  `in_sf` features.
 #'  If `scl_paths` is defined it is not used for aggregation of output values
 #'  (`weighted.mean()` is always used for that), but for aggregation of weights
 #'  made to compute the `"quality"` attribute.
 #' @param in_sf_id (optional) charachter vector corresponding to the name/names
 #'  of the `in_sf` column with the features IDs.
 #'  If NA (default) the row number is used.
-#' @param max_cells_in_memory (optional) argument passed to
-#'  `exactextractr::exact_extract()` (it is ignored in case of point features).
 #' @param scl_paths (optional) Paths of the SCL files (they must correspond
 #'  to `in_paths`); if provided, it is used to weight pixels
 #'  during the aggregation and to provide an output quality flag.
@@ -24,23 +22,16 @@
 #'  If `scl_paths` was provided, an attribute `"quality"`
 #'  is also returned, containing relative quality values (0-1).
 #' @author Luigi Ranghetti, phD (2020) \email{luigi@@ranghetti.info}
-#' @importFrom raster getZ
-#' @importFrom sf st_warp
+#' @importFrom sen2r raster_metadata sen2r_getElements
+#' @importFrom sf gdal_utils st_bbox st_buffer st_crs st_transform 
+#' @importFrom stars read_stars st_get_dimension_values st_set_dimensions st_warp
 #' @export
-
-#' inpath <- "~/nas-s4a/projects/SATFARMING/BF_datasets/.out_sen2r/Bonifiche_Ferraresi/Jolanda/raster/EO/SIs/S2A/MSAVI2"
-#' in_stack <- read_in_cube(inpath, out_format = "RasterStack")
-#' extent <- sf::st_read("~/nas-s4a/projects/SATFARMING/BF_datasets/.out_sen2r/Bonifiche_Ferraresi/Jolanda/vector/appezzamenti/2018/bf_jolanda_appezzamenti_2018_1r.shp")
-#' extract_s2ts(in_stack, extent)
-
-
 
 extract_s2ts <- function(
   in_paths,
   in_sf,
   fun = mean,
   in_sf_id = NA,
-  max_cells_in_memory = 3e+07,
   scl_paths = NULL,
   scl_weights = NA
 ) {
@@ -55,17 +46,6 @@ extract_s2ts <- function(
       "'in_sf' must be an object of class 'sf' or 'sfc'."
     )
   }
-  
-  # if (any(
-  #   !inherits(in_cube, "RasterStack"),
-  #   !missing(scl_cube) && !inherits(scl_cube, "RasterStack")
-  # )) {
-  #   print_message(
-  #     type = "error",
-  #     "Currently, extract_s2ts() supports only input RasterStacks."
-  #   )
-  # }
-  
   
   ## Read in_paths ----
   
@@ -186,7 +166,6 @@ extract_s2ts <- function(
     
   }
   
-  
   if (inherits(in_cube, "stars")) {
     
     s2_ts <- if (missing(scl_paths)) {
@@ -211,28 +190,6 @@ extract_s2ts <- function(
     }
     s2_ts
     
-    
-    
   } # end of IF in_cube is stars / stars_proxy
-  
-  
-  
-  # with exactextract TODO
-  
-  # # Extract values 
-  # extract_raw0 <- exactextractr::exact_extract(
-  #   in_stack, extent, 
-  #   fun = fun,
-  #   max_cells_in_memory = max_cells_in_memory,
-  #   parallel = TRUE
-  # )
-  # colnames(extract_raw0) <- getZ(in_stack_sel)
-  # 
-  # melt(as.data.table(extract_raw0), variable.name = "temp", value.name = "prod") # FIXME prod to actual prod_type
-  # 
-  # 
-  # 
-  # extract_raw0
-  # #TODO ritorna anche un attributo con i pesi delle date
   
 }

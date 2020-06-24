@@ -9,7 +9,6 @@ extract_s2ts(
   in_sf,
   fun = mean,
   in_sf_id = NA,
-  max_cells_in_memory = 3e+07,
   scl_paths = NULL,
   scl_weights = NA
 )
@@ -21,7 +20,7 @@ extract_s2ts(
 \item{in_sf}{Object with polygonal or point geometries}
 
 \item{fun}{(optional) aggregation function to be used in case of polygonal
-\code{in_sf} features (see \code{exactextractr::exact_extract()}).
+\code{in_sf} features.
 If \code{scl_paths} is defined it is not used for aggregation of output values
 (\code{weighted.mean()} is always used for that), but for aggregation of weights
 made to compute the \code{"quality"} attribute.}
@@ -29,9 +28,6 @@ made to compute the \code{"quality"} attribute.}
 \item{in_sf_id}{(optional) charachter vector corresponding to the name/names
 of the \code{in_sf} column with the features IDs.
 If NA (default) the row number is used.}
-
-\item{max_cells_in_memory}{(optional) argument passed to
-\code{exactextractr::exact_extract()} (it is ignored in case of point features).}
 
 \item{scl_paths}{(optional) Paths of the SCL files (they must correspond
 to \code{in_paths}); if provided, it is used to weight pixels
