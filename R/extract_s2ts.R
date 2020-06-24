@@ -18,13 +18,18 @@
 #'  which can be created using function `scl_weights()`.
 #' @param min_cov (optional) quality threshold (0-1) for output values to be
 #'  returned (default is 0, meaning that all values are returned).
-#' @return The output time series in `s2ts` format. 
-#'  If `scl_paths` was provided, an attribute `"quality"`
-#'  is also returned, containing relative quality values (0-1).
+#' @return The output time series in tabular format, containing the following 
+#'  columns:
+#'  - `date` :date of observation;
+#'  - `id` : polygon ID, corresponding to argument `in_sf_id`;
+#'  - `value`: extracted value;
+#'  - `quality`: relative 0-1 quality values (missing if `scl_paths` was not provided).
 #' @author Luigi Ranghetti, phD (2020) \email{luigi@@ranghetti.info}
+#' @import data.table
 #' @importFrom sen2r raster_metadata sen2r_getElements
 #' @importFrom sf gdal_utils st_bbox st_buffer st_crs st_transform 
 #' @importFrom stars read_stars st_get_dimension_values st_set_dimensions st_warp
+#' @importFrom dplyr group_by summarise
 #' @export
 
 extract_s2ts <- function(
@@ -40,19 +45,36 @@ extract_s2ts <- function(
   #TODO
   
   # check bbox format
-  if (!inherits(in_sf, c("sf", "sfc"))) {
+  if (inherits(in_sf, "sfc")) {
+    in_sf <- st_sf(in_sf)
+  } else if (!inherits(in_sf, "sf")) {
     print_message(
       type = "error",
       "'in_sf' must be an object of class 'sf' or 'sfc'."
     )
   }
   
+  # check in_sf_id
+  if (missing(in_sf_id)) {
+    in_sf$row_id <- seq_len(nrow(in_sf))
+    in_sf_id <- "row_id"
+  } else if (!in_sf_id %in% names(in_sf)) {
+    print_message(
+      type = "error",
+      "'in_sf_id' must correspond to a column name of 'in_sf'."
+    )
+  } else {
+    in_sf <- eval(parse(text = paste0(
+      "summarise(group_by(in_sf, ",in_sf_id,"))"
+    )))
+  }
+  
   ## Read in_paths ----
   
   ## Obtain rasterIO from in_sf
   # read grid metadata
-  in_meta <- sen2r::sen2r_getElements(in_paths)
-  inraster_meta <- sen2r::raster_metadata(in_paths[1], format = "list")[[1]]
+  in_meta <- sen2r_getElements(in_paths)
+  inraster_meta <- raster_metadata(in_paths[1], format = "list")[[1]]
   # reproject
   if (st_crs(in_sf) != inraster_meta$proj) {
     in_sf <- st_transform(in_sf, inraster_meta$proj)
@@ -166,28 +188,37 @@ extract_s2ts <- function(
     
   }
   
+  
+  ## Extract TS ----
+  
   if (inherits(in_cube, "stars")) {
     
-    s2_ts <- if (missing(scl_paths)) {
-      apply(in_cube[in_sf][[1]], 3, fun, na.rm=TRUE)
-    } else {
-      in_cube_array <- in_cube[in_sf][[1]]
-      w_cube_array <- w_cube[in_sf][[1]]
-      w_ts <- apply(w_cube_array, 3, fun, na.rm=TRUE)
-      mapply(
-        weighted.mean,
-        lapply(seq_len(dim(in_cube_array)[3]), function(k) in_cube_array[,,k]),
-        lapply(seq_len(dim(w_cube_array)[3]), function(k) w_cube_array[,,k]),
-        MoreArgs = list(na.rm = TRUE)
-      )
+    s2_ts_list <- list()
+    for (id in in_sf[[in_sf_id]]) {
+      in_cube_array <- in_cube[in_sf[in_sf[[in_sf_id]] == id,]][[1]]
+      if (missing(scl_paths)) {
+        s2_ts_list[[id]] <- data.table(
+          "date" = st_get_dimension_values(in_cube,"time"),
+          "id" = id,
+          "value" = apply(in_cube_array, 3, fun, na.rm=TRUE)
+        )
+      } else {
+        w_cube_array <- w_cube[in_sf[in_sf[[in_sf_id]] == id,]][[1]]
+        s2_ts_list[[id]] <- data.table(
+          "date" = st_get_dimension_values(in_cube,"time"),
+          "id" = id,
+          "value" = mapply(
+            weighted.mean,
+            lapply(seq_len(dim(in_cube_array)[3]), function(k) in_cube_array[,,k]),
+            lapply(seq_len(dim(w_cube_array)[3]), function(k) w_cube_array[,,k]),
+            MoreArgs = list(na.rm = TRUE)
+          ),
+          "quality" = apply(w_cube_array, 3, fun, na.rm=TRUE)
+        )
+      }
     }
-    
-    names(s2_ts) <- st_get_dimension_values(in_cube,"time")
-    
-    if (!missing(scl_paths)) {
-      attr(s2_ts, "quality") <- w_ts
-      names(attr(s2_ts, "quality")) <- names(s2_ts)
-    }
+    s2_ts <- rbindlist(s2_ts_list)
+    s2_ts <- s2_ts[!is.na(value),]
     s2_ts
     
   } # end of IF in_cube is stars / stars_proxy

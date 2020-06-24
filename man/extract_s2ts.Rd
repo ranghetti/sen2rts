@@ -40,9 +40,14 @@ which can be created using function \code{scl_weights()}.}
 returned (default is 0, meaning that all values are returned).}
 }
 \value{
-The output time series in \code{s2ts} format.
-If \code{scl_paths} was provided, an attribute \code{"quality"}
-is also returned, containing relative quality values (0-1).
+The output time series in tabular format, containing the following
+columns:
+\itemize{
+\item \code{date} :date of observation;
+\item \code{id} : polygon ID, corresponding to argument \code{in_sf_id};
+\item \code{value}: extracted value;
+\item \code{quality}: relative 0-1 quality values (missing if \code{scl_paths} was not provided).
+}
 }
 \description{
 TODO
