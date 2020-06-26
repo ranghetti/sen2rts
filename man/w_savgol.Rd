@@ -2,30 +2,38 @@
 % Please edit documentation in R/w_savgol.R
 \name{w_savgol}
 \alias{w_savgol}
-\title{Savitzky-Golay smoothing filter for not equally spaced data}
+\title{Savitzky-Golay filter for not equally-spaced weighted data}
 \usage{
-w_savgol(x, y, q, window, polynom)
+w_savgol(y, x = NA, q = NA, window = 7, polynom = 3)
 }
 \arguments{
-\item{x}{List of floats representing the "x" values of the data.}
+\item{y}{List of floats representing the "y" values.}
 
-\item{y}{List of floats representing the "y" values. Must have same length as \code{x}.}
+\item{x}{List of floats representing the "x" values of the data.
+Must have same length as \code{y}.
+If NA (default), points are assumed to be equally-spaced}
 
-\item{q}{List of floats representing the relative weight of "y" values. Must have same length as \code{y}.}
+\item{q}{List of floats representing the relative weight of "y" values.
+Must have same length as \code{y}.
+If NA (default), all points are assumed to have the same weight.}
 
-\item{window}{Window length of datapoints. Must be odd and smaller than \code{x}.}
+\item{window}{Window length of datapoints.
+Must be odd and smaller than \code{x}. Default is 7.}
 
-\item{polynom}{The order of polynom used. Must be smaller than the \code{window} size.}
+\item{polynom}{The order of polynom used.
+Must be smaller than the \code{window} size. Default is 3.}
 }
 \value{
 The smoothed "y" values.
 }
 \description{
-TODO
+Smooth values using a Savitzky-Golay filter.
+This function is suitable for not equally-spaced and/or weighted data.
 }
 \note{
 This is an R adaptation of Python function at
-https://dsp.stackexchange.com/questions/1676/savitzky-golay-smoothing-filter-for-not-equally-spaced-data
+https://dsp.stackexchange.com/questions/1676/savitzky-golay-smoothing-filter-for-not-equally-spaced-data,
+with the addition of weights following https://en.wikipedia.org/wiki/Savitzky-Golay_filter.
 }
 \author{
 Luigi Ranghetti, phD (2020) \email{luigi@ranghetti.info}

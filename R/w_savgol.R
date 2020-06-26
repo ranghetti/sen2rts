@@ -1,24 +1,40 @@
-#' @title Savitzky-Golay smoothing filter for not equally spaced data
-#' @description TODO
+#' @title Savitzky-Golay filter for not equally-spaced weighted data
+#' @description Smooth values using a Savitzky-Golay filter.
+#'  This function is suitable for not equally-spaced and/or weighted data.
+#' @param y List of floats representing the "y" values.
 #' @param x List of floats representing the "x" values of the data.
-#' @param y List of floats representing the "y" values. Must have same length as `x`.
-#' @param q List of floats representing the relative weight of "y" values. Must have same length as `y`.
-#' @param window Window length of datapoints. Must be odd and smaller than `x`.
-#' @param polynom The order of polynom used. Must be smaller than the `window` size.
+#'  Must have same length as `y`.
+#'  If NA (default), points are assumed to be equally-spaced
+#' @param q List of floats representing the relative weight of "y" values. 
+#'  Must have same length as `y`.
+#'  If NA (default), all points are assumed to have the same weight.
+#' @param window Window length of datapoints.
+#'  Must be odd and smaller than `x`. Default is 7.
+#' @param polynom The order of polynom used. 
+#'  Must be smaller than the `window` size. Default is 3.
 #' @return The smoothed "y" values.
 #' @author Luigi Ranghetti, phD (2020) \email{luigi@@ranghetti.info}
 #' @note This is an R adaptation of Python function at
-#'  https://dsp.stackexchange.com/questions/1676/savitzky-golay-smoothing-filter-for-not-equally-spaced-data
+#'  https://dsp.stackexchange.com/questions/1676/savitzky-golay-smoothing-filter-for-not-equally-spaced-data,
+#'  with the addition of weights following https://en.wikipedia.org/wiki/Savitzky-Golay_filter.
 #' @export
 
-w_savgol <- function(x, y, q, window, polynom) {
+w_savgol <- function(y, x = NA, q = NA, window = 7, polynom = 3) {
   
   ## Check parameters ----
+  
+  if (missing(x)) {
+    x <- seq_along(y)
+  }
+  
+  if (missing(q)) {
+    q <- rep(1, length(y))
+  }
   
   if (any(length(x) != length(y), length(y) != length(q))) {
     print_message(
       type = "error",
-      '"x", "y" and "q" must be of the same size.'
+      '"x", "y" and "q" must be of the same length.'
     )
   }
   
@@ -59,6 +75,8 @@ w_savgol <- function(x, y, q, window, polynom) {
 
   half_window <- trunc(window / 2)
   polynom <- polynom + 1
+  
+  ## Smooth ----
   
   # Initialise variables
   A <- matrix(nrow=window, ncol=polynom)     # Matrix
