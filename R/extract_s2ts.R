@@ -56,7 +56,7 @@ extract_s2ts <- function(
   
   # check in_sf_id
   if (missing(in_sf_id)) {
-    in_sf$row_id <- seq_len(nrow(in_sf))
+    in_sf$row_id <- as.character(seq_len(nrow(in_sf)))
     in_sf_id <- "row_id"
   } else if (!in_sf_id %in% names(in_sf)) {
     print_message(
