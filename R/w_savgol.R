@@ -85,10 +85,10 @@ w_savgol <- function(y, x = NA, q = NA, window = 7, polynom = 3) {
   y_smoothed <- rep(NA, length(y))
   
   # Start smoothing
-  for (i in seq(half_window+1, length(x) - half_window, 1)) {
+  for (i in seq(half_window+1, length(x)-half_window)) {
     
     # Center a window of x values on x[i]
-    for (j in seq(1, window, 1)) {
+    for (j in seq(window)) {
       t[j] <- x[i + j - 1 - half_window] - x[i]
     }
     
@@ -98,9 +98,9 @@ w_savgol <- function(y, x = NA, q = NA, window = 7, polynom = 3) {
     W <- diag(w) # diagonal matrix
 
     # Create the initial matrix A and its transposed form tA
-    for (j in seq(1, window, 1)) {
+    for (j in seq(window)) {
       r <- 1
-      for (k in seq(1, polynom, 1)) {
+      for (k in seq(polynom)) {
         A[j, k] <- r
         tA[k, j] <- r
         r <- r * t[j]
@@ -108,31 +108,46 @@ w_savgol <- function(y, x = NA, q = NA, window = 7, polynom = 3) {
     }
     
     # Multiply the three matrices
-    tAA <- tA %*% W %*% A
+    AA <- tA %*% W %*% A
     
     # Invert the product of the matrices
-    tAA <- solve(tAA)
+    tAA <- tryCatch(
+      solve(AA),
+      error = function(e) {
+        if (requireNamespace("MASS", quietly = TRUE)) {
+          MASS::ginv(AA)
+        } else {
+          print_message(
+            type = "error",
+            "Package 'MASS' is required to invert matrices with no univoc solution; ",
+            "please install it.\nDetails:\n",
+            e$message,"."
+          )
+        }
+      }
+    )
+    
     
     # Calculate the pseudoinverse of the design matrixmappl
     coeffs <- tAA %*% tA %*% W
     
     # Calculate c0 which is also the y value for y[i]
     y_smoothed[i] <- 0
-    for (j in seq(1, window, 1)) {
+    for (j in seq(window)) {
       y_smoothed[i] <- y_smoothed[i] + coeffs[1, j] * y[i + j - 1 - half_window]
     }
 
     # If at the end or beginning, store all coefficients for the polynom
     if (i == half_window+1) {
       first_coeffs <- rep(0, polynom)
-      for (j in seq(1, window, 1)) {
+      for (j in seq(window)) {
         for (k in seq(polynom)) {
           first_coeffs[k] <- first_coeffs[k] + coeffs[k, j] * y[j]
         }
       }
     } else if (i == length(x) - half_window - 1) {
       last_coeffs <- rep(0, polynom)
-      for (j in seq(1, window, 1)) {
+      for (j in seq(window)) {
         for (k in seq(polynom)) {
           last_coeffs[k] <- last_coeffs[k] + coeffs[k, j] * y[length(y) - window + j]
         }
@@ -142,20 +157,20 @@ w_savgol <- function(y, x = NA, q = NA, window = 7, polynom = 3) {
   }
   
   # Interpolate the result at the left border
-  for (i in seq(1, half_window, 1)) {
+  for (i in seq(half_window)) {
     y_smoothed[i] <- 0
     x_i <- 1
-    for (j in seq(1, polynom, 1)) {
+    for (j in seq(polynom)) {
       y_smoothed[i] <- y_smoothed[i] + first_coeffs[j] * x_i
       x_i <- x_i * (x[i] - x[half_window+1])
     }
   }
   
   # Interpolate the result at the right border
-  for (i in seq(length(x) - half_window + 1, length(x), 1)) {
+  for (i in seq(length(x)-half_window+1, length(x))) {
     y_smoothed[i] <- 0
     x_i <- 1
-    for (j in seq(1, polynom, 1)) {
+    for (j in seq(polynom)) {
       y_smoothed[i] <- y_smoothed[i] + last_coeffs[j] * x_i
       x_i <- x_i * (x[i] - x[length(x) - half_window])
     }
