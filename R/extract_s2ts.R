@@ -27,7 +27,7 @@
 #' @author Luigi Ranghetti, phD (2020) \email{luigi@@ranghetti.info}
 #' @import data.table
 #' @importFrom sen2r raster_metadata sen2r_getElements
-#' @importFrom sf gdal_utils st_bbox st_buffer st_crs st_transform 
+#' @importFrom sf gdal_utils st_bbox st_buffer st_crs st_sf st_transform 
 #' @importFrom stars read_stars st_get_dimension_values st_set_dimensions st_warp
 #' @importFrom dplyr group_by summarise
 #' @export
@@ -115,7 +115,7 @@ extract_s2ts <- function(
     ## Obtain rasterIO from in_sf
     
     # read grid metadata
-    scl_meta <- sen2r::sen2r_getElements(scl_paths)
+    scl_meta <- sen2r_getElements(scl_paths)
     
     # Check consistency between in_cube and scl_cube
     if (anyNA(match(in_meta$sensing_date, scl_meta$sensing_date))) {
@@ -200,6 +200,8 @@ extract_s2ts <- function(
         s2_ts_list[[id]] <- data.table(
           "date" = st_get_dimension_values(in_cube,"time"),
           "id" = id,
+          "orbit" = in_meta$id_orbit,
+          "sensor" = paste0(2, in_meta$mission),
           "value" = apply(in_cube_array, 3, fun, na.rm=TRUE)
         )
       } else {
@@ -207,6 +209,8 @@ extract_s2ts <- function(
         s2_ts_list[[id]] <- data.table(
           "date" = st_get_dimension_values(in_cube,"time"),
           "id" = id,
+          "orbit" = in_meta$id_orbit,
+          "sensor" = paste0(2, in_meta$mission),
           "value" = mapply(
             weighted.mean,
             lapply(seq_len(dim(in_cube_array)[3]), function(k) in_cube_array[,,k]),

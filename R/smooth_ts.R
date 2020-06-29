@@ -1,15 +1,6 @@
 #' @title Filter and smooth time series from sen2r archives
 #' @description TODO
-#' @param y List of floats representing the "y" values.
-#'  It can be a named vector with dates as names (in the format `YYYY-MM-DD`).
-#' @param date List of dates.
-#'  It must have same length as `y`.
-#' @param id (optional) List of IDs (each group of IDs is smoothed separately).
-#'  It must have same length as `y`.
-#'  If not provided, all poitns are assumed to be part of th same group.
-#' @param quality (optional) List of floats representing the relative weight of 
-#'  "y" values. It must have same length as `y`.
-#'  If not provided, all points are assumed to have the same weight.
+#' @param s2ts Time series generated using `extract_s2ts()`.
 #' @param min_q (optional) minimum 0-1 quality value
 #'  (points with `quality < min_q` are not used, while `quality` values
 #'  in the range `min_q` to 1 are reshaped ito the range 0 to 1).
@@ -33,10 +24,6 @@
 #' @export
 
 smooth_s2ts <- function(
-  y,
-  date = NA,
-  id = NA,
-  quality = NA,
   s2ts,
   min_q = 0.5,
   noise_dir = "undefined",
@@ -50,16 +37,13 @@ smooth_s2ts <- function(
   ## Check arguments
   # TODO
 
-  ## Create DT
-  s2ts_in <- s2ts <- data.table(
-    date = date,
-    id = id,
-    value = y,
-    quality = quality
-  )
+  ## Check s2ts format
+  # (must contain date, id, orbit, sensor, value, opt. quality)
+  # TODO
+  s2ts_in <- s2ts
   
   # define quality column if missing
-  if (all(is.na(s2ts$quality))) {s2ts$quality <- 1}
+  if (is.null(s2ts$quality)) {s2ts$quality <- 1}
   s2ts <- s2ts[order(id,date),]
 
   ## Build relative TS
@@ -93,7 +77,8 @@ smooth_s2ts <- function(
       }
     }
   } # end of id FOR cycle
-  s2ts <- s2ts[spike == FALSE,][,spike := NULL]
+  s2ts <- s2ts[spike == FALSE,]
+  s2ts$spike <- NULL
   
   # Compute Savitzky-Golay
   s2ts$value_sg <- numeric()
@@ -105,13 +90,19 @@ smooth_s2ts <- function(
       window = sg_window, 
       polynom = sg_polynom
     )]
-  }
+  } # end of id FOR cycle
   
   ## Take the maximum between SG and local
-  s2ts[,value_out := ifelse(keep_max == TRUE & value > value_sg, value, value_sg)]
-
+  s2ts[,value_sm := ifelse(keep_max == TRUE & value > value_sg, value, value_sg)]
+  s2ts$value_sg <- NULL
+  s2ts$relval <- NULL
+  
+  
   ## Return output
-  s2ts[,list(date,id,value=value_out,quality)]
+  s2ts$value <- s2ts$value_sm
+  s2ts$value_sm <- NULL
+  # s2ts[,list(date,id,value=value_out,quality)]
   # s2ts[match(s2ts_in[,paste(date,id)], s2ts[,paste(date,id)]), value_sg]
+  s2ts
   
 }

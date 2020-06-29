@@ -5,10 +5,6 @@
 \title{Filter and smooth time series from sen2r archives}
 \usage{
 smooth_s2ts(
-  y,
-  date = NA,
-  id = NA,
-  quality = NA,
   s2ts,
   min_q = 0.5,
   noise_dir = "undefined",
@@ -20,19 +16,7 @@ smooth_s2ts(
 )
 }
 \arguments{
-\item{y}{List of floats representing the "y" values.
-It can be a named vector with dates as names (in the format \code{YYYY-MM-DD}).}
-
-\item{date}{List of dates.
-It must have same length as \code{y}.}
-
-\item{id}{(optional) List of IDs (each group of IDs is smoothed separately).
-It must have same length as \code{y}.
-If not provided, all poitns are assumed to be part of th same group.}
-
-\item{quality}{(optional) List of floats representing the relative weight of
-"y" values. It must have same length as \code{y}.
-If not provided, all points are assumed to have the same weight.}
+\item{s2ts}{Time series generated using \code{extract_s2ts()}.}
 
 \item{min_q}{(optional) minimum 0-1 quality value
 (points with \code{quality < min_q} are not used, while \code{quality} values
