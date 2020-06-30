@@ -14,6 +14,10 @@
 #' @param scl_paths (optional) Paths of the SCL files (they must correspond
 #'  to `in_paths`); if provided, it is used to weight pixels
 #'  during the aggregation and to provide an output quality flag.
+#'  If both `scl_paths` and `cld_paths` are provided, they are combined
+#'  and the lowest quality flag is considered.
+#' @param cld_paths (optional) Paths of the CLD files (they must correspond
+#'  to `in_paths`); see `scl_paths`.
 #' @param scl_weights (optional) weights to be used for each SCL class,
 #'  which can be created using function `scl_weights()`.
 #' @param min_cov (optional) quality threshold (0-1) for output values to be
@@ -38,6 +42,7 @@ extract_s2ts <- function(
   fun = mean,
   in_sf_id = NA,
   scl_paths = NULL,
+  cld_paths = NULL,
   scl_weights = NA
 ) {
   
@@ -109,7 +114,6 @@ extract_s2ts <- function(
   
   
   ## Read scl_paths ----
-  
   if (!missing(scl_paths)) {
     
     ## Obtain rasterIO from in_sf
@@ -128,14 +132,6 @@ extract_s2ts <- function(
     scl_meta <- scl_meta[match(in_meta$sensing_date, sensing_date)]
     
     sclraster_meta <- sen2r::raster_metadata(scl_paths[1], format = "list")[[1]]
-    
-    # check projection
-    if (sclraster_meta$proj != inraster_meta$proj) {
-      print_message(
-        type = "error",
-        "'in_paths' and 'scl_paths' must have the same projection."
-      )
-    }
     
     # check bbox format
     scl_bbox <- st_bbox(st_buffer(in_sf,sclraster_meta$res))
@@ -177,14 +173,71 @@ extract_s2ts <- function(
     }
     
     # Convert SCL to weights
-    w_cube_0 <- scl_cube
+    w_cube_scl_raw <- scl_cube
     for (i in seq_along(scl_weights)) {
       sel_scl <- i - 1 # 0:11 in a 12-length vector
-      w_cube_0[scl_cube == sel_scl] <- scl_weights[i]
+      w_cube_scl_raw[scl_cube == sel_scl] <- scl_weights[i]
     }
     
     # Reshape it
-    w_cube <- st_warp(w_cube_0, in_cube, method = "near", use_gdal = TRUE)
+    w_cube_scl <- st_warp(w_cube_scl_raw, in_cube, method = "near", use_gdal = TRUE)
+    
+  }
+  
+  
+  ## Read cld_paths ----
+  if (!missing(cld_paths)) {
+    
+    ## Obtain rasterIO from in_sf
+    
+    # read grid metadata
+    cld_meta <- sen2r_getElements(cld_paths)
+    
+    # Check consistency between in_cube and cld_cube
+    if (anyNA(match(in_meta$sensing_date, cld_meta$sensing_date))) {
+      print_message(
+        type = "error",
+        "All files provided in `in_paths` must have a corresponding image in `cld_paths`."
+      )
+    }
+    cld_paths <- cld_paths[match(in_meta$sensing_date, cld_meta$sensing_date)]
+    cld_meta <- cld_meta[match(in_meta$sensing_date, sensing_date)]
+    
+    cldraster_meta <- sen2r::raster_metadata(cld_paths[1], format = "list")[[1]]
+    
+    # check bbox format
+    cld_bbox <- st_bbox(st_buffer(in_sf,cldraster_meta$res))
+    cld_RasterIO <- list(
+      nXOff = ceiling((cld_bbox$xmin - cldraster_meta$bbox$xmin) / cldraster_meta$res["x"]),
+      nYOff = ceiling((cldraster_meta$bbox$ymax - cld_bbox$ymax) / cldraster_meta$res["y"])
+    )
+    cld_RasterIO$nXSize = ceiling((cld_bbox$xmax - cldraster_meta$bbox$xmin) / cldraster_meta$res["x"]) - cld_RasterIO$nXOff
+    cld_RasterIO$nYSize = ceiling((cldraster_meta$bbox$ymax - cld_bbox$ymin) / cldraster_meta$res["y"]) - cld_RasterIO$nYOff
+    
+    ## Pass through a VRT
+    # (to avoid error "")
+    sf::gdal_utils(
+      "buildvrt",
+      source = cld_paths,
+      destination = cld_vrt_path <- tempfile(fileext = ".vrt"),
+      options = c(
+        "-separate",
+        "-resolution", "highest"
+      ),
+      quiet = TRUE
+    )
+    
+    # Read cld_cube
+    cld_cube <- read_stars(cld_vrt_path, RasterIO = cld_RasterIO)
+    
+    # Check consistency between in_cube and cld_cube
+    # TODO
+    
+    # Convert CLD to weights
+    w_cube_cld_raw <- 1 - cld_cube/100
+    
+    # Reshape it
+    w_cube_cld <- st_warp(w_cube_cld_raw, in_cube, method = "near", use_gdal = TRUE)
     
   }
   
@@ -196,7 +249,7 @@ extract_s2ts <- function(
     s2_ts_list <- list()
     for (id in in_sf[[in_sf_id]]) {
       in_cube_array <- in_cube[in_sf[in_sf[[in_sf_id]] == id,]][[1]]
-      if (missing(scl_paths)) {
+      if (all(missing(scl_paths), missing(cld_paths))) {
         s2_ts_list[[id]] <- data.table(
           "date" = st_get_dimension_values(in_cube,"time"),
           "id" = id,
@@ -205,7 +258,19 @@ extract_s2ts <- function(
           "value" = apply(in_cube_array, 3, fun, na.rm=TRUE)
         )
       } else {
-        w_cube_array <- w_cube[in_sf[in_sf[[in_sf_id]] == id,]][[1]]
+        # generate w_cube_array from scl and/or cld
+        w_cube_array <- if (all(!missing(scl_paths), !missing(cld_paths))) {
+          w_cube_scl_array <- w_cube_scl[in_sf[in_sf[[in_sf_id]] == id,]][[1]]
+          w_cube_cld_array <- w_cube_cld[in_sf[in_sf[[in_sf_id]] == id,]][[1]]
+          apply(
+            array(c(w_cube_scl_array, w_cube_cld_array), dim = c(dim(w_cube_scl_array), 2)),
+            1:3, min
+          )
+        } else if (all(!missing(scl_paths), missing(cld_paths))) {
+          w_cube_scl[in_sf[in_sf[[in_sf_id]] == id,]][[1]]
+        } else if (all(missing(scl_paths), missing(!cld_paths))) {
+          w_cube_cld[in_sf[in_sf[[in_sf_id]] == id,]][[1]]
+        }
         s2_ts_list[[id]] <- data.table(
           "date" = st_get_dimension_values(in_cube,"time"),
           "id" = id,

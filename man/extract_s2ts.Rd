@@ -10,6 +10,7 @@ extract_s2ts(
   fun = mean,
   in_sf_id = NA,
   scl_paths = NULL,
+  cld_paths = NULL,
   scl_weights = NA
 )
 }
@@ -31,7 +32,12 @@ If NA (default) the row number is used.}
 
 \item{scl_paths}{(optional) Paths of the SCL files (they must correspond
 to \code{in_paths}); if provided, it is used to weight pixels
-during the aggregation and to provide an output quality flag.}
+during the aggregation and to provide an output quality flag.
+If both \code{scl_paths} and \code{cld_paths} are provided, they are combined
+and the lowest quality flag is considered.}
+
+\item{cld_paths}{(optional) Paths of the CLD files (they must correspond
+to \code{in_paths}); see \code{scl_paths}.}
 
 \item{scl_weights}{(optional) weights to be used for each SCL class,
 which can be created using function \code{scl_weights()}.}
