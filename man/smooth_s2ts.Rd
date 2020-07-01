@@ -5,8 +5,8 @@
 \title{Filter and smooth time series from sen2r archives}
 \usage{
 smooth_s2ts(
-  s2ts,
-  min_q = 0.5,
+  ts,
+  min_qa = 0.5,
   noise_dir = "undefined",
   spike = 0.25,
   spike_window = 3,
@@ -16,11 +16,11 @@ smooth_s2ts(
 )
 }
 \arguments{
-\item{s2ts}{Time series generated using \code{extract_s2ts()}.}
+\item{ts}{Time series in \code{s2ts} format (generated using \code{extract_s2ts()}).}
 
-\item{min_q}{(optional) minimum 0-1 quality value
-(points with \code{quality < min_q} are not used, while \code{quality} values
-in the range \code{min_q} to 1 are reshaped ito the range 0 to 1).
+\item{min_qa}{(optional) minimum 0-1 quality value
+(points with \code{qa < min_qa} are not used, while \code{qa} values
+in the range \code{min_qa} to 1 are reshaped ito the range 0 to 1).
 Default is 0.5.}
 
 \item{noise_dir}{Direction of points generally containing noise.
@@ -44,7 +44,7 @@ is finally keeped; if FALSE (default) smoothed values are always keeped.
 This argument is not used if \code{noise_dir = "undefined"}.}
 }
 \value{
-The output time series in tabular format (see \code{extract_ts()}).
+The output time series in \code{s2ts} format.
 }
 \description{
 TODO

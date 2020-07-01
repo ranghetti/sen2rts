@@ -24,7 +24,7 @@ extract_s2ts(
 \code{in_sf} features.
 If \code{scl_paths} is defined it is not used for aggregation of output values
 (\code{weighted.mean()} is always used for that), but for aggregation of weights
-made to compute the \code{"quality"} attribute.}
+made to compute the \code{"qa"} attribute.}
 
 \item{in_sf_id}{(optional) charachter vector corresponding to the name/names
 of the \code{in_sf} column with the features IDs.
@@ -46,14 +46,7 @@ which can be created using function \code{scl_weights()}.}
 returned (default is 0, meaning that all values are returned).}
 }
 \value{
-The output time series in tabular format, containing the following
-columns:
-\itemize{
-\item \code{date} :date of observation;
-\item \code{id} : polygon ID, corresponding to argument \code{in_sf_id};
-\item \code{value}: extracted value;
-\item \code{quality}: relative 0-1 quality values (missing if \code{scl_paths} was not provided).
-}
+The output time series in \code{s2ts} format.
 }
 \description{
 TODO

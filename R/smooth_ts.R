@@ -1,9 +1,9 @@
 #' @title Filter and smooth time series from sen2r archives
 #' @description TODO
-#' @param s2ts Time series generated using `extract_s2ts()`.
-#' @param min_q (optional) minimum 0-1 quality value
-#'  (points with `quality < min_q` are not used, while `quality` values
-#'  in the range `min_q` to 1 are reshaped ito the range 0 to 1).
+#' @param ts Time series in `s2ts` format (generated using `extract_s2ts()`).
+#' @param min_qa (optional) minimum 0-1 quality value
+#'  (points with `qa < min_qa` are not used, while `qa` values
+#'  in the range `min_qa` to 1 are reshaped ito the range 0 to 1).
 #'  Default is 0.5.
 #' @param noise_dir Direction of points generally containing noise.
 #'  If `"low"`, higher values are generally maintained (this is the case of
@@ -19,13 +19,13 @@
 #'  or minimum (if `noise_dir = "high"`) value between the input and the smoothed
 #'  is finally keeped; if FALSE (default) smoothed values are always keeped.
 #'  This argument is not used if `noise_dir = "undefined"`.
-#' @return The output time series in tabular format (see `extract_ts()`).
+#' @return The output time series in `s2ts` format.
 #' @author Luigi Ranghetti, phD (2020) \email{luigi@@ranghetti.info}
 #' @export
 
 smooth_s2ts <- function(
-  s2ts,
-  min_q = 0.5,
+  ts,
+  min_qa = 0.5,
   noise_dir = "undefined",
   spike = 0.25,
   spike_window = 3,
@@ -37,72 +37,76 @@ smooth_s2ts <- function(
   ## Check arguments
   # TODO
 
-  ## Check s2ts format
-  # (must contain date, id, orbit, sensor, value, opt. quality)
+  ## Check ts format
+  # (must contain date, id, orbit, sensor, value, opt. qa)
+  if (!inherits(ts, "s2ts")) {
+    print_message(
+      type = "error",
+      "Argument 'ts' is not in the right format."
+    )
+  }
   # TODO
-  s2ts_in <- s2ts
-  
-  # define quality column if missing
-  if (is.null(s2ts$quality)) {s2ts$quality <- 1}
-  s2ts <- s2ts[order(id,date),]
+  ts_dt <- as.data.table(ts)
+  ts_dt <- ts_dt[order(id, date),]
 
   ## Build relative TS
-  s2ts[,relval := (value - min(value)) / diff(range(value))]
+  ts_dt[,relval := (value - min(value)) / diff(range(value))]
   
   ## Exclude low-quality values and reshape others
-  s2ts <- s2ts[quality > min_q,]
-  s2ts <- s2ts[,quality := (quality - min_q) / (1 - min_q)]
+  if (!is.null(ts_dt$qa)) {
+    ts_dt <- ts_dt[qa > min_qa,]
+    ts_dt <- ts_dt[,qa2 := (qa - min_qa) / (1 - min_qa)]
+  } else {
+    ts_dt$qa2 <- 1
+  }
   
   ## Remove spikes
-  s2ts$spike <- FALSE #initialisation
-  for (sel_id in unique(s2ts$id)) { # cycle on IDs
+  ts_dt$spike <- FALSE #initialisation
+  for (sel_id in unique(ts_dt$id)) { # cycle on IDs
     ## Convert inputs
     shw <- trunc(spike_window/2) # spike half window
-    sel_id_rows <- s2ts[,which(id == sel_id)]
+    sel_id_rows <- ts_dt[,which(id == sel_id)]
     for (j in seq(sel_id_rows[1]+shw, sel_id_rows[length(sel_id_rows)]-shw)) {
-      val <- s2ts[seq(j-shw, j+shw), relval]
+      val <- ts_dt[seq(j-shw, j+shw), relval]
       if (all(
         noise_dir %in% c("undefined", "high"),
         any(val[shw+1] - val[seq(1,shw)] > spike),
         any(val[shw+1] - val[seq(shw+2,2*shw+1)] > spike)
       )) {
-        s2ts[j, spike := TRUE]
+        ts_dt[j, spike := TRUE]
       }
       if (all(
         noise_dir %in% c("undefined", "low"),
         any(val[seq(1,shw)] - val[shw+1] > spike),
         any(val[seq(shw+2,2*shw+1)] - val[shw+1] > spike)
       )) {
-        s2ts[j, spike := TRUE]
+        ts_dt[j, spike := TRUE]
       }
     }
   } # end of id FOR cycle
-  s2ts <- s2ts[spike == FALSE,]
-  s2ts$spike <- NULL
+  ts_dt <- ts_dt[spike == FALSE,]
+  ts_dt$spike <- NULL
   
   # Compute Savitzky-Golay
-  s2ts$value_sg <- numeric()
-  for (sel_id in unique(s2ts$id)) { # cycle on IDs
-    s2ts[id == sel_id, value_sg := w_savgol(
+  ts_dt$value_sg <- numeric()
+  for (sel_id in unique(ts_dt$id)) { # cycle on IDs
+    ts_dt[id == sel_id, value_sg := w_savgol(
       value, 
       x = as.numeric(date), 
-      q = quality, 
+      q = qa2, 
       window = sg_window, 
       polynom = sg_polynom
     )]
   } # end of id FOR cycle
   
   ## Take the maximum between SG and local
-  s2ts[,value_sm := ifelse(keep_max == TRUE & value > value_sg, value, value_sg)]
-  s2ts$value_sg <- NULL
-  s2ts$relval <- NULL
-  
+  ts_dt[,value_sm := ifelse(keep_max == TRUE & value > value_sg, value, value_sg)]
   
   ## Return output
-  s2ts$value <- s2ts$value_sm
-  s2ts$value_sm <- NULL
-  # s2ts[,list(date,id,value=value_out,quality)]
-  # s2ts[match(s2ts_in[,paste(date,id)], s2ts[,paste(date,id)]), value_sg]
-  s2ts
+  ts_dt$value <- ts_dt$value_sm
+  ts_dt$value_sg <- ts_dt$relval <- ts_dt$qa2 <- ts_dt$value_sm <- NULL
+  ts_out <- as(ts_dt, "s2ts")
+  attr(ts_out, "gen_by") <- "smooth_s2ts"
+  ts_out
   
 }

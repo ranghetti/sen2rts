@@ -4,10 +4,10 @@
 \alias{fill_s2ts}
 \title{Fill not equally-spaced time series}
 \usage{
-fill_s2ts(s2ts, frequency = "dop")
+fill_s2ts(ts, frequency = "dop")
 }
 \arguments{
-\item{s2ts}{Time series generated using \code{smooth_s2ts()}.}
+\item{ts}{Time series in \code{s2ts} format (generated using \code{smooth_s2ts()}).}
 
 \item{frequency}{(optional) One of the followings:
 \itemize{

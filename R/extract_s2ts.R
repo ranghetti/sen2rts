@@ -7,7 +7,7 @@
 #'  `in_sf` features.
 #'  If `scl_paths` is defined it is not used for aggregation of output values
 #'  (`weighted.mean()` is always used for that), but for aggregation of weights
-#'  made to compute the `"quality"` attribute.
+#'  made to compute the `"qa"` attribute.
 #' @param in_sf_id (optional) charachter vector corresponding to the name/names
 #'  of the `in_sf` column with the features IDs.
 #'  If NA (default) the row number is used.
@@ -22,12 +22,7 @@
 #'  which can be created using function `scl_weights()`.
 #' @param min_cov (optional) quality threshold (0-1) for output values to be
 #'  returned (default is 0, meaning that all values are returned).
-#' @return The output time series in tabular format, containing the following 
-#'  columns:
-#'  - `date` :date of observation;
-#'  - `id` : polygon ID, corresponding to argument `in_sf_id`;
-#'  - `value`: extracted value;
-#'  - `quality`: relative 0-1 quality values (missing if `scl_paths` was not provided).
+#' @return The output time series in `s2ts` format.
 #' @author Luigi Ranghetti, phD (2020) \email{luigi@@ranghetti.info}
 #' @import data.table
 #' @importFrom sen2r raster_metadata sen2r_getElements
@@ -246,11 +241,11 @@ extract_s2ts <- function(
   
   if (inherits(in_cube, "stars")) {
     
-    s2_ts_list <- list()
+    ts_list <- list()
     for (id in in_sf[[in_sf_id]]) {
       in_cube_array <- in_cube[in_sf[in_sf[[in_sf_id]] == id,]][[1]]
       if (all(missing(scl_paths), missing(cld_paths))) {
-        s2_ts_list[[id]] <- data.table(
+        ts_list[[id]] <- data.table(
           "date" = st_get_dimension_values(in_cube,"time"),
           "id" = id,
           "orbit" = in_meta$id_orbit,
@@ -271,7 +266,7 @@ extract_s2ts <- function(
         } else if (all(missing(scl_paths), missing(!cld_paths))) {
           w_cube_cld[in_sf[in_sf[[in_sf_id]] == id,]][[1]]
         }
-        s2_ts_list[[id]] <- data.table(
+        ts_list[[id]] <- data.table(
           "date" = st_get_dimension_values(in_cube,"time"),
           "id" = id,
           "orbit" = in_meta$id_orbit,
@@ -282,13 +277,15 @@ extract_s2ts <- function(
             lapply(seq_len(dim(w_cube_array)[3]), function(k) w_cube_array[,,k]),
             MoreArgs = list(na.rm = TRUE)
           ),
-          "quality" = apply(w_cube_array, 3, fun, na.rm=TRUE)
+          "qa" = apply(w_cube_array, 3, fun, na.rm=TRUE)
         )
       }
     }
-    s2_ts <- rbindlist(s2_ts_list)
-    s2_ts <- s2_ts[!is.na(value),]
-    s2_ts
+    ts_dt <- rbindlist(ts_list)
+    ts_dt <- ts_dt[!is.na(value),]
+    ts_out <- as(ts_dt, "s2ts")
+    attr(ts_out, "gen_by") <- "extract_s2ts"
+    ts_out
     
   } # end of IF in_cube is stars / stars_proxy
   
