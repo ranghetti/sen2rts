@@ -19,10 +19,10 @@ s2ts <- function(value, date, id = NA, qa, orbit, sensor, rawval, ...) {
   # mandatory arguments
   which_args_mandatory <- c("value", "date")
   # arguments for which the length must be the same as value
-  which_args_l_asval <- c("date", "qa", "orbit", "sensor", "rawval")
+  which_args_l_asval <- c("date", "qa", "rawval")
   # arguments for which the length can be the same as value or 1 
   # (in which case it is replicated to the length of value)
-  which_args_l_toval <- c("id")
+  which_args_l_toval <- c("id", "orbit", "sensor")
   # arguments for which the length must be 1
   which_args_l_1 <- c("gen_by")
   # arguments which must be placed before 'value' (in this order)
@@ -89,24 +89,30 @@ s2ts <- function(value, date, id = NA, qa, orbit, sensor, rawval, ...) {
   args_before <- which_args_before[which_args_before %in% args_passed]
   args_after <- args_passed[!args_passed %in% c("value",which_args_before)]
   
-  out <- list()
+  out_l <- list()
   for (a in args_before) {
-    out[[a]] <- args[[a]]
+    out_l[[a]] <- args[[a]]
   }
-  out[["value"]] <- value
+  out_l[["value"]] <- value
   for (a in args_after) {
     if (length(args[[a]]) == length(value)) {
-      out[[a]] <- args[[a]]
+      out_l[[a]] <- args[[a]]
     } else {
-      attr(out, a) <- args[[a]]
+      attr(out_l, a) <- args[[a]]
     }
   }
   
   # Return s2ts
-  class(out) <- "s2ts"
+  out <- as.data.table(out_l)
+  # for (a in names(attributes(out_l))[names(attributes(out_l)) != "names"]) {
+  #   attr(out, a) <- attr(out_l, a)
+  # }
+  class(out) <- c("s2ts", class(out))
   out
   
 }
+
+setClass("s2ts", contains = "list")
 
 
 ## Methods: input -> s2ts ----
@@ -183,23 +189,18 @@ s2ts_rawval <- function(x) {
     s2ts_qa(x)
   } else if (name == "rawval") {
     s2ts_rawval(x)
-  } 
+  }
 }
 
-`[.s2ts` = function(x, name) {
-  x_dt <- as.data.table(x) 
-  if (all(!name %in% x_dt$id)) {
-    print_message(
-      type = "error",
-      ""
-    )
-  }
+`[[.s2ts` = function(x, name) {
+  x_dt <- as.data.table(x)
   as(x_dt[id %in% name,], "s2ts")
 }
 
 
 ## Methods: s2ts -> input ----
 
+#' @export
 as.list.s2ts <- function(x, ...) {
   unclass(x)
 }
@@ -207,23 +208,10 @@ setAs("safelist", "list", function(from) {
   as.list(from)
 })
 
-as.data.frame.s2ts <- function(x, ...) {
-  as.data.frame(as.list(x), stringsAsFactors = FALSE, ...)
-}
-setAs("safelist", "data.frame", function(from) {
-  as.data.frame(from)
-})
-
-as.data.table.s2ts <- function(x, ...) {
-  data.table(as.data.frame(x), ...)
-}
-setAs("safelist", "data.table", function(from) {
-  as.data.table(from)
-})
-
 
 ## Print ----
 
+#' @export
 print.s2ts <- function(x, ...) {
   
   # Define constants
