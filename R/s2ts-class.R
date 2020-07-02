@@ -10,42 +10,126 @@ setClass("s2ts", contains = "list")
 #'  - `value`: extracted value;
 #'  - `quality`: relative 0-1 quality values (missing if `scl_paths` was not provided).
 
-s2ts <- function(value, date, id, qa, ...) {
-  out <- structure(value, date = date, id = id)
-  attr(value, "id") <- if (missing(id)) {rep("0", length(value))} else {id}
-  if (!missing(qa)) {
-    attr(out, "qa") <- qa
-  }
+s2ts <- function(value, date, id = NA, qa, orbit, sensor, rawval, ...) {
+  
+  # leave as first function command!
   args <- c(as.list(environment()), list(...))
-  args <- args[!names(args) %in% c("args", "out", "value", "date", "id", "qa")]
-  for (sel_arg in names(args)) {
-    attr(out, sel_arg) <- args[[sel_arg]]
+  
+  # Define constants
+  # mandatory arguments
+  which_args_mandatory <- c("value", "date")
+  # arguments for which the length must be the same as value
+  which_args_l_asval <- c("date", "qa", "orbit", "sensor", "rawval")
+  # arguments for which the length can be the same as value or 1 
+  # (in which case it is replicated to the length of value)
+  which_args_l_toval <- c("id")
+  # arguments for which the length must be 1
+  which_args_l_1 <- c("gen_by")
+  # arguments which must be placed before 'value' (in this order)
+  which_args_before <- c("id", "date", "orbit", "sensor")
+  
+  # Define arguments
+  args_all <- names(args)
+  args_formal <- names(formals())
+  args_formal <- args_formal[!args_formal %in% c("...")]
+  args_formal_missing <- logical(0)
+  for (a in args_formal) {
+    # args_formal_missing[a] <- do.call(missing, list(a))
+    args_formal_missing[a] <- inherits(args[[a]], "name")
+    # in this way, also arguments with a default value are considered
   }
+  args_passed <- args_all[!args_all %in% args_formal[args_formal_missing]]
+  
+  # Check mandatory arguments
+  args_mandatory_missing <- logical(0)
+  for (a in which_args_mandatory) {
+    args_mandatory_missing[a] <- do.call(missing, list(a))
+  }
+  if (any(args_mandatory_missing)) {
+    print_message(
+      type = "error",
+      "Some mandatory arguments ('",
+      paste(which_args_mandatory[args_mandatory_missing], sep = "', '"),
+      "') are missing."
+    )
+  }
+  
+  # Check argument lengths
+  for (a in which_args_l_toval) {
+    if (a %in% args_passed && length(args[[a]]) == 1) {
+      args[[a]] <- rep(args[[a]], length(value))
+    }
+  }
+  args_l_not_asval <- logical(0)
+  for (a in c(which_args_l_asval, which_args_l_toval)) {
+    args_l_not_asval[a] <- a %in% args_passed && length(args[[a]]) != length(value)
+  }
+  if (any(args_l_not_asval)) {
+    print_message(
+      type = "error",
+      "Arguments '",
+      paste(names(args_l_not_asval)[args_l_not_asval], sep = "', '"),
+      "' must be of the same length of 'value'."
+    )
+  }
+  args_l_not_1 <- logical(0)
+  for (a in which_args_l_1) {
+    args_l_not_1[a] <- a %in% args_passed && length(args[[a]]) != 1
+  }
+  if (any(args_l_not_1)) {
+    print_message(
+      type = "error",
+      "Arguments '",
+      paste(which_args_l_1[args_l_not_1], sep = "', '"),
+      "' must be of length 1."
+    )
+  }
+  
+  # Define arguments: which before "value" and which after
+  args_before <- which_args_before[which_args_before %in% args_passed]
+  args_after <- args_passed[!args_passed %in% c("value",which_args_before)]
+  
+  out <- list()
+  for (a in args_before) {
+    out[[a]] <- args[[a]]
+  }
+  out[["value"]] <- value
+  for (a in args_after) {
+    if (length(args[[a]]) == length(value)) {
+      out[[a]] <- args[[a]]
+    } else {
+      attr(out, a) <- args[[a]]
+    }
+  }
+  
+  # Return s2ts
   class(out) <- "s2ts"
   out
+  
 }
 
 
 ## Methods: input -> s2ts ----
 
 setAs("numeric", "s2ts", function(from) {
-  stopifnot(!is.null(attr(from, "date")))
-  if (missing(attr(from, "id"))) {attr(from, "id") <- rep("0", length(from))}
-  class(from) <- "s2ts"
-  from
+  # Accept a named vector with values, names being dates
+  # and optional additional arguments
+  stopifnot(!is.null(names(from)))
+  from_list <- c(
+    list("value" = as.vector(tmp)), 
+    attributes(tmp)
+  )
+  from_list[["date"]] <- as.Date(from_list[["names"]])
+  from_list[["names"]] <- NULL
+  do.call(s2ts, from_list)
 })
 
 setAs("data.frame", "s2ts", function(from) {
-  stopifnot(c("value", "date") %in% names(from))
-  to <- from$value
-  attr(to, "date") <- from$date
-  attr(to, "id") <- if (is.null(from$id)) {rep("0", nrow(from))} else {from$id}
-  if (!is.null(from$qa)) {attr(to, "qa") <- from$qa}
-  for (colname in names(from)[!names(from) %in% c("value", "date", "qa")]) {
-    attr(to, colname) <- from[[colname]]
-  }
-  class(to) <- "s2ts"
-  to
+  do.call(s2ts, as.list(from))
+})
+
+setAs("list", "s2ts", function(from) {
+  do.call(s2ts, from)
 })
 
 
@@ -53,11 +137,11 @@ setAs("data.frame", "s2ts", function(from) {
 
 s2ts_date <- function(x) {
   stopifnot(inherits(x, "s2ts"))
-  attr(x, "date")
+  unclass(x)[["date"]]
 }
 s2ts_id <- function(x) {
   stopifnot(inherits(x, "s2ts"))
-  sort(unique(attr(x, "id")))
+  sort(unique(unclass(x)[["id"]]))
 }
 s2ts_value <- function(x) {
   stopifnot(inherits(x, "s2ts"))
@@ -65,7 +149,7 @@ s2ts_value <- function(x) {
 }
 s2ts_qa <- function(x) {
   stopifnot(inherits(x, "s2ts"))
-  if (!is.null(attr(x, "qa"))) {
+  if (!is.null(unclass(x)[["qa"]])) {
     dcast(as.data.table(x)[!is.na(qa),], date ~ id, value.var = "qa")
   } else {
     print_message(
@@ -77,7 +161,7 @@ s2ts_qa <- function(x) {
 }
 s2ts_rawval <- function(x) {
   stopifnot(inherits(x, "s2ts"))
-  if (!is.null(attr(x, "rawval"))) {
+  if (!is.null(unclass(x)[["rawval"]])) {
     dcast(as.data.table(x)[!is.na(rawval),], date ~ id, value.var = "rawval")
   } else {
     print_message(
@@ -102,42 +186,32 @@ s2ts_rawval <- function(x) {
   } 
 }
 
-`[[.s2ts` = function(x, name) {
-  which_sel <- attr(x, "id") == name
-  s2ts(
-    as.vector(x)[which_sel], 
-    date = attr(x, "date")[which_sel],
-    id = attr(x, "id")[which_sel],
-    qa = attr(x, "qa")[which_sel]
-  )
+`[.s2ts` = function(x, name) {
+  x_dt <- as.data.table(x) 
+  if (all(!name %in% x_dt$id)) {
+    print_message(
+      type = "error",
+      ""
+    )
+  }
+  as(x_dt[id %in% name,], "s2ts")
 }
 
 
 ## Methods: s2ts -> input ----
 
+as.list.s2ts <- function(x, ...) {
+  unclass(x)
+}
+setAs("safelist", "list", function(from) {
+  as.list(from)
+})
+
 as.data.frame.s2ts <- function(x, ...) {
-  # Define attributes: which before "value" and which after
-  which_attrs_before <- c("id", "date", "orbit", "sensor")
-  attrs <- names(attributes(x))[!names(attributes(x)) %in% c("class")]
-  attrs_before <- which_attrs_before[which_attrs_before %in% attrs]
-  attrs_after <- attrs[!attrs %in% which_attrs_before]
-  to_list <- list()
-  for (a in attrs_before) {
-    to_list[[a]] <- attr(x, a)
-  }
-  to <- as.data.frame(to_list, stringsAsFactors = FALSE)
-  to$value <- as.vector(x)
-  for (a in attrs_after) {
-    if (length(attr(x, a)) == nrow(to)) {
-      to[,a] <- attr(x, a)
-    } else {
-      attr(to, a) <- attr(x, a)
-    }
-  }
-  to
+  as.data.frame(as.list(x), stringsAsFactors = FALSE, ...)
 }
 setAs("safelist", "data.frame", function(from) {
-  as.data.frame(from, ...)
+  as.data.frame(from)
 })
 
 as.data.table.s2ts <- function(x, ...) {
@@ -152,7 +226,9 @@ setAs("safelist", "data.table", function(from) {
 
 print.s2ts <- function(x, ...) {
   
-  n_ids <- 6 # maximum number of IDs to print
+  # Define constants
+  # maximum number of IDs to print
+  n_ids <- 6
   
   x_dt <- as.data.table(x)
   ids <- sort(unique(x_dt$id))
@@ -161,39 +237,44 @@ print.s2ts <- function(x, ...) {
   dcast_lhs <- c("date", c("orbit", "sensor")[c("orbit", "sensor") %in% names(x_dt)])
   dcast_formula <- as.formula(paste(paste(dcast_lhs, collapse = " + "), "~ id"))
   x_dt$flag <- ""
-  if (!is.null(attr(x, "qa"))) {
+  if (!is.null(x_dt$qa)) {
     x_dt[,flag := ifelse(is.na(qa), "", 
                          ifelse(qa == 1, "\u25CF ", 
                                 ifelse(qa > 0.9, "\u25D5 ", 
                                        ifelse(qa > 0.75, "\u25D1 ", 
                                               ifelse(qa > 0.5, "\u25D4 ", "\u25CB ")))))]
   }
-  if (!is.null(attr(x, "interpolated"))) {
+  if (!is.null(x_dt$interpolated)) {
     x_dt[interpolated == TRUE,flag := "~ "]
   }
-  x_dt_cast <- dcast(x_dt, dcast_formula, value.var = c("value","flag"))
-  setcolorder(
-    x_dt_cast, 
-    c(seq_along(dcast_lhs), 
-      as.vector(t(matrix(seq(length(dcast_lhs)+1, ncol(x_dt_cast)), ncol=2)))
+  
+  if (nrow(x_dt) > 0) {
+    x_dt_cast <- dcast(x_dt, dcast_formula, value.var = c("value","flag"))
+    setcolorder(
+      x_dt_cast, 
+      c(seq_along(dcast_lhs), 
+        as.vector(t(matrix(seq(length(dcast_lhs)+1, ncol(x_dt_cast)), ncol=2)))
+      )
     )
-  )
-  setnames(
-    x_dt_cast, 
-    c("date", "orbit", "sensor"), 
-    c("Date", "Orbit", "Sensor"), 
-    skip_absent = TRUE
-  )
-  setnames(
-    x_dt_cast,
-    names(x_dt_cast)[grep("^value_",names(x_dt_cast))],
-    gsub("^value_", "", names(x_dt_cast)[grep("^value_",names(x_dt_cast))])
-  )
-  setnames(
-    x_dt_cast,
-    names(x_dt_cast)[grep("^flag_",names(x_dt_cast))],
-    rep("\u00A0", sum(grepl("^flag_",names(x_dt_cast))))
-  )
+    setnames(
+      x_dt_cast, 
+      c("date", "orbit", "sensor"), 
+      c("Date", "Orbit", "Sensor"), 
+      skip_absent = TRUE
+    )
+    setnames(
+      x_dt_cast,
+      names(x_dt_cast)[grep("^value_",names(x_dt_cast))],
+      gsub("^value_", "", names(x_dt_cast)[grep("^value_",names(x_dt_cast))])
+    )
+    setnames(
+      x_dt_cast,
+      names(x_dt_cast)[grep("^flag_",names(x_dt_cast))],
+      rep("\u00A0", sum(grepl("^flag_",names(x_dt_cast))))
+    )
+    # in case of a single TS without explicit ID
+    setnames(x_dt_cast, "NA", "Value", skip_absent = TRUE)
+  }
   
   cat("A")
   if (!is.null(attr(x, "gen_by"))) {
@@ -205,26 +286,27 @@ print.s2ts <- function(x, ...) {
       cat("n interpolated")
     }
   }
-  cat(" s2ts time series with", nrow(x_dt_cast), "dates and", length(ids), "IDs.\n")
-  print(x_dt_cast)
-  if (length(ids) > n_ids) {
-    cat("...with", length(ids)-n_ids, "more IDs.\n")
-  }
-  if (any(!is.null(attr(x, "qa")), !is.null(attr(x, "gen_by")) && attr(x, "gen_by") == "fill_s2ts")) {
-    cat("\n")
-  }
-  if (!is.null(attr(x, "qa"))) {
-    cat("Quality flags:  \u25CF [1]  \u25D5 [0.9,1)  \u25D1 [0.75,0.9)  \u25D4 [0.5,0.75)  \u25CB [0,0.5)\n")
-  }
-  if (!is.null(attr(x, "gen_by")) && attr(x, "gen_by") == "fill_s2ts") {
-    cat("Interpolated values are marked with ‘~’.\n")
-  }
-  attrs <- names(attributes(x))[!names(attributes(x)) %in% c("class", "date", "id", "qa", "orbit", "sensor", "rawval", "interpolated", "gen_by")]
-  if (length(attrs) > 0) {
-    cat("The following attributes are included:", paste(attrs, collapse=", "))
+  if (nrow(x_dt) == 0) {
+    cat(" empty s2ts time series.\n")
+  } else {
+    cat(" s2ts time series with", nrow(x_dt_cast), "dates")
+    if (length(ids) > 0) {cat(" and", length(ids), "IDs")}
     cat(".\n")
+    print(x_dt_cast)
+    if (length(ids) > n_ids) {
+      cat("...with", length(ids)-n_ids, "more IDs.\n")
+    }
+    if (any(!is.null(x_dt$qa), !is.null(attr(x, "gen_by")) && attr(x, "gen_by") == "fill_s2ts")) {
+      cat("\n")
+    }
+    if (!is.null(x_dt$qa)) {
+      cat("Quality flags:  \u25CF [1]  \u25D5 [0.9,1)  \u25D1 [0.75,0.9)  \u25D4 [0.5,0.75)  \u25CB [0,0.5)\n")
+    }
+    if (!is.null(attr(x, "gen_by")) && attr(x, "gen_by") == "fill_s2ts") {
+      cat("Interpolated values are marked with ‘~’.\n")
+    }
   }
   
   invisible(x)
-
+  
 }
