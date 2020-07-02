@@ -23,5 +23,5 @@ The output time series in tabular format (see \code{extract_ts()}).
 TODO
 }
 \author{
-Luigi Ranghetti, phD (2020) \email{luigi@ranghetti.info}
+Luigi Ranghetti, PhD (2020) \email{luigi@ranghetti.info}
 }

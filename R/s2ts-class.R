@@ -33,7 +33,7 @@
 #'  their meanings).
 #'  
 #'  The optional attribute `gen_by` provides information about the function 
-#'  which gnerated the object (if provided).
+#'  which generated the object (if provided).
 #' @details Some specific methods for this class are defined.
 #'  - `<s2ts_obj>$value` returns a `data.table` with the values for each date, 
 #'      in wide format.
@@ -49,7 +49,7 @@
 #'  Notice that since `$` and `[[` methods are defined, the syntaxes
 #'  `<s2ts_obj>$<fieldname>` and `<s2ts_obj>[["<fieldname>"]]`
 #'  can not be used (use instead `<s2ts_obj>[,<fieldname>]`).
-#' @author Luigi Ranghetti, phD (2020) \email{luigi@@ranghetti.info}
+#' @author Luigi Ranghetti, PhD (2020) \email{luigi@@ranghetti.info}
 #' @export
 
 s2ts <- function(value, date, id = NA, qa, orbit, sensor, rawval, ...) {

@@ -6,7 +6,7 @@
 #'      the theoretic Sentinel-2 dates of passage;
 #'  - `daily`: daily frequency.
 #' @return The output time series in tabular format (see `extract_ts()`).
-#' @author Luigi Ranghetti, phD (2020) \email{luigi@@ranghetti.info}
+#' @author Luigi Ranghetti, PhD (2020) \email{luigi@@ranghetti.info}
 #' @export
 
 fill_s2ts <- function(

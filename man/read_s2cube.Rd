@@ -31,7 +31,7 @@ read_s2cube(
 \item{s2_orbits}{(optional) Sentinel-2 orbits to import
 (used for filtering among \code{inpath} content).}
 
-\item{s2_sensors}{(optional) Sentinel-2 sensir to import  (\code{"2A"}, \code{"2B"} or both)
+\item{s2_sensors}{(optional) Sentinel-2 sensor to import  (\code{"2A"}, \code{"2B"} or both)
 (used for filtering among \code{inpath} content).}
 
 \item{file_ext}{(optional) input file extension
@@ -61,5 +61,5 @@ in_stars <- read_s2cube(inpath, out_format = "stars")
 in_starsp <- read_s2cube(inpath, out_format = "stars_proxy")
 }
 \author{
-Luigi Ranghetti, phD (2020) \email{luigi@ranghetti.info}
+Luigi Ranghetti, PhD (2020) \email{luigi@ranghetti.info}
 }

@@ -9,7 +9,7 @@
 #'  (used for filtering among `inpath` content).
 #' @param s2_orbits (optional) Sentinel-2 orbits to import
 #'  (used for filtering among `inpath` content).
-#' @param s2_sensors (optional) Sentinel-2 sensir to import  (`"2A"`, `"2B"` or both)
+#' @param s2_sensors (optional) Sentinel-2 sensor to import  (`"2A"`, `"2B"` or both)
 #'  (used for filtering among `inpath` content).
 #' @param file_ext (optional) input file extension 
 #'  (used for filtering among `inpath` content).
@@ -17,7 +17,7 @@
 #'  a subset of the original raster extent.
 #' @param .use_vrt (optional) pass through a temporary VRT before creating `stars`?
 #' @return The output raster cube in the selected format.
-#' @author Luigi Ranghetti, phD (2020) \email{luigi@@ranghetti.info}
+#' @author Luigi Ranghetti, PhD (2020) \email{luigi@@ranghetti.info}
 #' @export
 #' @import data.table
 #' @importFrom sf gdal_utils

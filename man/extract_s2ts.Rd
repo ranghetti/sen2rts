@@ -26,7 +26,7 @@ If \code{scl_paths} is defined it is not used for aggregation of output values
 (\code{weighted.mean()} is always used for that), but for aggregation of weights
 made to compute the \code{"qa"} attribute.}
 
-\item{in_sf_id}{(optional) charachter vector corresponding to the name/names
+\item{in_sf_id}{(optional) character vector corresponding to the name/names
 of the \code{in_sf} column with the features IDs.
 If NA (default) the row number is used.}
 
@@ -52,5 +52,5 @@ The output time series in \code{s2ts} format.
 TODO
 }
 \author{
-Luigi Ranghetti, phD (2020) \email{luigi@ranghetti.info}
+Luigi Ranghetti, PhD (2020) \email{luigi@ranghetti.info}
 }

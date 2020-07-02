@@ -46,7 +46,7 @@ This is a format derived from \code{data.table}, containing the mandatory column
 their meanings).
 
 The optional attribute \code{gen_by} provides information about the function
-which gnerated the object (if provided).
+which generated the object (if provided).
 }
 \description{
 TODO
@@ -71,5 +71,5 @@ Notice that since \code{$} and \code{[[} methods are defined, the syntaxes
 can not be used (use instead \verb{<s2ts_obj>[,<fieldname>]}).
 }
 \author{
-Luigi Ranghetti, phD (2020) \email{luigi@ranghetti.info}
+Luigi Ranghetti, PhD (2020) \email{luigi@ranghetti.info}
 }

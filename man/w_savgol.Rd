@@ -20,7 +20,7 @@ If NA (default), all points are assumed to have the same weight.}
 \item{window}{Window length of datapoints.
 Must be odd and smaller than \code{x}. Default is 7.}
 
-\item{polynom}{The order of polynom used.
+\item{polynom}{The polynomial order to be used.
 Must be smaller than the \code{window} size. Default is 3.}
 }
 \value{
@@ -32,9 +32,10 @@ This function is suitable for not equally-spaced and/or weighted data.
 }
 \note{
 This is an R adaptation of Python function at
-https://dsp.stackexchange.com/questions/1676/savitzky-golay-smoothing-filter-for-not-equally-spaced-data,
-with the addition of weights following https://en.wikipedia.org/wiki/Savitzky-Golay_filter.
+\url{https://dsp.stackexchange.com/questions/1676/savitzky-golay-smoothing-filter-for-not-equally-spaced-data},
+with the addition of weights following
+\url{https://en.wikipedia.org/wiki/Savitzky-Golay_filter}.
 }
 \author{
-Luigi Ranghetti, phD (2020) \email{luigi@ranghetti.info}
+Luigi Ranghetti, PhD (2020) \email{luigi@ranghetti.info}
 }

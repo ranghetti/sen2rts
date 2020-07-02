@@ -3,7 +3,7 @@
 #' @param ts Time series in `s2ts` format (generated using `extract_s2ts()`).
 #' @param min_qa (optional) minimum 0-1 quality value
 #'  (points with `qa < min_qa` are not used, while `qa` values
-#'  in the range `min_qa` to 1 are reshaped ito the range 0 to 1).
+#'  in the range `min_qa` to 1 are reshaped into the range 0 to 1).
 #'  Default is 0.5.
 #' @param noise_dir Direction of points generally containing noise.
 #'  If `"low"`, higher values are generally maintained (this is the case of
@@ -17,10 +17,10 @@
 #' @param sg_polynom Argument `polynom` of function `w_savgol()`.
 #' @param keep_max (optional) Logical: if TRUE, the maximum (if `noise_dir = "low"`)
 #'  or minimum (if `noise_dir = "high"`) value between the input and the smoothed
-#'  is finally keeped; if FALSE (default) smoothed values are always keeped.
+#'  is finally kept; if FALSE (default) smoothed values are always kept.
 #'  This argument is not used if `noise_dir = "undefined"`.
 #' @return The output time series in `s2ts` format.
-#' @author Luigi Ranghetti, phD (2020) \email{luigi@@ranghetti.info}
+#' @author Luigi Ranghetti, PhD (2020) \email{luigi@@ranghetti.info}
 #' @export
 
 smooth_s2ts <- function(

@@ -10,13 +10,14 @@
 #'  If NA (default), all points are assumed to have the same weight.
 #' @param window Window length of datapoints.
 #'  Must be odd and smaller than `x`. Default is 7.
-#' @param polynom The order of polynom used. 
+#' @param polynom The polynomial order to be used. 
 #'  Must be smaller than the `window` size. Default is 3.
 #' @return The smoothed "y" values.
-#' @author Luigi Ranghetti, phD (2020) \email{luigi@@ranghetti.info}
+#' @author Luigi Ranghetti, PhD (2020) \email{luigi@@ranghetti.info}
 #' @note This is an R adaptation of Python function at
-#'  https://dsp.stackexchange.com/questions/1676/savitzky-golay-smoothing-filter-for-not-equally-spaced-data,
-#'  with the addition of weights following https://en.wikipedia.org/wiki/Savitzky-Golay_filter.
+#'  \url{https://dsp.stackexchange.com/questions/1676/savitzky-golay-smoothing-filter-for-not-equally-spaced-data},
+#'  with the addition of weights following 
+#'  \url{https://en.wikipedia.org/wiki/Savitzky-Golay_filter}.
 #' @export
 
 w_savgol <- function(y, x = NA, q = NA, window = 7, polynom = 3) {

@@ -20,7 +20,7 @@ smooth_s2ts(
 
 \item{min_qa}{(optional) minimum 0-1 quality value
 (points with \code{qa < min_qa} are not used, while \code{qa} values
-in the range \code{min_qa} to 1 are reshaped ito the range 0 to 1).
+in the range \code{min_qa} to 1 are reshaped into the range 0 to 1).
 Default is 0.5.}
 
 \item{noise_dir}{Direction of points generally containing noise.
@@ -40,7 +40,7 @@ if \code{"undefined"} (default), no assumptions are done.}
 
 \item{keep_max}{(optional) Logical: if TRUE, the maximum (if \code{noise_dir = "low"})
 or minimum (if \code{noise_dir = "high"}) value between the input and the smoothed
-is finally keeped; if FALSE (default) smoothed values are always keeped.
+is finally kept; if FALSE (default) smoothed values are always kept.
 This argument is not used if \code{noise_dir = "undefined"}.}
 }
 \value{
@@ -50,5 +50,5 @@ The output time series in \code{s2ts} format.
 TODO
 }
 \author{
-Luigi Ranghetti, phD (2020) \email{luigi@ranghetti.info}
+Luigi Ranghetti, PhD (2020) \email{luigi@ranghetti.info}
 }

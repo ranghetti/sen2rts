@@ -8,7 +8,7 @@
 #'  If `scl_paths` is defined it is not used for aggregation of output values
 #'  (`weighted.mean()` is always used for that), but for aggregation of weights
 #'  made to compute the `"qa"` attribute.
-#' @param in_sf_id (optional) charachter vector corresponding to the name/names
+#' @param in_sf_id (optional) character vector corresponding to the name/names
 #'  of the `in_sf` column with the features IDs.
 #'  If NA (default) the row number is used.
 #' @param scl_paths (optional) Paths of the SCL files (they must correspond
@@ -23,7 +23,7 @@
 #' @param min_cov (optional) quality threshold (0-1) for output values to be
 #'  returned (default is 0, meaning that all values are returned).
 #' @return The output time series in `s2ts` format.
-#' @author Luigi Ranghetti, phD (2020) \email{luigi@@ranghetti.info}
+#' @author Luigi Ranghetti, PhD (2020) \email{luigi@@ranghetti.info}
 #' @import data.table
 #' @importFrom sen2r raster_metadata sen2r_getElements
 #' @importFrom sf gdal_utils st_bbox st_buffer st_crs st_sf st_transform 
