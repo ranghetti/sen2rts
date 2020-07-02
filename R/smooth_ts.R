@@ -46,11 +46,7 @@ smooth_s2ts <- function(
     )
   }
   # TODO
-  ts_dt <- as.data.table(ts)
-  ts_dt <- ts_dt[order(id, date),]
-
-  ## Build relative TS
-  ts_dt[,relval := (value - min(value)) / diff(range(value))]
+  ts_dt <- ts_dt_full <- as.data.table(ts)[order(id, date),]
   
   ## Exclude low-quality values and reshape others
   if (!is.null(ts_dt$qa)) {
@@ -59,6 +55,9 @@ smooth_s2ts <- function(
   } else {
     ts_dt$qa2 <- 1
   }
+  
+  ## Build relative TS
+  ts_dt[,relval := (value - min(value)) / diff(range(value))]
   
   ## Remove spikes
   ts_dt$spike <- FALSE #initialisation
@@ -100,11 +99,15 @@ smooth_s2ts <- function(
   } # end of id FOR cycle
   
   ## Take the maximum between SG and local
-  ts_dt[,value_sm := ifelse(keep_max == TRUE & value > value_sg, value, value_sg)]
+  ts_dt[,value_smoothed := ifelse(keep_max == TRUE & value > value_sg, value, value_sg)]
+  
+  # Restore non-smoothed values
+  ts_dt <- merge(ts_dt, ts_dt_full, by = names(ts_dt_full), all = TRUE)
   
   ## Return output
-  ts_dt$value <- ts_dt$value_sm
-  ts_dt$value_sg <- ts_dt$relval <- ts_dt$qa2 <- ts_dt$value_sm <- NULL
+  ts_dt$rawval <- ts_dt$value
+  ts_dt$value <- ts_dt$value_smoothed
+  ts_dt$value_sg <- ts_dt$relval <- ts_dt$qa2 <- ts_dt$value_smoothed <- NULL
   ts_out <- as(ts_dt, "s2ts")
   attr(ts_out, "gen_by") <- "smooth_s2ts"
   ts_out

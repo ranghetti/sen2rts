@@ -66,8 +66,8 @@ fill_s2ts <- function(
       by.x = c("date", "sensor", "orbit"), by.y = c("date", "mission", "orbit"), 
       all = TRUE
     )
-    ts_dt_out2[,interpolated := is.na(id)]
-    ts_dt_out2[interpolated == TRUE, id := sel_id]
+    ts_dt_out2[,interpolated := is.na(value)]
+    ts_dt_out2[,id := sel_id]
     
     # Interpolate
     sel_spline <- spline(

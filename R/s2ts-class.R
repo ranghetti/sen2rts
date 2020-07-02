@@ -21,7 +21,7 @@ s2ts <- function(value, date, id, qa, ...) {
   for (sel_arg in names(args)) {
     attr(out, sel_arg) <- args[[sel_arg]]
   }
-  class(out) <- unique(c("s2ts", class(out)))
+  class(out) <- "s2ts"
   out
 }
 
@@ -31,7 +31,7 @@ s2ts <- function(value, date, id, qa, ...) {
 setAs("numeric", "s2ts", function(from) {
   stopifnot(!is.null(attr(from, "date")))
   if (missing(attr(from, "id"))) {attr(from, "id") <- rep("0", length(from))}
-  class(from) <- unique(c("s2ts", class(from)))
+  class(from) <- "s2ts"
   from
 })
 
@@ -44,7 +44,7 @@ setAs("data.frame", "s2ts", function(from) {
   for (colname in names(from)[!names(from) %in% c("value", "date", "qa")]) {
     attr(to, colname) <- from[[colname]]
   }
-  class(to) <- unique(c("s2ts", class(to)))
+  class(to) <- "s2ts"
   to
 })
 
@@ -61,16 +61,28 @@ s2ts_id <- function(x) {
 }
 s2ts_value <- function(x) {
   stopifnot(inherits(x, "s2ts"))
-  dcast(as.data.table(x), date ~ id, value.var = "value")
+  dcast(as.data.table(x)[!is.na(value),], date ~ id, value.var = "value")
 }
 s2ts_qa <- function(x) {
   stopifnot(inherits(x, "s2ts"))
   if (!is.null(attr(x, "qa"))) {
-    dcast(as.data.table(x), date ~ id, value.var = "qa")
+    dcast(as.data.table(x)[!is.na(qa),], date ~ id, value.var = "qa")
   } else {
     print_message(
       type = "message",
       "Quality flag is missing."
+    )
+    invisible(NULL)
+  }
+}
+s2ts_rawval <- function(x) {
+  stopifnot(inherits(x, "s2ts"))
+  if (!is.null(attr(x, "rawval"))) {
+    dcast(as.data.table(x)[!is.na(rawval),], date ~ id, value.var = "rawval")
+  } else {
+    print_message(
+      type = "message",
+      "Non-smoothed values are missing (probably this is not a smoothed s2ts)."
     )
     invisible(NULL)
   }
@@ -85,6 +97,8 @@ s2ts_qa <- function(x) {
     s2ts_value(x)
   } else if (name == "qa") {
     s2ts_qa(x)
+  } else if (name == "rawval") {
+    s2ts_rawval(x)
   } 
 }
 
@@ -205,7 +219,7 @@ print.s2ts <- function(x, ...) {
   if (!is.null(attr(x, "gen_by")) && attr(x, "gen_by") == "fill_s2ts") {
     cat("Interpolated values are marked with ‘~’.\n")
   }
-  attrs <- names(attributes(x))[!names(attributes(x)) %in% c("class", "date", "id", "qa", "orbit", "sensor", "interpolated", "gen_by")]
+  attrs <- names(attributes(x))[!names(attributes(x)) %in% c("class", "date", "id", "qa", "orbit", "sensor", "rawval", "interpolated", "gen_by")]
   if (length(attrs) > 0) {
     cat("The following attributes are included:", paste(attrs, collapse=", "))
     cat(".\n")
