@@ -17,8 +17,8 @@ Imports:
   sen2r,
   data.table,
   sf,
-  raster,
-  stars
+  stars,
+  dplyr
 Suggests:
   MASS,
   spelling,

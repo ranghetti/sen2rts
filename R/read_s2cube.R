@@ -1,8 +1,8 @@
 #' @title Read raster cubes from sen2r archives
 #' @description TODO
 #' @param inpath Path of the directory in which sen2r files are.
-#' @param out_format (optional) Output format (one among `"RasterStack"`, 
-#'  `"stars"`, `"stars_proxy"` and `"path"`).
+#' @param out_format (optional) Output format, being one among
+#'  `"stars"`, `"stars_proxy"` and `"path"` -- default is `"path"`).
 #' @param prod_type (optional) sen2r product type to import
 #'  (used for filtering among `inpath` content).
 #' @param time_window (optional) time window to import
@@ -23,25 +23,19 @@
 #' @importFrom sf gdal_utils
 #' @importFrom sen2r normalize_path sen2r_getElements
 #' @importFrom stars read_stars st_redimension
-#' @importFrom raster setZ stack
 #'
 #' @examples
 #' json_path <- sen2r::build_example_param_file()
 #' out_paths_2 <- sen2r::sen2r(json_path, timewindow = c("2019-07-13", "2019-07-23"))
 #' inpath <- file.path(unique(dirname(dirname(out_paths_2))), "MSAVI2")
 #' extent <- sf::st_read(system.file("extdata/vector/barbellino.geojson", package = "sen2r"))
-#' in_stack <- read_s2cube(inpath, out_format = "RasterStack")
+#' in_paths <- read_s2cube(inpath)
 #' in_stars <- read_s2cube(inpath, out_format = "stars")
-
-#' inpath <- "~/nas-s4a/projects/SATFARMING/BF_datasets/.out_sen2r/Bonifiche_Ferraresi/Jolanda/raster/EO/SIs/S2A/MSAVI2"
-#' in_stack <- read_s2cube(inpath, out_format = "RasterStack")
-#' in_stars <- read_s2cube(inpath, out_format = "stars")
-#' in_starsp <- read_s2cube(inpath, out_format = "stars_proxy")
 
 
 read_s2cube <- function(
   inpath,
-  out_format = "RasterStack",
+  out_format = "path",
   # extent = NA,
   # res = NA,
   prod_type = NA,
@@ -62,10 +56,10 @@ read_s2cube <- function(
   in_meta <- in_meta[order(sensing_date),]
   
   # Check arguments
-  if (!out_format %in% c("RasterStack", "stars_proxy", "stars", "path")) {
+  if (!out_format %in% c("stars_proxy", "stars", "path")) {
     print_message(
       type = "error",
-      "\"out_format\" must be one among 'RasterStack', 'stars_proxy', 'stars', 'path'."
+      "\"out_format\" must be one among 'stars_proxy', 'stars', 'path'."
     )
   }
   #TODO
@@ -156,10 +150,7 @@ read_s2cube <- function(
   }
   
   # switch format
-  if (out_format == "RasterStack") {
-    in_cube <- stack(vrt_path)
-    in_cube <- setZ(in_cube, in_meta$sensing_date)
-  } else if (out_format %in% c("stars", "stars_proxy")) {
+  if (out_format %in% c("stars", "stars_proxy")) {
     in_cube <- read_stars(vrt_path, proxy = out_format=="stars_proxy", RasterIO = RasterIO)
     if (.use_vrt == TRUE) {
       in_cube <- st_set_dimensions(in_cube, "band", in_meta$sensing_date)

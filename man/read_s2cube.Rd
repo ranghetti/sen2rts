@@ -6,7 +6,7 @@
 \usage{
 read_s2cube(
   inpath,
-  out_format = "RasterStack",
+  out_format = "path",
   prod_type = NA,
   time_window = NA,
   s2_orbits = NA,
@@ -19,8 +19,8 @@ read_s2cube(
 \arguments{
 \item{inpath}{Path of the directory in which sen2r files are.}
 
-\item{out_format}{(optional) Output format (one among \code{"RasterStack"},
-\code{"stars"}, \code{"stars_proxy"} and \code{"path"}).}
+\item{out_format}{(optional) Output format, being one among
+\code{"stars"}, \code{"stars_proxy"} and \code{"path"} -- default is \code{"path"}).}
 
 \item{prod_type}{(optional) sen2r product type to import
 (used for filtering among \code{inpath} content).}
@@ -53,12 +53,8 @@ json_path <- sen2r::build_example_param_file()
 out_paths_2 <- sen2r::sen2r(json_path, timewindow = c("2019-07-13", "2019-07-23"))
 inpath <- file.path(unique(dirname(dirname(out_paths_2))), "MSAVI2")
 extent <- sf::st_read(system.file("extdata/vector/barbellino.geojson", package = "sen2r"))
-in_stack <- read_s2cube(inpath, out_format = "RasterStack")
+in_paths <- read_s2cube(inpath)
 in_stars <- read_s2cube(inpath, out_format = "stars")
-inpath <- "~/nas-s4a/projects/SATFARMING/BF_datasets/.out_sen2r/Bonifiche_Ferraresi/Jolanda/raster/EO/SIs/S2A/MSAVI2"
-in_stack <- read_s2cube(inpath, out_format = "RasterStack")
-in_stars <- read_s2cube(inpath, out_format = "stars")
-in_starsp <- read_s2cube(inpath, out_format = "stars_proxy")
 }
 \author{
 Luigi Ranghetti, PhD (2020) \email{luigi@ranghetti.info}
