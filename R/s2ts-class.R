@@ -251,6 +251,77 @@ setAs("safelist", "list", function(from) {
 })
 
 
+## Plot ----
+
+#' @export
+plot.s2ts <- function(x, ...) {
+  
+  # Check optional suggested ggplot2 to be present
+  if (!requireNamespace("ggplot2", quietly = TRUE)) {
+    print_message(
+      type = "error",
+      "Package 'ggplot2' is required to plot a 's2ts' object."
+    )
+  }
+  
+  # Determine plot mode
+  plot_mode <- if (is.null(attr(x, "gen_by"))) {
+    "base"
+  } else if (attr(x, "gen_by") %in% c("smooth_s2ts", "fill_s2ts")) {
+    "smoothed"
+  } else { # including attr(x, "gen_by") == "extract_s2ts"
+    "base"
+  }
+  
+  # Extract input data.table
+  x_dt <- as.data.table(x)
+  setnames(x_dt, "qa", "QA", skip_absent = TRUE)
+  x_dt_smooth <- x_dt[!is.na(value),]
+  if (plot_mode == "base") {
+    x_dt_raw <- x_dt_smooth
+  } else {
+    x_dt_raw <- x_dt[!is.na(rawval),]
+    x_dt_raw[,value := rawval]
+  }
+  
+  # Base plot
+  out <- ggplot2::ggplot(x_dt, ggplot2::aes(x = date, y = value))
+  
+  # Add raw line
+  out <- out + ggplot2::geom_line(
+    data = x_dt_raw, 
+    alpha = if (plot_mode == "smoothed") {0.1} else {0.35}
+  )
+  
+  # Add smoothed line
+  if (plot_mode == "smoothed") {
+    out <- out + ggplot2::geom_line(data = x_dt_smooth, alpha = 0.5)
+  }
+  
+  # Add points
+  out <- out + ggplot2::geom_point(
+    data = x_dt_raw, 
+    if (!is.null(x_dt$QA)) {ggplot2::aes(colour = QA)}, 
+    size = 0.75
+  )
+  
+  # Facet in case of multiple IDs
+  if (length(sort(unique(x_dt$id))) > 0) {
+    out <- out + ggplot2::facet_wrap(~id)
+  }
+  
+  # Format options
+  out <- out +
+    ggplot2::scale_x_date(name = "Date") +
+    ggplot2::scale_y_continuous(name = NULL) +
+    ggplot2::scale_colour_viridis_c(option = "inferno", direction = -1) +
+    ggplot2::theme_light()
+  
+  out
+  
+}
+
+
 ## Print ----
 
 #' @export
