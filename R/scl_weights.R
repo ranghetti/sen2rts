@@ -1,4 +1,40 @@
-
+#' @title Build SCL weights
+#' @description Build a vector with relative weights for each SCL class.
+#'  Class weights can be defined using function arguments  (all of them 
+#'  are optional; default weights are used for each non-provided class).
+#' @param nodata (optional) Relative weight (0-1) for SCL class
+#'  `"nodata"`.
+#' @param saturated_or_defective (optional) Relative weight (0-1) for SCL class
+#'  `"saturated_or_defective"`.
+#' @param dark_area_pixels (optional) Relative weight (0-1) for SCL class
+#'  `"dark_area_pixels"`.
+#' @param cloud_shadows (optional) Relative weight (0-1) for SCL class
+#'  `"cloud_shadows"`.
+#' @param vegetation (optional) Relative weight (0-1) for SCL class
+#'  `"vegetation"`.
+#' @param not_vegetated (optional) Relative weight (0-1) for SCL class
+#'  `"not_vegetated"`.
+#' @param water (optional) Relative weight (0-1) for SCL class
+#'  `"water"`.
+#' @param unclassified (optional) Relative weight (0-1) for SCL class
+#'  `"unclassified"`.
+#' @param cloud_medium_probability (optional) Relative weight (0-1) for SCL class
+#'  `"cloud_medium_probability"`.
+#' @param cloud_high_probability (optional) Relative weight (0-1) for SCL class
+#'  `"cloud_high_probability"`.
+#' @param thin_cirrus (optional) Relative weight (0-1) for SCL class
+#'  `"thin_cirrus"`.
+#' @param snow (optional) Relative weight (0-1) for SCL class
+#'  `"snow"`.
+#' @return A named vector of length 12, containing 0-1 relative weights
+#'  for each SCL class.
+#' @author Luigi Ranghetti, PhD (2020) \email{luigi@@ranghetti.info}
+#' @export
+#' @examples 
+#' # Default weights
+#' scl_weights()
+#' # Custom weights changing two classes
+#' scl_weights(unclassified = 0.25, snow = 0)
 
 scl_weights <- function(
   no_data                  = 0.00, #  0
