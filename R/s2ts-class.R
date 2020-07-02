@@ -1,14 +1,56 @@
 
 ## Class definition ----
 
-setClass("s2ts", contains = "list")
-
-#' @return The output time series in `s2ts` format, containing the following 
-#'  columns:
-#'  - `date` :date of observation;
-#'  - `id` : polygon ID, corresponding to argument `in_sf_id`;
-#'  - `value`: extracted value;
-#'  - `quality`: relative 0-1 quality values (missing if `scl_paths` was not provided).
+#' @title Class `s2ts`
+#' @description TODO
+#' @param value (mandatory) Vector with the values ("y") of the time series.
+#' @param date (mandatory) Vector (of the same length of `value`) with the dates
+#'  of each value.
+#' @param id (optional) Vector (of the same length of `value` or of length 1,
+#'  in which case the passed value is replicated for each element of `value`)
+#'  with the feature IDs of each value. 
+#'  If missing, all the values are considered as extracted from the same feature.
+#' @param qa (optional) Vector (of the same length of `value`) with the quality
+#'  assessment values (range 0-1) associated to each value.
+#'  If missing, all the values are considered as equally weighted.
+#' @param orbit (optional) Vector (of the same length of `value`or of length 1,
+#'  in which case the passed value is replicated for each element of `value`)
+#'  with the Sentinel-2 orbits of each value.
+#' @param sensor (optional) Vector (of the same length of `value` or of length 1,
+#'  in which case the passed value is replicated for each element of `value`)
+#'  with the Sentinel-2 sensors (`"2A"` or `"2B"`) of each value.
+#' @param rawval (optional) Vector (of the same length of `value`) with the
+#'  non-smoothed values (this is generally created by outputs of `smooth_s2ts()`).
+#' @param ... Additional vectors to be passed. 
+#'  Each additional argument is threated as an additional element of the output
+#'  list in case it is of the same length of `value`, otherwise it is threated
+#'  as an output attribute.
+#' @return The output time series in `s2ts` format.
+#' 
+#'  This is a format derived from `data.table`, containing the mandatory columns
+#'  `id`, `date`, `value`, and additional ones among which
+#'  `qa`, `orbit`, `sensor` and `rawval` (see the arguments in this help for
+#'  their meanings).
+#'  
+#'  The optional attribute `gen_by` provides information about the function 
+#'  which gnerated the object (if provided).
+#' @details Some specific methods for this class are defined.
+#'  - `<s2ts_obj>$value` returns a `data.table` with the values for each date, 
+#'      in wide format.
+#'  - `<s2ts_obj>$date` returns a `vector` with the dates.
+#'  - `<s2ts_obj>$id` returns a `vector` with the unique ID values.
+#'  - `<s2ts_obj>$qa` returns a `data.table` with the quality assessment values 
+#'      for each date, in wide format.
+#'  - `<s2ts_obj>$rawval` returns a `data.table` with the `rawval` values for 
+#'      each date, in wide format.
+#'  - `<s2ts_obj>[[<idname>]]` returns a subsampled `s2ts` containing only
+#'      the values of the provided ID.
+#' 
+#'  Notice that since `$` and `[[` methods are defined, the syntaxes
+#'  `<s2ts_obj>$<fieldname>` and `<s2ts_obj>[["<fieldname>"]]`
+#'  can not be used (use instead `<s2ts_obj>[,<fieldname>]`).
+#' @author Luigi Ranghetti, phD (2020) \email{luigi@@ranghetti.info}
+#' @export
 
 s2ts <- function(value, date, id = NA, qa, orbit, sensor, rawval, ...) {
   
