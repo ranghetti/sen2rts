@@ -2,9 +2,12 @@
 % Please edit documentation in R/s2ts-class.R
 \name{s2ts}
 \alias{s2ts}
+\alias{as.s2ts}
 \title{Class \code{s2ts}}
 \usage{
 s2ts(value, date, id = NA, qa, orbit, sensor, rawval, ...)
+
+as.s2ts(x, ...)
 }
 \arguments{
 \item{value}{(mandatory) Vector with the values ("y") of the time series.}
@@ -36,6 +39,8 @@ non-smoothed values (this is generally created by outputs of \code{smooth_s2ts()
 Each additional argument is threated as an additional element of the output
 list in case it is of the same length of \code{value}, otherwise it is threated
 as an output attribute.}
+
+\item{x}{Input element to be converted to \code{s2ts}.}
 }
 \value{
 The output time series in \code{s2ts} format.

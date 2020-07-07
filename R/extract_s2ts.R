@@ -103,7 +103,7 @@ extract_s2ts <- function(
   )
   
   ## Read in_cube
-  in_cube <- read_stars(vrt_path, RasterIO = in_RasterIO)
+  in_cube <- read_stars(vrt_path, RasterIO = in_RasterIO, proxy = FALSE)
   in_cube <- st_set_dimensions(in_cube, "band", in_meta$sensing_date)
   in_cube <- st_set_dimensions(in_cube, names = c("x", "y", "time"))
   
