@@ -267,8 +267,10 @@ plot.s2ts <- function(x, ...) {
   # Determine plot mode
   plot_mode <- if (is.null(attr(x, "gen_by"))) {
     "base"
-  } else if (attr(x, "gen_by") %in% c("smooth_s2ts", "fill_s2ts")) {
+  } else if (attr(x, "gen_by") %in% c("smooth_s2ts")) {
     "smoothed"
+  } else if (attr(x, "gen_by") %in% c("fill_s2ts")) {
+    "filled"
   } else { # including attr(x, "gen_by") == "extract_s2ts"
     "base"
   }
@@ -276,9 +278,13 @@ plot.s2ts <- function(x, ...) {
   # Extract input data.table
   x_dt <- as.data.table(x)
   setnames(x_dt, "qa", "QA", skip_absent = TRUE)
-  x_dt_smooth <- x_dt[!is.na(value),]
+  if (plot_mode == "filled") {
+    x_dt_smooth <- x_dt
+  } else {
+    x_dt_smooth <- x_dt[!is.na(value),]
+  }
   if (plot_mode == "base") {
-    x_dt_raw <- x_dt_smooth
+    x_dt_raw <- x_dt[!is.na(value),]
   } else {
     x_dt_raw <- x_dt[!is.na(rawval),]
     x_dt_raw[,value := rawval]
@@ -290,11 +296,11 @@ plot.s2ts <- function(x, ...) {
   # Add raw line
   out <- out + ggplot2::geom_line(
     data = x_dt_raw, 
-    alpha = if (plot_mode == "smoothed") {0.1} else {0.35}
+    alpha = if (plot_mode %in% c("smoothed", "filled")) {0.1} else {0.35}
   )
   
   # Add smoothed line
-  if (plot_mode == "smoothed") {
+  if (plot_mode %in% c("smoothed", "filled")) {
     out <- out + ggplot2::geom_line(data = x_dt_smooth, alpha = 0.5)
   }
   

@@ -4,7 +4,7 @@
 \alias{fill_s2ts}
 \title{Fill not equally-spaced time series}
 \usage{
-fill_s2ts(ts, frequency = "dop")
+fill_s2ts(ts, frequency = "dop", method = "fmm", max_na_days = 30)
 }
 \arguments{
 \item{ts}{Time series in \code{s2ts} format (generated using \code{smooth_s2ts()}).}
@@ -15,6 +15,12 @@ fill_s2ts(ts, frequency = "dop")
 the theoretic Sentinel-2 dates of passage;
 \item \code{daily}: daily frequency.
 }}
+
+\item{method}{(optional) Argument passed to \code{spline()}.}
+
+\item{max_na_days}{(optional) maximum number of consecutive days with missing
+values which can be filled (in case of longer time windows with missing data,
+NA are returned).}
 }
 \value{
 The output time series in tabular format (see \code{extract_ts()}).
