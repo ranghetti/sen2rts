@@ -146,6 +146,9 @@ s2ts <- function(value, date, id = NA, qa, orbit, sensor, rawval, ...) {
   
   # Return s2ts
   out <- as.data.table(out_l)
+  for (a in names(attributes(out_l))[names(attributes(out_l)) != "names"]) {
+    attr(out, a) <- attr(out_l, a)
+  }
   
   # Check univocity
   if (any(any(out[,duplicated(paste(id, date))]))) {
@@ -155,7 +158,6 @@ s2ts <- function(value, date, id = NA, qa, orbit, sensor, rawval, ...) {
       "and ensure that only a unique data was provided for each ID value."
     )
   }
-  
   
   class(out) <- c("s2ts", class(out))
   out
@@ -200,13 +202,16 @@ setAs("integer", "s2ts", function(from) {
 
 
 as.s2ts.data.frame <- function(x, ...) {
-  do.call(s2ts, as.list(x))
+  as.s2ts(as.list(x))
 }
 setAs("data.frame", "s2ts", function(from) {
   as.s2ts.data.frame(from)
 })
 
 as.s2ts.list <- function(x, ...) {
+  for (a in names(attributes(x))[names(attributes(x)) != "names"]) {
+    x[[a]] <- attr(x, a)
+  }
   do.call(s2ts, x)
 }
 setAs("list", "s2ts", function(from) {
