@@ -1,7 +1,7 @@
 Package: sen2rts
 Type: Package
 Title: Build and Smooth Sentinel-2 Time Series
-Version: 0.2.0
+Version: 0.2.1
 Authors@R: c(person("Luigi", "Ranghetti",
                     email = "luigi@ranghetti.info",
                     role = c("aut", "cre"),

@@ -5,13 +5,19 @@
 #'  - `dop` (Days Of Passage -- default): values are returned corresponding to 
 #'      the theoretic Sentinel-2 dates of passage;
 #'  - `daily`: daily frequency.
+#' @param method (optional) Argument passed to `spline()`.
+#' @param max_na_days (optional) maximum number of consecutive days with missing
+#'  values which can be filled (in case of longer time windows with missing data,
+#'  NA are returned).
 #' @return The output time series in tabular format (see `extract_ts()`).
 #' @author Luigi Ranghetti, PhD (2020) \email{luigi@@ranghetti.info}
 #' @export
 
 fill_s2ts <- function(
   ts,
-  frequency = "dop"
+  frequency = "dop",
+  method = "fmm",
+  max_na_days = 30
 ) {
   
   ## Define Greater Common Divisor
@@ -69,13 +75,23 @@ fill_s2ts <- function(
     ts_dt_out2[,interpolated := is.na(value)]
     ts_dt_out2[,id := sel_id]
     
-    # Interpolate
+    # Interpolate (without extrapolating)
+    valid_dates <- ts_dt[id == sel_id,][!is.na(value), date]
+    valid_range <- as.Date(character(0))
+    for (i in seq(length(valid_dates)-1)) {
+      if (diff(valid_dates[i:(i+1)]) <= max_na_days) {
+        valid_range <- c(valid_range, seq(valid_dates[i], valid_dates[i+1], 1))
+      }
+    }
+    valid_range <- unique(valid_range)
     sel_spline <- spline(
-      ts_dt[id == sel_id, date],
-      ts_dt[id == sel_id, value],
-      xout = ts_dt_out2$date
+      ts_dt[id == sel_id & date %in% valid_range, date],
+      ts_dt[id == sel_id & date %in% valid_range, value],
+      xout = ts_dt_out2[date %in% valid_range, date],
+      method = method
     )
-    ts_dt_out2$value <- sel_spline$y
+    sel_spline$x <- as.Date(sel_spline$x, origin = "1970-01-01")
+    ts_dt_out2[date %in% valid_range, value := sel_spline$y]
     
     ts_list[[sel_id]] <- ts_dt_out2
     

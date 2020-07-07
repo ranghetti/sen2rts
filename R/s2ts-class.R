@@ -91,7 +91,7 @@ s2ts <- function(value, date, id = NA, qa, orbit, sensor, rawval, ...) {
     print_message(
       type = "error",
       "Some mandatory arguments ('",
-      paste(which_args_mandatory[args_mandatory_missing], sep = "', '"),
+      paste(which_args_mandatory[args_mandatory_missing], collapse = "', '"),
       "') are missing."
     )
   }
@@ -146,9 +146,19 @@ s2ts <- function(value, date, id = NA, qa, orbit, sensor, rawval, ...) {
   
   # Return s2ts
   out <- as.data.table(out_l)
-  # for (a in names(attributes(out_l))[names(attributes(out_l)) != "names"]) {
-  #   attr(out, a) <- attr(out_l, a)
-  # }
+  for (a in names(attributes(out_l))[names(attributes(out_l)) != "names"]) {
+    attr(out, a) <- attr(out_l, a)
+  }
+  
+  # Check univocity
+  if (any(any(out[,duplicated(paste(id, date))]))) {
+    print_message(
+      type = "error",
+      "Dpuplicated were detected; please check your input data ",
+      "and ensure that only a unique data was provided for each ID value."
+    )
+  }
+  
   class(out) <- c("s2ts", class(out))
   out
   
@@ -159,25 +169,53 @@ setClass("s2ts", contains = "list")
 
 ## Methods: input -> s2ts ----
 
-setAs("numeric", "s2ts", function(from) {
+#' @param x Input element to be converted to `s2ts`.
+#' @name as.s2ts
+#' @rdname s2ts
+#' @export
+as.s2ts <- function(x, ...) {
+  UseMethod("as.s2ts")
+}
+
+as.s2ts.numeric <- function(x, ...) {
   # Accept a named vector with values, names being dates
   # and optional additional arguments
-  stopifnot(!is.null(names(from)))
-  from_list <- c(
-    list("value" = as.vector(tmp)), 
-    attributes(tmp)
+  stopifnot(!is.null(names(x)))
+  x_list <- c(
+    list("value" = as.vector(x)), 
+    attributes(x)
   )
-  from_list[["date"]] <- as.Date(from_list[["names"]])
-  from_list[["names"]] <- NULL
-  do.call(s2ts, from_list)
+  x_list[["date"]] <- as.Date(x_list[["names"]])
+  x_list[["names"]] <- NULL
+  do.call(s2ts, x_list)
+}
+setAs("numeric", "s2ts", function(from) {
+  as.s2ts.numeric(from)
 })
 
+as.s2ts.integer <- function(x, ...) {
+  as.s2ts.numeric(x, ...)
+}
+setAs("integer", "s2ts", function(from) {
+  as.s2ts.integer(from)
+})
+
+
+as.s2ts.data.frame <- function(x, ...) {
+  as.s2ts(as.list(x))
+}
 setAs("data.frame", "s2ts", function(from) {
-  do.call(s2ts, as.list(from))
+  as.s2ts.data.frame(from)
 })
 
+as.s2ts.list <- function(x, ...) {
+  for (a in names(attributes(x))[names(attributes(x)) != "names"]) {
+    x[[a]] <- attr(x, a)
+  }
+  do.call(s2ts, x)
+}
 setAs("list", "s2ts", function(from) {
-  do.call(s2ts, from)
+  as.s2ts.list(from)
 })
 
 
@@ -239,6 +277,14 @@ s2ts_rawval <- function(x) {
   as(x_dt[id %in% name,], "s2ts")
 }
 
+`[.s2ts` = function(x, ...) {
+  x_dt <- as.data.table(x)[...]
+  tryCatch(
+    as(x_dt, "s2ts"),
+    error = function(e) {x_dt}
+  )
+}
+
 
 ## Methods: s2ts -> input ----
 
@@ -246,7 +292,7 @@ s2ts_rawval <- function(x) {
 as.list.s2ts <- function(x, ...) {
   unclass(x)
 }
-setAs("safelist", "list", function(from) {
+setAs("s2ts", "list", function(from) {
   as.list(from)
 })
 
@@ -267,8 +313,10 @@ plot.s2ts <- function(x, ...) {
   # Determine plot mode
   plot_mode <- if (is.null(attr(x, "gen_by"))) {
     "base"
-  } else if (attr(x, "gen_by") %in% c("smooth_s2ts", "fill_s2ts")) {
+  } else if (attr(x, "gen_by") %in% c("smooth_s2ts")) {
     "smoothed"
+  } else if (attr(x, "gen_by") %in% c("fill_s2ts")) {
+    "filled"
   } else { # including attr(x, "gen_by") == "extract_s2ts"
     "base"
   }
@@ -276,9 +324,13 @@ plot.s2ts <- function(x, ...) {
   # Extract input data.table
   x_dt <- as.data.table(x)
   setnames(x_dt, "qa", "QA", skip_absent = TRUE)
-  x_dt_smooth <- x_dt[!is.na(value),]
+  if (plot_mode == "filled") {
+    x_dt_smooth <- x_dt
+  } else {
+    x_dt_smooth <- x_dt[!is.na(value),]
+  }
   if (plot_mode == "base") {
-    x_dt_raw <- x_dt_smooth
+    x_dt_raw <- x_dt[!is.na(value),]
   } else {
     x_dt_raw <- x_dt[!is.na(rawval),]
     x_dt_raw[,value := rawval]
@@ -290,11 +342,11 @@ plot.s2ts <- function(x, ...) {
   # Add raw line
   out <- out + ggplot2::geom_line(
     data = x_dt_raw, 
-    alpha = if (plot_mode == "smoothed") {0.1} else {0.35}
+    alpha = if (plot_mode %in% c("smoothed", "filled")) {0.1} else {0.35}
   )
   
   # Add smoothed line
-  if (plot_mode == "smoothed") {
+  if (plot_mode %in% c("smoothed", "filled")) {
     out <- out + ggplot2::geom_line(data = x_dt_smooth, alpha = 0.5)
   }
   
