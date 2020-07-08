@@ -7,7 +7,7 @@
 scl_weights(
   no_data = 0,
   saturated_or_defective = 0,
-  dark_area_pixels = 0,
+  dark_area_pixels = 0.5,
   cloud_shadows = 0.25,
   vegetation = 1,
   not_vegetated = 1,

@@ -39,7 +39,7 @@
 scl_weights <- function(
   no_data                  = 0.00, #  0
   saturated_or_defective   = 0.00, #  1
-  dark_area_pixels         = 0.00, #  2
+  dark_area_pixels         = 0.50, #  2
   cloud_shadows            = 0.25, #  3
   vegetation               = 1.00, #  4
   not_vegetated            = 1.00, #  5
