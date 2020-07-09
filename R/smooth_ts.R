@@ -15,10 +15,14 @@
 #'  (it must be an odd number). Default is 3.
 #' @param sg_window Argument `window` of function `w_savgol()`.
 #' @param sg_polynom Argument `polynom` of function `w_savgol()`.
-#' @param keep_max (optional) Logical: if TRUE, the maximum (if `noise_dir = "low"`)
-#'  or minimum (if `noise_dir = "high"`) value between the input and the smoothed
-#'  is finally kept; if FALSE (default) smoothed values are always kept.
-#'  This argument is not used if `noise_dir = "undefined"`.
+#' @param sg_n (optional) Positive integer: number of applications of the 
+#'  Savitzky-Golay filter. The minimum value is 1 (a single application
+#'  using the weights included in `ts`).
+#'  Within each additional application, the weights included in `ts` are
+#'  multiplicated for the relative ranks of the difference between original
+#'  and smoothed values (if `noise_dir = "low"`) or between smoothed and 
+#'  original values (if `noise_dir = "high"`).
+#'  If `noise_dir = "undefined"`, this argument is coherced to 1.
 #' @return The output time series in `s2ts` format.
 #' @author Luigi Ranghetti, PhD (2020) \email{luigi@@ranghetti.info}
 #' @export
@@ -26,17 +30,17 @@
 smooth_s2ts <- function(
   ts,
   min_qa = 0.5,
-  noise_dir = "undefined",
+  noise_dir = "low",
   spike = 0.25,
   spike_window = 3,
   sg_window = 9,
   sg_polynom = 3,
-  keep_max = FALSE
+  sg_n = 3
 ) {
   
   ## Check arguments
   # TODO
-
+  
   ## Check ts format
   # (must contain date, id, orbit, sensor, value, opt. qa)
   if (!inherits(ts, "s2ts")) {
@@ -48,12 +52,20 @@ smooth_s2ts <- function(
   # TODO
   ts_dt <- ts_dt_full <- as.data.table(ts)[order(id, date),]
   
+  # Check sg_n
+  if (any(
+    sg_n < 1,
+    sg_n > 1 & !noise_dir %in% c("low", "high")
+  )) {
+    sg_n <- 1
+  }
+  
   ## Exclude low-quality values and reshape others
   if (!is.null(ts_dt$qa)) {
     ts_dt <- ts_dt[qa > min_qa,]
-    ts_dt <- ts_dt[,qa2 := (qa - min_qa) / (1 - min_qa)]
+    ts_dt <- ts_dt[,qa0 := (qa - min_qa) / (1 - min_qa)]
   } else {
-    ts_dt$qa2 <- 1
+    ts_dt$qa0 <- 1
   }
   
   ## Build relative TS
@@ -87,19 +99,22 @@ smooth_s2ts <- function(
   ts_dt$spike <- NULL
   
   # Compute Savitzky-Golay
-  ts_dt$value_sg <- numeric()
+  ts_dt$value_smoothed <- numeric()
   for (sel_id in unique(ts_dt$id)) { # cycle on IDs
-    ts_dt[id == sel_id, value_sg := w_savgol(
-      value, 
-      x = as.numeric(date), 
-      q = qa2, 
-      window = sg_window, 
-      polynom = sg_polynom
-    )]
+    qa <- ts_dt[id == sel_id, qa0]
+    value <- value_sg <- ts_dt[id == sel_id, value]
+    for (i in seq_len(sg_n)) {
+      qa <- (rank(value-value_sg) - 1) / (ts_dt[,sum(id == sel_id)] - 1) * qa
+      value_sg <- w_savgol(
+        value, 
+        x = ts_dt[id == sel_id, as.numeric(date)], 
+        q = qa, 
+        window = sg_window, 
+        polynom = sg_polynom
+      )
+    }
+    ts_dt[id == sel_id, value_smoothed := value_sg]
   } # end of id FOR cycle
-  
-  ## Take the maximum between SG and local
-  ts_dt[,value_smoothed := ifelse(keep_max == TRUE & value > value_sg, value, value_sg)]
   
   # Restore non-smoothed values
   ts_dt <- merge(ts_dt, ts_dt_full, by = names(ts_dt_full), all = TRUE)
@@ -107,7 +122,7 @@ smooth_s2ts <- function(
   ## Return output
   ts_dt$rawval <- ts_dt$value
   ts_dt$value <- ts_dt$value_smoothed
-  ts_dt$value_sg <- ts_dt$relval <- ts_dt$qa2 <- ts_dt$value_smoothed <- NULL
+  ts_dt$value_smoothed <- ts_dt$relval <- ts_dt$qa0 <- NULL
   ts_out <- as(ts_dt, "s2ts")
   attr(ts_out, "gen_by") <- "smooth_s2ts"
   ts_out

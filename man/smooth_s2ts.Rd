@@ -7,12 +7,12 @@
 smooth_s2ts(
   ts,
   min_qa = 0.5,
-  noise_dir = "undefined",
+  noise_dir = "low",
   spike = 0.25,
   spike_window = 3,
   sg_window = 9,
   sg_polynom = 3,
-  keep_max = FALSE
+  sg_n = 3
 )
 }
 \arguments{
@@ -38,10 +38,14 @@ if \code{"undefined"} (default), no assumptions are done.}
 
 \item{sg_polynom}{Argument \code{polynom} of function \code{w_savgol()}.}
 
-\item{keep_max}{(optional) Logical: if TRUE, the maximum (if \code{noise_dir = "low"})
-or minimum (if \code{noise_dir = "high"}) value between the input and the smoothed
-is finally kept; if FALSE (default) smoothed values are always kept.
-This argument is not used if \code{noise_dir = "undefined"}.}
+\item{sg_n}{(optional) Positive integer: number of applications of the
+Savitzky-Golay filter. The minimum value is 1 (a single application
+using the weights included in \code{ts}).
+Within each additional application, the weights included in \code{ts} are
+multiplicated for the relative ranks of the difference between original
+and smoothed values (if \code{noise_dir = "low"}) or between smoothed and
+original values (if \code{noise_dir = "high"}).
+If \code{noise_dir = "undefined"}, this argument is coherced to 1.}
 }
 \value{
 The output time series in \code{s2ts} format.
