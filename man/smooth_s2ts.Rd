@@ -45,7 +45,7 @@ Within each additional application, the weights included in \code{ts} are
 multiplicated for the relative ranks of the difference between original
 and smoothed values (if \code{noise_dir = "low"}) or between smoothed and
 original values (if \code{noise_dir = "high"}).
-If \code{noise_dir = "undefined"}, this argument is coherced to 1.}
+If \code{noise_dir = "undefined"}, this argument is coerced to 1.}
 }
 \value{
 The output time series in \code{s2ts} format.

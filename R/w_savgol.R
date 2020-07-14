@@ -4,10 +4,10 @@
 #' @param y List of floats representing the "y" values.
 #' @param x List of floats representing the "x" values of the data.
 #'  Must have same length as `y`.
-#'  If NA (default), points are assumed to be equally-spaced
+#'  If missing, points are assumed to be equally-spaced
 #' @param q List of floats representing the relative weight of "y" values. 
 #'  Must have same length as `y`.
-#'  If NA (default), all points are assumed to have the same weight.
+#'  If missing, all points are assumed to have the same weight.
 #' @param window Window length of datapoints.
 #'  Must be odd and smaller than `x`. Default is 7.
 #' @param polynom The polynomial order to be used. 
@@ -20,7 +20,7 @@
 #'  \url{https://en.wikipedia.org/wiki/Savitzky-Golay_filter}.
 #' @export
 
-w_savgol <- function(y, x = NA, q = NA, window = 7, polynom = 3) {
+w_savgol <- function(y, x, q, window = 7, polynom = 3) {
   
   ## Check parameters ----
   

@@ -22,7 +22,7 @@
 #'  multiplicated for the relative ranks of the difference between original
 #'  and smoothed values (if `noise_dir = "low"`) or between smoothed and 
 #'  original values (if `noise_dir = "high"`).
-#'  If `noise_dir = "undefined"`, this argument is coherced to 1.
+#'  If `noise_dir = "undefined"`, this argument is coerced to 1.
 #' @return The output time series in `s2ts` format.
 #' @author Luigi Ranghetti, PhD (2020) \email{luigi@@ranghetti.info}
 #' @export

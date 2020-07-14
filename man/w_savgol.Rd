@@ -4,18 +4,18 @@
 \alias{w_savgol}
 \title{Savitzky-Golay filter for not equally-spaced weighted data}
 \usage{
-w_savgol(y, x = NA, q = NA, window = 7, polynom = 3)
+w_savgol(y, x, q, window = 7, polynom = 3)
 }
 \arguments{
 \item{y}{List of floats representing the "y" values.}
 
 \item{x}{List of floats representing the "x" values of the data.
 Must have same length as \code{y}.
-If NA (default), points are assumed to be equally-spaced}
+If missing, points are assumed to be equally-spaced}
 
 \item{q}{List of floats representing the relative weight of "y" values.
 Must have same length as \code{y}.
-If NA (default), all points are assumed to have the same weight.}
+If missing, all points are assumed to have the same weight.}
 
 \item{window}{Window length of datapoints.
 Must be odd and smaller than \code{x}. Default is 7.}
