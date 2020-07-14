@@ -10,19 +10,51 @@
 #'  made to compute the `"qa"` attribute.
 #' @param in_sf_id (optional) character vector corresponding to the name/names
 #'  of the `in_sf` column with the features IDs.
-#'  If NA (default) the row number is used.
+#'  If missing, the row number is used.
 #' @param scl_paths (optional) Paths of the SCL files (they must correspond
 #'  to `in_paths`); if provided, it is used to weight pixels
 #'  during the aggregation and to provide an output quality flag.
-#'  If both `scl_paths` and `cld_paths` are provided, they are combined
-#'  and the lowest quality flag is considered.
+#'  See details for the conversion between SCL and weights.
 #' @param cld_paths (optional) Paths of the CLD files (they must correspond
 #'  to `in_paths`); see `scl_paths`.
+#'  See details for the conversion between SCL and weights.
 #' @param scl_weights (optional) weights to be used for each SCL class,
 #'  which can be created using function `scl_weights()`.
-#' @param min_cov (optional) quality threshold (0-1) for output values to be
-#'  returned (default is 0, meaning that all values are returned).
+#'  If missing, the default outputs of `scl_weights()` are used.
+#'  See details for the conversion between SCL and weights.
 #' @return The output time series in `s2ts` format.
+#' @details To generate pixel weights, SCL and/or CLD layers can be used.
+#' 
+#'  SCL are categorical layers (12 levels), so each level must be converted
+#'  in a 0-1 numeric value. This is done by function `scl_weights()`.
+#'  If the user provides only `scl_paths`, the layer of weights will be a
+#'  0-1 numeric layer in which each pixel value corresponds to the 0-1 value
+#'  associated with the corresponding SCL class.
+#'  
+#'  CLD are integer layers with the percentage (0-100) of cloud probability.
+#'  Assumed that a CLD of 0% is associated to a weight of 1 and a CLD of 100% 
+#'  to a weight of 0, intermediate values are computed taking into account 
+#'  the output of `scl_weights()` for classes `"cloud_high_probability"`,
+#'  `"cloud_medium_probability"` and `"unclassified"`
+#'  (this because CLD values are in the range 80-100 when associated to the SCL
+#'  class `"cloud_high_probability"`, in the range 20-80 when associated to 
+#'  `"cloud_medium_probability"` and in the range 20-80 when associated to 
+#'  `"unclassified"` or `"thin_cirrus"`).
+#'  The two values `"cloud_medium_probability" - "cloud_high_probability"`
+#'  and `"unclassified" - "cloud_medium_probability"` are taken as breaks
+#'  to reclassify CLD.
+#'  I.e., consider the default case:
+#'  `scl_weights()[c("cloud_high_probability", "cloud_medium_probability", "unclassified")]`
+#'  returns `0.0 0.1 0.5`; so, breaks `0.05` and `0.35` are used, meaning that
+#'  CLD values in the range 80-100% are rescaled to 0-0.05,
+#'  CLD values in the range 20-80% are rescaled to 0.05-0.35 and 
+#'  CLD values in the range 80-100% are rescaled to 0.35-1.
+#'  If the user provides only `cld_paths`, the layer of weights will be a
+#'  0-1 numeric layer with the above described values.
+#'  
+#'  Finally, if the user provides both `scl_paths` and `cld_paths`, the two
+#'  layers of weights are combined and the lowest quality flag is considered.
+#'  
 #' @author Luigi Ranghetti, PhD (2020) \email{luigi@@ranghetti.info}
 #' @import data.table
 #' @importFrom sen2r raster_metadata sen2r_getElements
@@ -35,10 +67,10 @@ extract_s2ts <- function(
   in_paths,
   in_sf,
   fun = mean,
-  in_sf_id = NA,
-  scl_paths = NULL,
-  cld_paths = NULL,
-  scl_weights = NA
+  in_sf_id,
+  scl_paths,
+  cld_paths,
+  scl_weights
 ) {
   
   ## Check arguments ----
@@ -229,7 +261,28 @@ extract_s2ts <- function(
     # TODO
     
     # Convert CLD to weights
-    w_cube_cld_raw <- 1 - cld_cube/100
+    w_cube_cld_raw_0 <- 1 - cld_cube/100
+    scl_cld_val <- scl_weights()[c("cloud_high_probability", "cloud_medium_probability", "unclassified")]
+    if (any(diff(scl_cld_val) < 0)) {
+      print_error(
+        type = "error",
+        "SCL weight for class \"cloud_high_probability\" must be higher than for ",
+        "\"cloud_medium_probability\", as well as \"cloud_medium_probability\" ",
+        "must be higher than \"unclassified\"."
+      )
+    }
+    scl_cld_lim <- c(0, (scl_cld_val[1]+scl_cld_val[2])/2, (scl_cld_val[2]+scl_cld_val[3])/2, 1)
+    scl_cld_limref <- c(0, 0.2, 0.8, 1)
+    w_cube_cld_raw <- w_cube_cld_raw_0
+    w_cube_cld_raw[[1]] <- ifelse(
+      w_cube_cld_raw_0[[1]] < scl_cld_limref[2],
+      scl_cld_lim[1] + (w_cube_cld_raw_0[[1]]-scl_cld_limref[1]) / diff(scl_cld_limref[1:2]) * diff(scl_cld_lim[1:2]),
+      ifelse(
+        w_cube_cld_raw_0[[1]] < scl_cld_limref[3],
+        scl_cld_lim[2] + (w_cube_cld_raw_0[[1]]-scl_cld_limref[2]) / diff(scl_cld_limref[2:3]) * diff(scl_cld_lim[2:3]),
+        scl_cld_lim[3] + (w_cube_cld_raw_0[[1]]-scl_cld_limref[3]) / diff(scl_cld_limref[3:4]) * diff(scl_cld_lim[3:4])
+      )
+    )
     
     # Reshape it
     w_cube_cld <- st_warp(w_cube_cld_raw, in_cube, method = "near", use_gdal = TRUE)
