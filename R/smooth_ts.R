@@ -32,9 +32,9 @@ smooth_s2ts <- function(
   min_qa = 0.5,
   noise_dir = "low",
   spike = 0.25,
-  spike_window = 3,
+  spike_window = 5,
   sg_window = 9,
-  sg_polynom = 3,
+  sg_polynom = 2,
   sg_n = 3
 ) {
   
@@ -58,14 +58,6 @@ smooth_s2ts <- function(
     sg_n > 1 & !noise_dir %in% c("low", "high")
   )) {
     sg_n <- 1
-  }
-  
-  ## Exclude low-quality values and reshape others
-  if (!is.null(ts_dt$qa)) {
-    ts_dt <- ts_dt[qa > min_qa,]
-    ts_dt <- ts_dt[,qa0 := (qa - min_qa) / (1 - min_qa)]
-  } else {
-    ts_dt$qa0 <- 1
   }
   
   ## Build relative TS
@@ -98,11 +90,32 @@ smooth_s2ts <- function(
   ts_dt <- ts_dt[spike == FALSE,]
   ts_dt$spike <- NULL
   
+  ## Exclude low-quality values and reshape others
+  if (!is.null(ts_dt$qa)) {
+    
+    # Recompute low-quality values
+    ts_dt$value0 <- ts_dt$value
+    for (sel_id in unique(ts_dt$id)) { # cycle on IDs
+      valid_range <- range(ts_dt[id == sel_id & qa > min_qa, date])
+      ts_dt_interp <- approx(
+        ts_dt[id == sel_id & qa > min_qa, date],
+        ts_dt[id == sel_id & qa > min_qa, value],
+        xout = ts_dt[id == sel_id & date >= valid_range[1] & date <= valid_range[2], date]
+      )
+      ts_dt[id == sel_id & date >= valid_range[1] & date <= valid_range[2],
+            value0 := ts_dt_interp$y]
+    }
+    ts_dt <- ts_dt[,qa0 := qa]
+  } else {
+    ts_dt$value0 <- ts_dt$value
+    ts_dt$qa0 <- 1
+  }
+  
   # Compute Savitzky-Golay
   ts_dt$value_smoothed <- numeric()
   for (sel_id in unique(ts_dt$id)) { # cycle on IDs
     qa <- ts_dt[id == sel_id, qa0]
-    value <- value_sg <- ts_dt[id == sel_id, value]
+    value <- value_sg <- ts_dt[id == sel_id, value0]
     for (i in seq_len(sg_n)) {
       qa <- (rank(value-value_sg) - 1) / (ts_dt[,sum(id == sel_id)] - 1) * qa
       value_sg <- w_savgol(
@@ -122,7 +135,7 @@ smooth_s2ts <- function(
   ## Return output
   ts_dt$rawval <- ts_dt$value
   ts_dt$value <- ts_dt$value_smoothed
-  ts_dt$value_smoothed <- ts_dt$relval <- ts_dt$qa0 <- NULL
+  ts_dt$value_smoothed <- ts_dt$relval <- ts_dt$qa0 <- ts_dt$value0 <- NULL
   ts_out <- as(ts_dt, "s2ts")
   attr(ts_out, "gen_by") <- "smooth_s2ts"
   ts_out

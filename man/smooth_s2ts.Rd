@@ -9,9 +9,9 @@ smooth_s2ts(
   min_qa = 0.5,
   noise_dir = "low",
   spike = 0.25,
-  spike_window = 3,
+  spike_window = 5,
   sg_window = 9,
-  sg_polynom = 3,
+  sg_polynom = 2,
   sg_n = 3
 )
 }
