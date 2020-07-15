@@ -7,11 +7,12 @@
 extract_s2ts(
   in_paths,
   in_sf,
-  fun = mean,
+  fun = "mean",
   in_sf_id,
   scl_paths,
   cld_paths,
-  scl_weights
+  scl_weights,
+  fun_w = "mean"
 )
 }
 \arguments{
@@ -20,11 +21,16 @@ extract_s2ts(
 
 \item{in_sf}{Object with polygonal or point geometries}
 
-\item{fun}{(optional) aggregation function to be used in case of polygonal
-\code{in_sf} features.
-If \code{scl_paths} is defined it is not used for aggregation of output values
-(\code{weighted.mean()} is always used for that), but for aggregation of weights
-made to compute the \code{"qa"} attribute.}
+\item{fun}{(optional) aggregation function (or function name)
+to be used in case of polygonal \code{in_sf} features. Default is \code{mean}.
+If \code{scl_paths} and/or \code{cld_paths} are defined:
+\itemize{
+\item the default \code{mean} is intended as \code{weighted.mean()} (where the computed
+quality flags are used as weights);
+\item only the alternative value \code{"best"} is accepted (in this case, the pixel
+with the higher quality flag - or the average of pixles with the same
+higher quality flags - is considered).
+}}
 
 \item{in_sf_id}{(optional) character vector corresponding to the name/names
 of the \code{in_sf} column with the features IDs.
@@ -43,6 +49,9 @@ See details for the conversion between SCL and weights.}
 which can be created using function \code{scl_weights()}.
 If missing, the default outputs of \code{scl_weights()} are used.
 See details for the conversion between SCL and weights.}
+
+\item{fun_w}{(optional) function to be used to aggregate quality flags
+in case of polygonal \code{in_sf} features. Default is \code{mean}.}
 }
 \value{
 The output time series in \code{s2ts} format.

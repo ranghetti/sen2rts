@@ -3,11 +3,14 @@
 #' @param in_paths Paths of the sen2r files (eventually obtained using 
 #'  `read_in_cube(..., out_format = "path")`).
 #' @param in_sf Object with polygonal or point geometries
-#' @param fun (optional) aggregation function to be used in case of polygonal
-#'  `in_sf` features.
-#'  If `scl_paths` is defined it is not used for aggregation of output values
-#'  (`weighted.mean()` is always used for that), but for aggregation of weights
-#'  made to compute the `"qa"` attribute.
+#' @param fun (optional) aggregation function (or function name) 
+#'  to be used in case of polygonal `in_sf` features. Default is `mean`.
+#'  If `scl_paths` and/or `cld_paths` are defined:
+#'  - the default `mean` is intended as `weighted.mean()` (where the computed 
+#'      quality flags are used as weights); 
+#'  - only the alternative value `"best"` is accepted (in this case, the pixel 
+#'      with the higher quality flag - or the average of pixles with the same
+#'      higher quality flags - is considered).
 #' @param in_sf_id (optional) character vector corresponding to the name/names
 #'  of the `in_sf` column with the features IDs.
 #'  If missing, the row number is used.
@@ -22,6 +25,8 @@
 #'  which can be created using function `scl_weights()`.
 #'  If missing, the default outputs of `scl_weights()` are used.
 #'  See details for the conversion between SCL and weights.
+#' @param fun_w (optional) function to be used to aggregate quality flags
+#'  in case of polygonal `in_sf` features. Default is `mean`.
 #' @return The output time series in `s2ts` format.
 #' @details To generate pixel weights, SCL and/or CLD layers can be used.
 #' 
@@ -66,15 +71,26 @@
 extract_s2ts <- function(
   in_paths,
   in_sf,
-  fun = mean,
+  fun = "mean",
   in_sf_id,
   scl_paths,
   cld_paths,
-  scl_weights
+  scl_weights,
+  fun_w = "mean"
 ) {
   
   ## Check arguments ----
   #TODO
+  if (all(
+    any(!missing(scl_paths), !missing(cld_paths)),
+    !inherits(fun, "character") || !fun %in% c("best", "mean")
+  )) {
+    print_message(
+      type = "warning",
+      "Argument 'fun' can only take values 'mean' and 'best' when ",
+      "scl_paths and/or cld_paths are defined."
+    )
+  }
   
   # check bbox format
   if (inherits(in_sf, "sfc")) {
@@ -325,12 +341,16 @@ extract_s2ts <- function(
           "orbit" = in_meta$id_orbit,
           "sensor" = paste0(2, in_meta$mission),
           "value" = mapply(
-            weighted.mean,
+            if (fun == "mean") {
+              weighted.mean
+            } else if (fun == "best") {
+              function(x,y,...) {mean(x[y == max(c(1E-19,y),na.rm=TRUE)], ...)}
+            },
             lapply(seq_len(dim(in_cube_array)[3]), function(k) in_cube_array[,,k]),
             lapply(seq_len(dim(w_cube_array)[3]), function(k) w_cube_array[,,k]),
             MoreArgs = list(na.rm = TRUE)
           ),
-          "qa" = apply(w_cube_array, 3, fun, na.rm=TRUE)
+          "qa" = apply(w_cube_array, 3, fun_w, na.rm=TRUE)
         )
       }
     }
