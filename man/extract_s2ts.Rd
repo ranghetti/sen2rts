@@ -28,7 +28,7 @@ If \code{scl_paths} and/or \code{cld_paths} are defined:
 \item the default \code{mean} is intended as \code{weighted.mean()} (where the computed
 quality flags are used as weights);
 \item only the alternative value \code{"best"} is accepted (in this case, the pixel
-with the higher quality flag - or the average of pixles with the same
+with the higher quality flag - or the average of pixels with the same
 higher quality flags - is considered).
 }}
 

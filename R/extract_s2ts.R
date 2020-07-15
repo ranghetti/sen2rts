@@ -9,7 +9,7 @@
 #'  - the default `mean` is intended as `weighted.mean()` (where the computed 
 #'      quality flags are used as weights); 
 #'  - only the alternative value `"best"` is accepted (in this case, the pixel 
-#'      with the higher quality flag - or the average of pixles with the same
+#'      with the higher quality flag - or the average of pixels with the same
 #'      higher quality flags - is considered).
 #' @param in_sf_id (optional) character vector corresponding to the name/names
 #'  of the `in_sf` column with the features IDs.
