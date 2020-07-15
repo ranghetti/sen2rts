@@ -39,15 +39,15 @@
 scl_weights <- function(
   no_data                  = 0.00, #  0
   saturated_or_defective   = 0.00, #  1
-  dark_area_pixels         = 0.00, #  2
-  cloud_shadows            = 0.25, #  3
+  dark_area_pixels         = 0.33, #  2
+  cloud_shadows            = 0.17, #  3
   vegetation               = 1.00, #  4
   not_vegetated            = 1.00, #  5
   water                    = 1.00, #  6
-  unclassified             = 0.50, #  7
-  cloud_medium_probability = 0.10, #  8
+  unclassified             = 0.33, #  7
+  cloud_medium_probability = 0.00, #  8
   cloud_high_probability   = 0.00, #  9
-  thin_cirrus              = 0.50, # 10
+  thin_cirrus              = 0.33, # 10
   snow                     = 1.00  # 11
 ) {
   

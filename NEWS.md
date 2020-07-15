@@ -1,3 +1,9 @@
+# Version 0.2.1
+
+- Add arguments `max_na_days` and `method` to `fill_s2ts()`
+- Improvements in class `s2ts`
+
+
 # Version 0.2.0
 
 First package release (still in alpha version) including functions planned

@@ -7,11 +7,12 @@
 extract_s2ts(
   in_paths,
   in_sf,
-  fun = mean,
-  in_sf_id = NA,
-  scl_paths = NULL,
-  cld_paths = NULL,
-  scl_weights = NA
+  fun = "mean",
+  in_sf_id,
+  scl_paths,
+  cld_paths,
+  scl_weights,
+  fun_w = "mean"
 )
 }
 \arguments{
@@ -20,36 +21,76 @@ extract_s2ts(
 
 \item{in_sf}{Object with polygonal or point geometries}
 
-\item{fun}{(optional) aggregation function to be used in case of polygonal
-\code{in_sf} features.
-If \code{scl_paths} is defined it is not used for aggregation of output values
-(\code{weighted.mean()} is always used for that), but for aggregation of weights
-made to compute the \code{"qa"} attribute.}
+\item{fun}{(optional) aggregation function (or function name)
+to be used in case of polygonal \code{in_sf} features. Default is \code{mean}.
+If \code{scl_paths} and/or \code{cld_paths} are defined:
+\itemize{
+\item the default \code{mean} is intended as \code{weighted.mean()} (where the computed
+quality flags are used as weights);
+\item only the alternative value \code{"best"} is accepted (in this case, the pixel
+with the higher quality flag - or the average of pixles with the same
+higher quality flags - is considered).
+}}
 
 \item{in_sf_id}{(optional) character vector corresponding to the name/names
 of the \code{in_sf} column with the features IDs.
-If NA (default) the row number is used.}
+If missing, the row number is used.}
 
 \item{scl_paths}{(optional) Paths of the SCL files (they must correspond
 to \code{in_paths}); if provided, it is used to weight pixels
 during the aggregation and to provide an output quality flag.
-If both \code{scl_paths} and \code{cld_paths} are provided, they are combined
-and the lowest quality flag is considered.}
+See details for the conversion between SCL and weights.}
 
 \item{cld_paths}{(optional) Paths of the CLD files (they must correspond
-to \code{in_paths}); see \code{scl_paths}.}
+to \code{in_paths}); see \code{scl_paths}.
+See details for the conversion between SCL and weights.}
 
 \item{scl_weights}{(optional) weights to be used for each SCL class,
-which can be created using function \code{scl_weights()}.}
+which can be created using function \code{scl_weights()}.
+If missing, the default outputs of \code{scl_weights()} are used.
+See details for the conversion between SCL and weights.}
 
-\item{min_cov}{(optional) quality threshold (0-1) for output values to be
-returned (default is 0, meaning that all values are returned).}
+\item{fun_w}{(optional) function to be used to aggregate quality flags
+in case of polygonal \code{in_sf} features. Default is \code{mean}.}
 }
 \value{
 The output time series in \code{s2ts} format.
 }
 \description{
 TODO
+}
+\details{
+To generate pixel weights, SCL and/or CLD layers can be used.
+
+SCL are categorical layers (12 levels), so each level must be converted
+in a 0-1 numeric value. This is done by function \code{scl_weights()}.
+If the user provides only \code{scl_paths}, the layer of weights will be a
+0-1 numeric layer in which each pixel value corresponds to the 0-1 value
+associated with the corresponding SCL class.
+
+CLD are integer layers with the percentage (0-100) of cloud probability.
+Assumed that a CLD of 0\% is associated to a weight of 1 and a CLD of 100\%
+to a weight of 0, intermediate values are computed taking into account
+the output of \code{scl_weights()} for classes \code{"cloud_high_probability"},
+\code{"cloud_medium_probability"} and \code{"unclassified"}
+(this because CLD values are in the range 80-100 when associated to the SCL
+class \code{"cloud_high_probability"}, in the range 20-80 when associated to
+\code{"cloud_medium_probability"} and in the range 20-80 when associated to
+\code{"unclassified"} or \code{"thin_cirrus"}).
+The two values \code{"cloud_medium_probability" - "cloud_high_probability"}
+and \code{"unclassified" - "cloud_medium_probability"} are taken as breaks
+to reclassify CLD.
+I.e., consider the default case:
+\code{scl_weights()[c("cloud_high_probability", "cloud_medium_probability", "unclassified")]}
+returns \verb{0.0 0.1 0.5}; so, breaks \code{0.05} and \code{0.35} are used, meaning that
+CLD values in the range 80-100\% are rescaled to 0-0.05,
+CLD values in the range 20-80\% are rescaled to 0.05-0.35 and
+CLD values in the range 80-100\% are rescaled to 0.35-1.
+If the user provides only \code{cld_paths}, the layer of weights will be a
+0-1 numeric layer with the above described values.
+
+Finally, if the user provides both \code{scl_paths} and \code{cld_paths}, the two
+layers of weights are combined and the lowest quality flag is considered.
 }
 \author{
 Luigi Ranghetti, PhD (2020) \email{luigi@ranghetti.info}

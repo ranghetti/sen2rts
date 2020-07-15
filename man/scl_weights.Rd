@@ -7,15 +7,15 @@
 scl_weights(
   no_data = 0,
   saturated_or_defective = 0,
-  dark_area_pixels = 0,
-  cloud_shadows = 0.25,
+  dark_area_pixels = 0.33,
+  cloud_shadows = 0.17,
   vegetation = 1,
   not_vegetated = 1,
   water = 1,
-  unclassified = 0.5,
-  cloud_medium_probability = 0.1,
+  unclassified = 0.33,
+  cloud_medium_probability = 0,
   cloud_high_probability = 0,
-  thin_cirrus = 0.5,
+  thin_cirrus = 0.33,
   snow = 1
 )
 }

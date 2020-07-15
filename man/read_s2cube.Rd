@@ -7,12 +7,12 @@
 read_s2cube(
   inpath,
   out_format = "path",
-  prod_type = NA,
-  time_window = NA,
-  s2_orbits = NA,
-  s2_sensors = c("2A", "2B"),
-  file_ext = NA,
-  bbox = NA,
+  prod_type,
+  time_window,
+  s2_orbits,
+  s2_sensors,
+  file_ext,
+  bbox,
   .use_vrt = FALSE
 )
 }
@@ -20,7 +20,7 @@ read_s2cube(
 \item{inpath}{Path of the directory in which sen2r files are.}
 
 \item{out_format}{(optional) Output format, being one among
-\code{"stars"}, \code{"stars_proxy"} and \code{"path"} -- default is \code{"path"}).}
+\code{"path"} (default), \code{"stars"} and \code{"stars_proxy"}).}
 
 \item{prod_type}{(optional) sen2r product type to import
 (used for filtering among \code{inpath} content).}
