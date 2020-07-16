@@ -61,7 +61,7 @@ smooth_s2ts <- function(
   }
   
   ## Build relative TS
-  ts_dt[,relval := (value - min(value)) / diff(range(value))]
+  ts_dt[,relval := (value - min(value, na.rm=TRUE)) / diff(range(value, na.rm=TRUE))]
   
   ## Remove spikes
   ts_dt$spike <- FALSE #initialisation
@@ -107,8 +107,8 @@ smooth_s2ts <- function(
     }
     ts_dt <- ts_dt[,qa0 := qa]
   } else {
-    ts_dt$value0 <- ts_dt$value
-    ts_dt$qa0 <- 1
+    ts_dt <- ts_dt[,value0 := value]
+    ts_dt <- ts_dt[,qa0 := 1]
   }
   
   # Compute Savitzky-Golay
