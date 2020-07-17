@@ -317,6 +317,8 @@ plot.s2ts <- function(x, ...) {
     "smoothed"
   } else if (attr(x, "gen_by") %in% c("fill_s2ts")) {
     "filled"
+  } else if (attr(x, "gen_by") %in% c("find_peaks")) {
+    "pheno"
   } else { # including attr(x, "gen_by") == "extract_s2ts"
     "base"
   }
@@ -324,7 +326,7 @@ plot.s2ts <- function(x, ...) {
   # Extract input data.table
   x_dt <- as.data.table(x)
   setnames(x_dt, "qa", "QA", skip_absent = TRUE)
-  if (plot_mode == "filled") {
+  if (plot_mode %in% c("filled", "pheno")) {
     x_dt_smooth <- x_dt
   } else {
     x_dt_smooth <- x_dt[!is.na(value),]
@@ -342,20 +344,35 @@ plot.s2ts <- function(x, ...) {
   # Add raw line
   out <- out + ggplot2::geom_line(
     data = x_dt_raw, 
-    alpha = if (plot_mode %in% c("smoothed", "filled")) {0.1} else {0.35}
+    alpha = if (plot_mode %in% c("smoothed", "filled", "pheno")) {0.1} else {0.35}
   )
   
   # Add smoothed line
-  if (plot_mode %in% c("smoothed", "filled")) {
+  if (plot_mode %in% c("smoothed", "filled", "pheno")) {
     out <- out + ggplot2::geom_line(data = x_dt_smooth, alpha = 0.5)
   }
   
   # Add points
-  out <- out + ggplot2::geom_point(
-    data = x_dt_raw, 
-    if (!is.null(x_dt$QA)) {ggplot2::aes(colour = QA)}, 
-    size = 0.75
-  )
+  if (plot_mode %in% c("base", "smoothed", "filled")) {
+    out <- out + ggplot2::geom_point(
+      data = x_dt_raw, 
+      if (!is.null(x_dt$QA)) {ggplot2::aes(colour = QA)}, 
+      size = 0.75
+    )
+  }
+  
+  # Add season cuts / peaks
+  if (plot_mode %in% c("pheno")) {
+    out <- out + ggplot2::geom_point(
+      data = x_dt_smooth[pheno=="peak",],
+      colour = "red"
+    ) + 
+      ggplot2::geom_vline(
+        data = x_dt_smooth[pheno=="cut_seas",],
+        aes(xintercept = date),
+        colour = "red", linetype = "dashed"
+      )
+  }
   
   # Facet in case of multiple IDs
   if (length(sort(unique(x_dt$id))) > 0) {
@@ -435,7 +452,7 @@ print.s2ts <- function(x, ...) {
       cat(" raw")
     } else if (attr(x, "gen_by") == "smooth_s2ts") {
       cat(" smoothed")
-    } else if (attr(x, "gen_by") == "fill_s2ts") {
+    } else if (attr(x, "gen_by") %in% c("fill_s2ts", "find_peaks")) {
       cat("n interpolated")
     }
   }
