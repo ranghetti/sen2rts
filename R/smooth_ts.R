@@ -23,6 +23,9 @@
 #'  and smoothed values (if `noise_dir = "low"`) or between smoothed and 
 #'  original values (if `noise_dir = "high"`).
 #'  If `noise_dir = "undefined"`, this argument is coerced to 1.
+#' @param max_extrapolation (optional) Numeric: maximum allowed extrapolation
+#'  out of original range (relative value).
+#'  Default is 0.1 (+10%). Set to Inf in order not to set any constraint.
 #' @return The output time series in `s2ts` format.
 #' @author Luigi Ranghetti, PhD (2020) \email{luigi@@ranghetti.info}
 #' @export
@@ -35,7 +38,8 @@ smooth_s2ts <- function(
   spike_window = 5,
   sg_window = 9,
   sg_polynom = 2,
-  sg_n = 3
+  sg_n = 3,
+  max_extrapolation = 0.1
 ) {
   
   ## Check arguments
@@ -128,6 +132,12 @@ smooth_s2ts <- function(
     }
     ts_dt[id == sel_id, value_smoothed := value_sg]
   } # end of id FOR cycle
+  
+  # Coerce values to original ranges
+  if (max_extrapolation < Inf) {
+    ts_dt[,value_smoothed := sapply(value_smoothed, max, min(value, na.rm = TRUE) - diff(range(value, na.rm = TRUE)) * max_extrapolation), by = id]
+    ts_dt[,value_smoothed := sapply(value_smoothed, min, max(value, na.rm = TRUE) + diff(range(value, na.rm = TRUE)) * max_extrapolation), by = id]
+  }
   
   # Restore non-smoothed values
   ts_dt <- merge(ts_dt, ts_dt_full, by = names(ts_dt_full), all = TRUE)

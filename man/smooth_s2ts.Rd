@@ -12,7 +12,8 @@ smooth_s2ts(
   spike_window = 5,
   sg_window = 9,
   sg_polynom = 2,
-  sg_n = 3
+  sg_n = 3,
+  max_extrapolation = 0.1
 )
 }
 \arguments{
@@ -46,6 +47,10 @@ multiplicated for the relative ranks of the difference between original
 and smoothed values (if \code{noise_dir = "low"}) or between smoothed and
 original values (if \code{noise_dir = "high"}).
 If \code{noise_dir = "undefined"}, this argument is coerced to 1.}
+
+\item{max_extrapolation}{(optional) Numeric: maximum allowed extrapolation
+out of original range (relative value).
+Default is 0.1 (+10\%). Set to Inf in order not to set any constraint.}
 }
 \value{
 The output time series in \code{s2ts} format.

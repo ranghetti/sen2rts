@@ -9,6 +9,9 @@
 #' @param max_na_days (optional) maximum number of consecutive days with missing
 #'  values which can be filled (in case of longer time windows with missing data,
 #'  NA are returned).
+#' @param max_extrapolation (optional) Numeric: maximum allowed extrapolation
+#'  out of original range (relative value).
+#'  Default is 0.1 (+10%). Set to Inf in order not to set any constraint.
 #' @return The output time series in tabular format (see `extract_ts()`).
 #' @author Luigi Ranghetti, PhD (2020) \email{luigi@@ranghetti.info}
 #' @export
@@ -17,7 +20,8 @@ fill_s2ts <- function(
   ts,
   frequency = "dop",
   method = "fmm",
-  max_na_days = 30
+  max_na_days = 30,
+  max_extrapolation = 0.1
 ) {
   
   ## Define Greater Common Divisor
@@ -77,24 +81,31 @@ fill_s2ts <- function(
     
     # Interpolate (without extrapolating)
     valid_dates <- ts_dt[id == sel_id,][!is.na(value), date]
-    valid_range <- as.Date(character(0))
+    valid_yrange <- ts_dt[id == sel_id, range(value, na.rm=TRUE)]
+    valid_xrange <- as.Date(character(0))
     for (i in seq(length(valid_dates)-1)) {
       if (diff(valid_dates[i:(i+1)]) <= max_na_days) {
-        valid_range <- c(valid_range, seq(valid_dates[i], valid_dates[i+1], 1))
+        valid_xrange <- c(valid_xrange, seq(valid_dates[i], valid_dates[i+1], 1))
       }
     }
-    valid_range <- unique(valid_range)
+    valid_xrange <- unique(valid_xrange)
     sel_spline <- spline(
-      ts_dt[id == sel_id & date %in% valid_range, date],
-      ts_dt[id == sel_id & date %in% valid_range, value],
-      xout = ts_dt_out2[date %in% valid_range, date],
+      ts_dt[id == sel_id & date %in% valid_xrange, date],
+      ts_dt[id == sel_id & date %in% valid_xrange, value],
+      xout = ts_dt_out2[date %in% valid_xrange, date],
       method = method
     )
     sel_spline$x <- as.Date(sel_spline$x, origin = "1970-01-01")
-    ts_dt_out2[date %in% valid_range, value := sel_spline$y]
+    ts_dt_out2[date %in% valid_xrange, value := sel_spline$y]
+    
+    # Coerce to original min/max ranges
+    if (max_extrapolation < Inf) {
+      ts_dt_out2[,value := sapply(value, max, valid_yrange[1] - diff(valid_yrange) * max_extrapolation), by = id]
+      ts_dt_out2[,value := sapply(value, min, valid_yrange[2] + diff(valid_yrange) * max_extrapolation), by = id]
+    }
     
     ts_list[[sel_id]] <- ts_dt_out2
-    
+
   } # end of id FOR cycle
   
   ts_out <- as(rbindlist(ts_list), "s2ts")
