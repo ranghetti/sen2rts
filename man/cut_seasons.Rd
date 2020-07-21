@@ -19,9 +19,16 @@ and each of the two minima to consider a separate season.}
 season breakpoint.}
 }
 \value{
-The output time series in tabular format (see \code{extract_ts()}),
-with a new column \code{pheno} in which records detected as season breakpoints
-are marked with \code{"cut_seas"}, while season peaks with \code{"peak"}.
+A data table with the following fields:
+\itemize{
+\item \code{id}: the time series ID (see \code{s2ts});
+\item \code{season}: the season ID (integer);
+\item \code{date}: the date of the record;
+\item \code{pheno}: one among
+\code{"begin"} (begin of the season),
+\code{"peak"} (the maximum value of the season) and
+\code{"end"} (the end of the season).
+}
 }
 \description{
 Cut Sentinel-2 time series into separate seasons,

@@ -8,9 +8,14 @@
 #'  and each of the two minima to consider a separate season.
 #' @param max_relval (optional) Maximum relative value to consider a 
 #'  season breakpoint.
-#' @return The output time series in tabular format (see `extract_ts()`),
-#'  with a new column `pheno` in which records detected as season breakpoints
-#'  are marked with `"cut_seas"`, while season peaks with `"peak"`.
+#' @return A data table with the following fields:
+#'  - `id`: the time series ID (see `s2ts`);
+#'  - `season`: the season ID (integer);
+#'  - `date`: the date of the record;
+#'  - `pheno`: one among 
+#'      `"begin"` (begin of the season), 
+#'      `"peak"` (the maximum value of the season) and
+#'      `"end"` (the end of the season).
 #' @author Luigi Ranghetti, PhD (2020) \email{luigi@@ranghetti.info}
 #' @import data.table
 #' @importFrom stats quantile
@@ -113,14 +118,24 @@ cut_seasons <- function(
     }
   }
   
-  ## Return output
-  ts_dt[,pheno := as.character(NA)]
-  ts_dt[peak1 == TRUE, pheno := "peak"]
-  ts_dt[cut1 == TRUE, pheno := "cut_seas"]
-  ts_dt[,c("uid", "relval", "peak0", "peak1", "cut1") := NULL]
   
-  ts_out <- as(ts_dt, "s2ts")
-  attr(ts_out, "gen_by") <- "cut_seasons"
-  ts_out
+  ## Return output
+  
+  # DT with records of peaks
+  peak_dt <- ts_dt[peak1 == TRUE, list(season = seq_len(.N), date, pheno = "peak"), by = id]
+  # DT with records of begin of the season
+  begin_dt <- ts_dt[cut1 == TRUE, list(season = seq_len(.N), date, pheno = "begin"), by = id]
+  # DT with records of end of the season
+  end_dt <- begin_dt[season > 1,]
+  end_dt[,c("season", "pheno") := list(season-1, "end")]
+  # remove false begins of the season (dates only corresponding to ends)
+  begin_dt <- begin_dt[begin_dt[, .I[season < max(season)], by = id]$V1,]
+  # bind DTs
+  pheno_dt <- rbind(peak_dt, begin_dt, end_dt)[order(id, date, season)]
+  # check that all id-season have 3 records (begin-peak-end)
+  valid_ids <- pheno_dt[,list(check=length(date)), by = list(id, season)][check==3, paste(id, season)]
+  pheno_dt <- pheno_dt[paste(id, season) %in% valid_ids,]
+  
+  pheno_dt
   
 }

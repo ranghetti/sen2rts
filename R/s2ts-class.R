@@ -299,8 +299,10 @@ setAs("s2ts", "list", function(from) {
 
 ## Plot ----
 
+#' @param pheno (optional) Output of `cut_seasons()`
+#' @param fitted (optional) Output of `fit_curve()`
 #' @export
-plot.s2ts <- function(x, ...) {
+plot.s2ts <- function(x, pheno, fitted, ...) {
   
   # Check optional suggested ggplot2 to be present
   if (!requireNamespace("ggplot2", quietly = TRUE)) {
@@ -311,14 +313,14 @@ plot.s2ts <- function(x, ...) {
   }
   
   # Determine plot mode
-  plot_mode <- if (is.null(attr(x, "gen_by"))) {
+  plot_mode <- if (any(!missing(pheno), !missing(fitted))) {
+    "background"
+  } else if (is.null(attr(x, "gen_by"))) {
     "base"
   } else if (attr(x, "gen_by") %in% c("smooth_s2ts")) {
     "smoothed"
   } else if (attr(x, "gen_by") %in% c("fill_s2ts")) {
     "filled"
-  } else if (attr(x, "gen_by") %in% c("cut_seasons", "fit_curve")) {
-    "pheno"
   } else { # including attr(x, "gen_by") == "extract_s2ts"
     "base"
   }
@@ -326,7 +328,7 @@ plot.s2ts <- function(x, ...) {
   # Extract input data.table
   x_dt <- as.data.table(x)
   setnames(x_dt, "qa", "QA", skip_absent = TRUE)
-  if (plot_mode %in% c("filled", "pheno")) {
+  if (plot_mode %in% c("filled", "background")) {
     x_dt_smooth <- x_dt
   } else {
     x_dt_smooth <- x_dt[!is.na(value),]
@@ -338,26 +340,41 @@ plot.s2ts <- function(x, ...) {
     x_dt_raw[,value := rawval]
   }
   
+  # Extract additional data
+  if (!missing(pheno)) {
+    pheno_dt <- pheno
+  } else if (!missing(fitted)) {
+    pheno_dt <- rbind(
+      ts_evi2_cf1[,list(date = min(date), pheno = "begin"), by = list(id, season)],
+      ts_evi2_cf1[,list(date = max(date), pheno = "end"), by = list(id, season)]
+    )
+  }
+  if (!missing(fitted)) {
+    fitted_dt <- as.data.table(fitted)
+  }
+  
   # Base plot
   out <- ggplot2::ggplot(x_dt, ggplot2::aes(x = date, y = value))
   
   # Add raw line
   out <- out + ggplot2::geom_line(
     data = x_dt_raw, 
-    alpha = if (plot_mode %in% c("smoothed", "filled", "pheno")) {0.1} else {0.35}
+    alpha = if (plot_mode %in% c("smoothed", "filled", "background")) {0.1} else {0.35}
   )
   
   # Add smoothed line
-  if (plot_mode %in% c("smoothed", "filled", "pheno")) {
+  if (plot_mode %in% c("smoothed", "filled", "background")) {
     out <- out + ggplot2::geom_line(data = x_dt_smooth, alpha = 0.5)
   }
   
   # Add fitted line # FIXME
-  if (plot_mode %in% c("pheno") & !is.null(x_dt_smooth$fit)) {
-    out <- out + ggplot2::geom_line(
-      data = x_dt_smooth, ggplot2::aes(y=fit), 
-      colour = "red", alpha = 0.5
-    )
+  if (exists("fitted_dt")) {
+    for (sel_season in fitted_dt[,unique(season)]) {
+      out <- out + ggplot2::geom_line(
+        data = fitted_dt[season == sel_season,], 
+        colour = "red", alpha = 0.5
+      )
+    }
   }
   
   # Add points
@@ -370,13 +387,13 @@ plot.s2ts <- function(x, ...) {
   }
   
   # Add season cuts / peaks
-  if (plot_mode %in% c("pheno")) {
+  if (exists("pheno_dt")) {
     out <- out + ggplot2::geom_point(
-      data = x_dt_smooth[pheno=="peak",],
+      data = merge(x_dt, pheno_dt[pheno=="peak",], by = c("id", "date")),
       colour = "red"
     ) + 
       ggplot2::geom_vline(
-        data = x_dt_smooth[pheno=="cut_seas",],
+        data = pheno_dt[pheno %in% c("begin", "end"),],
         ggplot2::aes(xintercept = date),
         colour = "red", linetype = "dashed"
       )
@@ -462,6 +479,8 @@ print.s2ts <- function(x, ...) {
       cat(" smoothed")
     } else if (attr(x, "gen_by") %in% c("fill_s2ts", "cut_seasons")) {
       cat("n interpolated")
+    } else if (attr(x, "gen_by") == "fit_curve") {
+      cat(paste0(" fitted (",attr(x, "fit")," method)"))
     }
   }
   if (nrow(x_dt) == 0) {

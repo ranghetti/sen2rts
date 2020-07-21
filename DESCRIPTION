@@ -21,6 +21,7 @@ Imports:
   dplyr
 Suggests:
   MASS,
+  ggplot2,
   spelling,
   httptest,
   knitr,
