@@ -317,7 +317,7 @@ plot.s2ts <- function(x, ...) {
     "smoothed"
   } else if (attr(x, "gen_by") %in% c("fill_s2ts")) {
     "filled"
-  } else if (attr(x, "gen_by") %in% c("find_peaks")) {
+  } else if (attr(x, "gen_by") %in% c("cut_seasons", "fit_curve")) {
     "pheno"
   } else { # including attr(x, "gen_by") == "extract_s2ts"
     "base"
@@ -352,6 +352,14 @@ plot.s2ts <- function(x, ...) {
     out <- out + ggplot2::geom_line(data = x_dt_smooth, alpha = 0.5)
   }
   
+  # Add fitted line # FIXME
+  if (plot_mode %in% c("pheno") & !is.null(x_dt_smooth$fit)) {
+    out <- out + ggplot2::geom_line(
+      data = x_dt_smooth, ggplot2::aes(y=fit), 
+      colour = "red", alpha = 0.5
+    )
+  }
+  
   # Add points
   if (plot_mode %in% c("base", "smoothed", "filled")) {
     out <- out + ggplot2::geom_point(
@@ -369,7 +377,7 @@ plot.s2ts <- function(x, ...) {
     ) + 
       ggplot2::geom_vline(
         data = x_dt_smooth[pheno=="cut_seas",],
-        aes(xintercept = date),
+        ggplot2::aes(xintercept = date),
         colour = "red", linetype = "dashed"
       )
   }
@@ -452,7 +460,7 @@ print.s2ts <- function(x, ...) {
       cat(" raw")
     } else if (attr(x, "gen_by") == "smooth_s2ts") {
       cat(" smoothed")
-    } else if (attr(x, "gen_by") %in% c("fill_s2ts", "find_peaks")) {
+    } else if (attr(x, "gen_by") %in% c("fill_s2ts", "cut_seasons")) {
       cat("n interpolated")
     }
   }
