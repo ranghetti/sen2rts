@@ -299,8 +299,13 @@ setAs("s2ts", "list", function(from) {
 
 ## Plot ----
 
+#' @name plot
+#' @title Plot `s2ts` object
+#' @description Plot a `s2ts` time series, using `{ggplot2}` routines.
 #' @param pheno (optional) Output of `cut_seasons()`
 #' @param fitted (optional) Output of `fit_curve()`
+#' @author Luigi Ranghetti, PhD (2020) \email{luigi@@ranghetti.info}
+#' @import data.table
 #' @export
 plot.s2ts <- function(x, pheno, fitted, ...) {
   
@@ -324,16 +329,19 @@ plot.s2ts <- function(x, pheno, fitted, ...) {
   } else { # including attr(x, "gen_by") == "extract_s2ts"
     "base"
   }
+  if (!missing(pheno)) {
+    plot_mode <- c(plot_mode, "pheno", paste0("pheno_",attr(pheno, "info")$method))
+  }
   
   # Extract input data.table
   x_dt <- as.data.table(x)
   setnames(x_dt, "qa", "QA", skip_absent = TRUE)
-  if (plot_mode %in% c("filled", "background")) {
+  if (any(c("filled", "background") %in% plot_mode)) {
     x_dt_smooth <- x_dt
   } else {
     x_dt_smooth <- x_dt[!is.na(value),]
   }
-  if (plot_mode == "base") {
+  if ("base" %in% plot_mode) {
     x_dt_raw <- x_dt[!is.na(value),]
   } else {
     x_dt_raw <- x_dt[!is.na(rawval),]
@@ -341,33 +349,98 @@ plot.s2ts <- function(x, pheno, fitted, ...) {
   }
   
   # Extract additional data
-  if (!missing(pheno)) {
-    pheno_dt <- pheno
-  } else if (!missing(fitted)) {
-    pheno_dt <- rbind(
-      ts_evi2_cf1[,list(date = min(date), pheno = "begin"), by = list(id, season)],
-      ts_evi2_cf1[,list(date = max(date), pheno = "end"), by = list(id, season)]
-    )
-  }
   if (!missing(fitted)) {
-    fitted_dt <- as.data.table(fitted)
+    fitted_dt <- s2fit_to_s2ts(fitted)[id %in% x_dt$id,]
   }
-  
+  if (!missing(pheno)) {
+    pheno_dt <- pheno[id %in% x_dt$id,]
+  } else if (!missing(fitted)) {
+    pheno_dt <- fitted_dt[
+      ,list("begin" = min(date), "end" = max(date)),
+      by = c("id", "season")
+      ]
+    # TODO add maxval
+  }
+  if ("pheno" %in% plot_mode) {
+    # Define which metrics are quantitative (y) and which refer to dates (x)
+    metrics_y <- c(
+      if (any(c("pheno_trs", "pheno_derivatives") %in% plot_mode)) {
+        c("mgs", "peak", "msp", "mau")
+      } else if ("pheno_gu" %in% plot_mode) {
+        c("maxline", "baseline")
+      }
+    )
+    metrics_x <- c(
+      "maxval", #"begin", "end",
+      if (any(c("pheno_trs", "pheno_derivatives") %in% plot_mode)) {
+        c("sos", "eos", "pop")
+      } else if ("pheno_gu" %in% plot_mode) {
+        c("UD", "SD", "DD", "RD")
+      } else if ("pheno_klosterman" %in% plot_mode) {
+        c("Greenup", "Maturity", "Senescence", "Dormancy")
+      }
+    )
+    if (!is.null(metrics_y)) {
+      pheno_dt_y <- melt(
+        pheno_dt, 
+        id.vars = c("id", "season", "begin", "end"), 
+        measure.vars = metrics_y,
+        variable.name = "Value", value.name = "value"
+      )
+    }
+    if (!is.null(metrics_x)) {
+      pheno_dt_x <- melt(
+        pheno_dt, 
+        id.vars = c("id", "season"), 
+        measure.vars = metrics_x,
+        variable.name = "Phenology", value.name = "date"
+      )
+    }
+  }
+
   # Base plot
   out <- ggplot2::ggplot(x_dt, ggplot2::aes(x = date, y = value))
   
   # Add raw line
   out <- out + ggplot2::geom_line(
     data = x_dt_raw, 
-    alpha = if (plot_mode %in% c("smoothed", "filled", "background")) {0.1} else {0.35}
+    alpha = if (any(c("smoothed", "filled", "background") %in% plot_mode)) {0.1} else {0.35}
   )
   
-  # Add smoothed line
-  if (plot_mode %in% c("smoothed", "filled", "background")) {
-    out <- out + ggplot2::geom_line(data = x_dt_smooth, alpha = 0.5)
+  # Add season cuts / peaks
+  if (exists("pheno_dt_y")) {
+    for (sel_season in pheno[, unique(season)]) {
+      out <- out + ggplot2::geom_segment(
+        data = pheno_dt_y[season==sel_season,], 
+        ggplot2::aes(
+          x = begin, xend = end,
+          y = value, yend = value,
+          colour = Value
+        ),
+        linetype = "dashed"
+      )
+    }
+  }
+  if (exists("pheno_dt_x")) {
+    out <- out + 
+      ggplot2::geom_vline(
+        data = pheno_dt_x,
+        ggplot2::aes(xintercept = date, colour = Phenology)
+      )
+  }
+  if (exists("pheno_dt")) {
+    out <- out + 
+      ggplot2::geom_vline(
+        data = pheno_dt[season == 1],
+        ggplot2::aes(xintercept = begin), colour = "black"
+      ) + 
+      ggplot2::geom_vline(
+        data = pheno_dt,
+        ggplot2::aes(xintercept = end), colour = "black"
+      )
   }
   
-  # Add fitted line # FIXME
+  # Add fitted line
   if (exists("fitted_dt")) {
     for (sel_season in fitted_dt[,unique(season)]) {
       out <- out + ggplot2::geom_line(
@@ -377,26 +450,18 @@ plot.s2ts <- function(x, pheno, fitted, ...) {
     }
   }
   
+  # Add smoothed line
+  if (any(c("smoothed", "filled", "background") %in% plot_mode)) {
+    out <- out + ggplot2::geom_line(data = x_dt_smooth, alpha = 0.5)
+  }
+  
   # Add points
-  if (plot_mode %in% c("base", "smoothed", "filled")) {
+  if (any(c("base", "smoothed", "filled") %in% plot_mode)) {
     out <- out + ggplot2::geom_point(
       data = x_dt_raw, 
       if (!is.null(x_dt$QA)) {ggplot2::aes(colour = QA)}, 
       size = 0.75
     )
-  }
-  
-  # Add season cuts / peaks
-  if (exists("pheno_dt")) {
-    out <- out + ggplot2::geom_point(
-      data = merge(x_dt, pheno_dt[pheno=="peak",], by = c("id", "date")),
-      colour = "red"
-    ) + 
-      ggplot2::geom_vline(
-        data = pheno_dt[pheno %in% c("begin", "end"),],
-        ggplot2::aes(xintercept = date),
-        colour = "red", linetype = "dashed"
-      )
   }
   
   # Facet in case of multiple IDs
@@ -408,8 +473,14 @@ plot.s2ts <- function(x, pheno, fitted, ...) {
   out <- out +
     ggplot2::scale_x_date(name = "Date") +
     ggplot2::scale_y_continuous(name = NULL) +
-    ggplot2::scale_colour_viridis_c(option = "inferno", direction = -1) +
     ggplot2::theme_light()
+  if (all(!"background" %in% plot_mode)) {
+    out <- out + ggplot2::scale_colour_viridis_d(
+      option = "inferno", direction = -1
+    )
+  } else {
+    out <- out + ggplot2::scale_colour_brewer(palette = "Set2")
+  }
   
   out
   
