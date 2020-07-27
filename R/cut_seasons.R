@@ -11,11 +11,9 @@
 #' @return A data table with the following fields:
 #'  - `id`: the time series ID (see `s2ts`);
 #'  - `season`: the season ID (integer);
-#'  - `date`: the date of the record;
-#'  - `pheno`: one among 
-#'      `"begin"` (begin of the season), 
-#'      `"peak"` (the maximum value of the season) and
-#'      `"end"` (the end of the season).
+#'  - `begin`: the date of the begin of the season;
+#'  - `end`: the date of the end of the season;
+#'  - `maxval`: the date of the maximum value of the season.
 #' @author Luigi Ranghetti, PhD (2020) \email{luigi@@ranghetti.info}
 #' @import data.table
 #' @importFrom stats quantile
@@ -94,8 +92,8 @@ cut_seasons <- function(
       ))
       # compute ID of minimum values within this window
       uid_mins <- c(
-        ts_dt[id == sel_id & uid < i & uid > uid_win[1],][relval==min(relval), max(uid)],
-        ts_dt[id == sel_id & uid > i & uid < uid_win[2],][relval==min(relval), min(uid)]
+        ts_dt[id == sel_id & uid < i & uid > uid_win[1],][relval==min(relval, na.rm=TRUE), max(uid)],
+        ts_dt[id == sel_id & uid > i & uid < uid_win[2],][relval==min(relval, na.rm=TRUE), min(uid)]
       )
       # check that the difference with all the minima is > min_relh
       # and that all the minima are <= max_relval
@@ -122,20 +120,25 @@ cut_seasons <- function(
   ## Return output
   
   # DT with records of peaks
-  peak_dt <- ts_dt[peak1 == TRUE, list(season = seq_len(.N), date, pheno = "peak"), by = id]
+  peak_dt <- ts_dt[peak1 == TRUE, list(season = seq_len(.N), maxval = date), by = id]
   # DT with records of begin of the season
-  begin_dt <- ts_dt[cut1 == TRUE, list(season = seq_len(.N), date, pheno = "begin"), by = id]
+  begin_dt <- ts_dt[cut1 == TRUE, list(season = seq_len(.N), begin = date), by = id]
   # DT with records of end of the season
   end_dt <- begin_dt[season > 1,]
-  end_dt[,c("season", "pheno") := list(season-1, "end")]
+  end_dt[,season := season-1]
+  setnames(end_dt, "begin", "end")
   # remove false begins of the season (dates only corresponding to ends)
   begin_dt <- begin_dt[begin_dt[, .I[season < max(season)], by = id]$V1,]
   # bind DTs
-  pheno_dt <- rbind(peak_dt, begin_dt, end_dt)[order(id, date, season)]
-  # check that all id-season have 3 records (begin-peak-end)
-  valid_ids <- pheno_dt[,list(check=length(date)), by = list(id, season)][check==3, paste(id, season)]
-  pheno_dt <- pheno_dt[paste(id, season) %in% valid_ids,]
+  # pheno_dt <- rbind(peak_dt, begin_dt, end_dt)[order(id, date, season)]
+  pheno_dt <- merge(merge(begin_dt, end_dt, by = c("id", "season")), peak_dt, by = c("id", "season"))
+  # # check that all id-season have 3 records (begin-peak-end)
+  # valid_ids <- pheno_dt[,list(check=length(date)), by = list(id, season)][check==3, paste(id, season)]
+  # pheno_dt <- list(
+  #   "dates" = pheno_dt[paste(id, season) %in% valid_ids,][!is.na(date),]
+  # )
   
+  attr(pheno_dt, "gen_by") <- "cut_seasons"
   pheno_dt
   
 }

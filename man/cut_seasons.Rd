@@ -23,11 +23,9 @@ A data table with the following fields:
 \itemize{
 \item \code{id}: the time series ID (see \code{s2ts});
 \item \code{season}: the season ID (integer);
-\item \code{date}: the date of the record;
-\item \code{pheno}: one among
-\code{"begin"} (begin of the season),
-\code{"peak"} (the maximum value of the season) and
-\code{"end"} (the end of the season).
+\item \code{begin}: the date of the begin of the season;
+\item \code{end}: the date of the end of the season;
+\item \code{maxval}: the date of the maximum value of the season.
 }
 }
 \description{

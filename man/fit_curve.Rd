@@ -4,7 +4,7 @@
 \alias{fit_curve}
 \title{Fit curve over seasons}
 \usage{
-fit_curve(ts, seas, fit = "klosterman")
+fit_curve(ts, seas, fit = "gu")
 }
 \arguments{
 \item{ts}{Time series in \code{s2ts} format (generated using \code{fill_s2ts()}).}
@@ -15,8 +15,18 @@ fit_curve(ts, seas, fit = "klosterman")
 \code{"elmore"} and \code{"gu"} (see \code{phenopix::greenProcess()}).}
 }
 \value{
-The output time series in tabular format (see \code{extract_ts()}),
-with a new column \code{fit} containing fitted values.
+A named list of \code{n} elements (being \code{n} the number of IDs included
+in \code{ts}). Each element is a named list of \code{m} elements (being \code{m} the
+number of detected seasons).
+Each element is a list including the following elements:
+\itemize{
+\item \code{fit}: the fitted curve as returned by \code{phenopix} fitting functions;
+\item \code{ts}: a data table of fitted values, containing the columns
+\code{date} (date of the record) and
+\code{value} (fitted value);
+\item \code{maxval}: the date of the maximum value in the season
+(reported from input \code{seas} and here reported).
+}
 }
 \description{
 Fit a curve using a parametric function  from

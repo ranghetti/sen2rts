@@ -6,7 +6,7 @@
 \usage{
 fill_s2ts(
   ts,
-  frequency = "dop",
+  frequency = "daily",
   method = "fmm",
   max_na_days = 30,
   max_extrapolation = 0.1
@@ -17,9 +17,9 @@ fill_s2ts(
 
 \item{frequency}{(optional) One of the followings:
 \itemize{
-\item \code{dop} (Days Of Passage -- default): values are returned corresponding to
-the theoretic Sentinel-2 dates of passage;
-\item \code{daily}: daily frequency.
+\item \code{daily}: daily frequency (default);
+\item \code{dop} (Days Of Passage): values are returned corresponding to
+the theoretic Sentinel-2 dates of passage.
 }}
 
 \item{method}{(optional) Argument passed to \code{spline()}.}
