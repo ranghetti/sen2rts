@@ -2,9 +2,9 @@
 #' @description TODO
 #' @param ts Time series in `s2ts` format (generated using `smooth_s2ts()`).
 #' @param frequency (optional) One of the followings:
-#'  - `dop` (Days Of Passage -- default): values are returned corresponding to 
-#'      the theoretic Sentinel-2 dates of passage;
-#'  - `daily`: daily frequency.
+#'  - `daily`: daily frequency (default);
+#'  - `dop` (Days Of Passage): values are returned corresponding to 
+#'      the theoretic Sentinel-2 dates of passage.
 #' @param method (optional) Argument passed to `spline()`.
 #' @param max_na_days (optional) maximum number of consecutive days with missing
 #'  values which can be filled (in case of longer time windows with missing data,
@@ -18,7 +18,7 @@
 
 fill_s2ts <- function(
   ts,
-  frequency = "dop",
+  frequency = "daily",
   method = "fmm",
   max_na_days = 30,
   max_extrapolation = 0.1
