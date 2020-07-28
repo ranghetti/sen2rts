@@ -431,7 +431,7 @@ plot.s2ts <- function(x, pheno, fitted, ...) {
   if (exists("pheno_dt")) {
     out <- out + 
       ggplot2::geom_vline(
-        data = pheno_dt[season == 1],
+        data = pheno_dt,
         ggplot2::aes(xintercept = begin), colour = "black"
       ) + 
       ggplot2::geom_vline(
