@@ -10,7 +10,11 @@ to obtain a smoothed equally-weighted time series:
 - `read_s2cube()` to build data cubes from Sentinel-2 archives;
 - `extract_s2ts()` to build raw time series in `s2ts` format;
 - `smooth_s2ts()` to smooth and filter time series;
-- `fill_s2ts()` to fill non equally-temporally weighted time series.
+- `fill_s2ts()` to fill non equally-temporally weighted time series;
+- `cut_seasons()` to cut Sentinel-2 time series into separate seasons;
+- `fit_curve()` to fit a curve using a parametric function;
+- `extract_pheno()` to extract phenological metrics;
+- `filter_seasons()` to filter seasons and associate them with a reference year.
 
 An adequate documentation of these functions will be written in a future release.
 
