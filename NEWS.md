@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Version 0.3.0
 
 - New functions to reach [milestone 2](https://github.com/ranghetti/sen2rts/milestone/2):
@@ -8,6 +9,8 @@
 - Update plot methods to integrate phenological metrics and fitted curves (this will be improved).
 
 
+=======
+>>>>>>> f0235ed7f82f1699a723b9666b200704e22022e2
 # Version 0.2.2
 
 - Savitzky-Golay filtered can be repeated to better follow higher values.
