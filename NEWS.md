@@ -1,3 +1,13 @@
+# Version 0.3.0
+
+- New functions to reach [milestone 2](https://github.com/ranghetti/sen2rts/milestone/2):
+    - `cut_seasons()`: cut Sentinel-2 time series into separate seasons, detecting dates of cuts and of peaks;
+    - `fit_curve()`: fit a curve using a parametric function  from `phenopix::greenProcess()`;
+    - `extract_pheno()`: extract phenological metrics from a fitted time series using methods from `phenopix::PhenoExtract()`;
+    - `filter_seasons()`: filter detected seasons basing on dates of begin / end / peak, and associate each season with a reference year.
+- Update plot methods to integrate phenological metrics and fitted curves (this will be improved).
+
+
 # Version 0.2.2
 
 - Savitzky-Golay filtered can be repeated to better follow higher values.
