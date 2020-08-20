@@ -199,7 +199,7 @@ extract_s2ts <- function(
     )
     
     # Read scl_sube
-    scl_cube <- read_stars(scl_vrt_path, RasterIO = scl_RasterIO)
+    scl_cube <- read_stars(scl_vrt_path, RasterIO = scl_RasterIO, proxy = FALSE)
     
     # Check consistency between in_cube and scl_cube
     # TODO
@@ -223,8 +223,8 @@ extract_s2ts <- function(
     }
     
     # Reshape it
-    w_cube_scl <- st_warp(w_cube_scl_raw, in_cube, method = "near", use_gdal = TRUE)
-    
+    w_cube_scl <- st_warp_fixing(w_cube_scl_raw, in_cube, method = "near", use_gdal = TRUE)
+
   }
   
   
@@ -271,7 +271,7 @@ extract_s2ts <- function(
     )
     
     # Read cld_cube
-    cld_cube <- read_stars(cld_vrt_path, RasterIO = cld_RasterIO)
+    cld_cube <- read_stars(cld_vrt_path, RasterIO = cld_RasterIO, proxy = FALSE)
     
     # Check consistency between in_cube and cld_cube
     # TODO
@@ -301,7 +301,7 @@ extract_s2ts <- function(
     )
     
     # Reshape it
-    w_cube_cld <- st_warp(w_cube_cld_raw, in_cube, method = "near", use_gdal = TRUE)
+    w_cube_cld <- st_warp_fixing(w_cube_cld_raw, in_cube, method = "near", use_gdal = TRUE)
     
   }
   
@@ -312,6 +312,8 @@ extract_s2ts <- function(
     
     ts_list <- list()
     for (id in in_sf[[in_sf_id]]) {
+      print(id) # FIXME remove
+      sel_id <<- id # FIXME remove
       in_cube_array <- in_cube[in_sf[in_sf[[in_sf_id]] == id,]][[1]]
       if (all(missing(scl_paths), missing(cld_paths))) {
         ts_list[[id]] <- data.table(

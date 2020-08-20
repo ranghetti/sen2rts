@@ -24,10 +24,12 @@ or \code{cut_seasons()}).}
 for the date of peak (associated with \code{pop_seasons}).}
 
 \item{sos_metric}{Character name of the field in \code{seas} to be used as metric
-for the date of beginning of growing season (associated with \code{sos_seasons}).}
+for the date of beginning of growing season (associated with \code{sos_seasons}).
+Set to NULL in order not to apply.}
 
 \item{eos_metric}{Character name of the field in \code{seas} to be used as metric
-for the date of end of growing season (associated with \code{pop_seasons}).}
+for the date of end of growing season (associated with \code{pop_seasons}).
+Set to NULL in order not to apply.}
 
 \item{peak_metric}{Character name of the field in \code{seas} to be used as metric
 for the value of the peak.}

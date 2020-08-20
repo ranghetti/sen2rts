@@ -68,12 +68,16 @@ fill_s2ts <- function(
         seq(min(ts_dop$date), max(ts_dop$date), by = diffdate)
       }
     )
-    ts_dt_out1 <- merge(ts_dt_out0, ts_dop, by = "date", all = TRUE)
+    # ts_dt_out1 <- merge(ts_dt_out0, ts_dop, by = "date", all = TRUE)
     
-    
+    # ts_dt_out2 <- merge(
+    #   ts_dt[id == sel_id,], ts_dt_out1, 
+    #   by.x = c("date", "sensor", "orbit"), by.y = c("date", "mission", "orbit"), 
+    #   all = TRUE
+    # )
     ts_dt_out2 <- merge(
-      ts_dt[id == sel_id,], ts_dt_out1, 
-      by.x = c("date", "sensor", "orbit"), by.y = c("date", "mission", "orbit"), 
+      ts_dt[id == sel_id,], ts_dt_out0, 
+      by = "date", 
       all = TRUE
     )
     ts_dt_out2[,interpolated := is.na(value)]

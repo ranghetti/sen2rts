@@ -154,7 +154,7 @@ s2ts <- function(value, date, id = NA, qa, orbit, sensor, rawval, ...) {
   if (any(any(out[,duplicated(paste(id, date))]))) {
     print_message(
       type = "error",
-      "Dpuplicated were detected; please check your input data ",
+      "Duplicated were detected; please check your input data ",
       "and ensure that only a unique data was provided for each ID value."
     )
   }

@@ -70,9 +70,9 @@ fit_curve <- function(
   ts_dt[,relval := (value - rescale[1]) / rescale[2]]
   
   # Set progress bar (time consuming function)
-  use_pb <- inherits(stdout(), "terminal") && seas$dates[,length(unique(paste(id,season)))] > 1
+  use_pb <- inherits(stdout(), "terminal") && seas[,length(unique(paste(id,season)))] > 1
   if (use_pb) {
-    pb <- txtProgressBar(0, seas$dates[,length(unique(paste(id,season)))], style = 3)
+    pb <- txtProgressBar(0, seas[,length(unique(paste(id,season)))], style = 3)
   }
   
   # Fit for each ID/season
@@ -80,8 +80,8 @@ fit_curve <- function(
   for (sel_id in unique(ts_dt$id)) {
     
     fit_out[[sel_id]] <- list()
-    for (sel_season in seas$dates[id == sel_id, unique(season)]) {
-      sel_cut_date <- seas$dates[id == sel_id & season == sel_season,][match(c("begin", "maxval", "end"), pheno), date]
+    for (sel_season in seas[id == sel_id, unique(season)]) {
+      sel_cut_date <- as.Date(as.matrix(seas[id == sel_id & season == sel_season,][,list(begin, maxval, end)])[1,])
       sel_ts_zoo <- zoo::zoo(
         ts_dt[id == sel_id & date >= sel_cut_date[1] & date < sel_cut_date[3], relval]
       )

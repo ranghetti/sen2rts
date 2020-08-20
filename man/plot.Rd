@@ -5,7 +5,7 @@
 \alias{plot.s2ts}
 \title{Plot \code{s2ts} object}
 \usage{
-plot.s2ts(x, pheno, fitted, ...)
+\method{plot}{s2ts}(x, pheno, fitted, ...)
 }
 \arguments{
 \item{pheno}{(optional) Output of \code{cut_seasons()}}

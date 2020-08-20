@@ -24,8 +24,10 @@
 #'  for the date of peak (associated with `pop_seasons`).
 #' @param sos_metric Character name of the field in `seas` to be used as metric
 #'  for the date of beginning of growing season (associated with `sos_seasons`).
+#'  Set to NULL in order not to apply.
 #' @param eos_metric Character name of the field in `seas` to be used as metric
 #'  for the date of end of growing season (associated with `pop_seasons`).
+#'  Set to NULL in order not to apply.
 #' @param peak_metric Character name of the field in `seas` to be used as metric
 #'  for the value of the peak.
 #' @param newyear Character vector in the form `"mm-dd"` (month-day)
@@ -89,23 +91,23 @@ filter_seasons <- function(
   seas_dt <- copy(seas)
   for (s in names(pop_win)) {
     seas_dt[
-      do.call(
+      if (is.null(pop_win)) TRUE else do.call(
         if (package_version(pop_win[[s]][1]) < package_version(pop_win[[s]][2])) `&` else `|`, 
         list(
-          package_version(strftime(get(pop_metric), "%m.%d")) >= package_version(pop_win[[s]][1]),
-          package_version(strftime(get(pop_metric), "%m.%d")) <= package_version(pop_win[[s]][2])
+          package_version(strftime(get(pop_metric), "%m.%d"), strict = FALSE) >= package_version(pop_win[[s]][1]),
+          package_version(strftime(get(pop_metric), "%m.%d"), strict = FALSE) <= package_version(pop_win[[s]][2])
         )) &
-        do.call(
+        if (is.null(sos_win)) TRUE else do.call(
           if (package_version(sos_win[[s]][1]) < package_version(sos_win[[s]][2])) `&` else `|`, 
           list(
-            package_version(strftime(get(sos_metric), "%m.%d")) >= package_version(sos_win[[s]][1]),
-            package_version(strftime(get(sos_metric), "%m.%d")) <= package_version(sos_win[[s]][2])
+            package_version(strftime(get(sos_metric), "%m.%d"), strict = FALSE) >= package_version(sos_win[[s]][1]),
+            package_version(strftime(get(sos_metric), "%m.%d"), strict = FALSE) <= package_version(sos_win[[s]][2])
           )) &
-        do.call(
+        if (is.null(eos_win)) TRUE else do.call(
           if (package_version(eos_win[[s]][1]) < package_version(eos_win[[s]][2])) `&` else `|`, 
           list(
-            package_version(strftime(get(eos_metric), "%m.%d")) >= package_version(eos_win[[s]][1]),
-            package_version(strftime(get(eos_metric), "%m.%d")) <= package_version(eos_win[[s]][2])
+            package_version(strftime(get(eos_metric), "%m.%d"), strict = FALSE) >= package_version(eos_win[[s]][1]),
+            package_version(strftime(get(eos_metric), "%m.%d"), strict = FALSE) <= package_version(eos_win[[s]][2])
           )),
       "seas_name" := s
       ]
