@@ -21,7 +21,6 @@
 #' @author Luigi Ranghetti, PhD (2020) \email{luigi@@ranghetti.info}
 #' @import data.table
 #' @importFrom methods as
-#' @importFrom phenopix PhenoExtract
 #' @export
 
 
