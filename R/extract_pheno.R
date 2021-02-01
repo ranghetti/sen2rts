@@ -57,20 +57,22 @@ extract_pheno <- function(
   pheno_list <- list()
   for (sel_id in names(data)) {
     pheno_list[[sel_id]] <- list()
-    for (sel_season in names(data[[sel_id]])) {
+    for (sel_year in names(data[[sel_id]])) {
+    for (sel_season in names(data[[sel_id]][[sel_year]])) {
       sel_metrics <- PhenoExtract(
-        data[[sel_id]][[sel_season]], 
+        data[[sel_id]][[sel_year]][[sel_season]], 
         method = method,
         uncert = FALSE, plot = FALSE,
         sf = c(0,1),
         trs = trs, ...
       )$metrics
-      pheno_list[[sel_id]][[sel_season]] <- data.table(
+      pheno_list[[sel_id]][[sel_year]][[sel_season]] <- data.table(
         "id" = sel_id,
+        "year" = sel_year,
         "season" = sel_season,
-        "begin" = min(data[[sel_id]][[sel_season]]$ts$date),
-        "end" = max(data[[sel_id]][[sel_season]]$ts$date),
-        "maxval" = data[[sel_id]][[sel_season]]$maxval,
+        "begin" = min(data[[sel_id]][[sel_year]][[sel_season]]$ts$date),
+        "end" = max(data[[sel_id]][[sel_year]][[sel_season]]$ts$date),
+        "maxval" = data[[sel_id]][[sel_year]][[sel_season]]$maxval,
         as.data.frame(as.list(sel_metrics))
       )
       # sel_metrics_x <- sel_metrics[names(sel_metrics) %in% metrics_x]
@@ -82,23 +84,23 @@ extract_pheno <- function(
       #   # otherwise, add them to the first date (allowing catching the "outliers" dates)
       #   # (the two methods should be equal, since input "ts" must be a daily-filled s2ts).
       #   pheno_x_dates <- if (
-      #     any(!round(sel_metrics_x) %in% seq_along(data[[sel_id]][[sel_season]]$ts$date))
+      #     any(!round(sel_metrics_x) %in% seq_along(data[[sel_id]][[sel_year]][[sel_season]]$ts$date))
       #   ) {
-      #     round(sel_metrics_x)-1 + data[[sel_id]][[sel_season]]$ts$date[1]
+      #     round(sel_metrics_x)-1 + data[[sel_id]][[sel_year]][[sel_season]]$ts$date[1]
       #   } else {
-      #     data[[sel_id]][[sel_season]]$ts$date[round(sel_metrics_x)]
+      #     data[[sel_id]][[sel_year]][[sel_season]]$ts$date[round(sel_metrics_x)]
       #   }
       #   pheno_x_list[[sel_id]][[sel_season]] <- data.table(
       #     "id" = sel_id,
       #     "season" = sel_season,
       #     "date" = c(
-      #       range(data[[sel_id]][[sel_season]]$ts$date), # begin - end of the season
-      #       data[[sel_id]][[sel_season]]$maxval, # date of the peak
+      #       range(data[[sel_id]][[sel_year]][[sel_season]]$ts$date), # begin - end of the season
+      #       data[[sel_id]][[sel_year]][[sel_season]]$maxval, # date of the peak
       #       pheno_x_dates # dates of the metrics
       #     ),
       #     "pheno" = c(
       #       "begin", "end", 
-      #       if (!is.null(data[[sel_id]][[sel_season]]$maxval)) "maxval",
+      #       if (!is.null(data[[sel_id]][[sel_year]][[sel_season]]$maxval)) "maxval",
       #       names(sel_metrics_x)
       #     )
       #   )
@@ -113,9 +115,10 @@ extract_pheno <- function(
       #   )
       # }
     } # end of sel_season FOR cycle
+    } # end of sel_year FOR cycle
   } # end of id FOR cycle
 
-  pheno_dt <- rbindlist(lapply(pheno_list, rbindlist))
+  pheno_dt <- rbindlist(lapply(lapply(pheno_list, lapply, rbindlist), rbindlist))
   
   # Format metrics basing on method
   if (method %in% c("trs", "derivatives") ) {

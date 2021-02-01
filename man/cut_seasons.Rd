@@ -4,10 +4,22 @@
 \alias{cut_seasons}
 \title{Cut seasons}
 \usage{
-cut_seasons(ts, min_win = 60, min_relh = 0.25, max_relval = 0.3)
+cut_seasons(
+  ts,
+  n_seas = Inf,
+  min_win = 60,
+  min_relh = 0.25,
+  max_relval = 0.3,
+  newyearday = "01-01"
+)
 }
 \arguments{
 \item{ts}{Time series in \code{s2ts} format (generated using \code{fill_s2ts()}).}
+
+\item{n_seas}{(optional) Maximum number of seasons to be detected in one year
+(default: Inf, meaning that all the identified seasons are kept).
+A season overlapping the new year's day (argument \code{newyearday})
+is assigned to the year in which the date of maximum value falls.}
 
 \item{min_win}{(optional) Minimum time window between two consecutive
 maxima / minima to consider a separate season.}
@@ -17,12 +29,21 @@ and each of the two minima to consider a separate season.}
 
 \item{max_relval}{(optional) Maximum relative value to consider a
 season breakpoint.}
+
+\item{newyearday}{(optional) day to be considered as new year's day, used
+to assign seasons to the proper year. It can be an object of class \code{Date}
+(in which case the year is ignored) or a character value in the form \code{mm-dd}.
+In case it is July 1 or higher, seasons falling in the last part of the year
+are assigned to the subsequent year; otherwise, seasons falling in the first
+part of the year are assigned to the previous year. Default is January 1
+(all seasons are assigned the the year in which they fall).}
 }
 \value{
 A data table with the following fields:
 \itemize{
 \item \code{id}: the time series ID (see \code{s2ts});
-\item \code{season}: the season ID (integer);
+\item \code{year}: the year assigned to each season;
+\item \code{season}: the season ID (progressive integer within each year);
 \item \code{begin}: the date of the begin of the season;
 \item \code{end}: the date of the end of the season;
 \item \code{maxval}: the date of the maximum value of the season.

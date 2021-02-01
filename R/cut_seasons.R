@@ -2,15 +2,27 @@
 #' @description Cut Sentinel-2 time series into separate seasons,
 #'  detecting dates of cuts and of peaks.
 #' @param ts Time series in `s2ts` format (generated using `fill_s2ts()`).
+#' @param n_seas (optional) Maximum number of seasons to be detected in one year
+#'  (default: Inf, meaning that all the identified seasons are kept).
+#'  A season overlapping the new year's day (argument `newyearday`)
+#'  is assigned to the year in which the date of maximum value falls.
 #' @param min_win (optional) Minimum time window between two consecutive 
 #'  maxima / minima to consider a separate season.
 #' @param min_relh (optional) Minimum relative difference between the maximum
 #'  and each of the two minima to consider a separate season.
 #' @param max_relval (optional) Maximum relative value to consider a 
 #'  season breakpoint.
+#' @param newyearday (optional) day to be considered as new year's day, used
+#'  to assign seasons to the proper year. It can be an object of class `Date`
+#'  (in which case the year is ignored) or a character value in the form `mm-dd`.
+#'  In case it is July 1 or higher, seasons falling in the last part of the year
+#'  are assigned to the subsequent year; otherwise, seasons falling in the first
+#'  part of the year are assigned to the previous year. Default is January 1
+#'  (all seasons are assigned the the year in which they fall).
 #' @return A data table with the following fields:
 #'  - `id`: the time series ID (see `s2ts`);
-#'  - `season`: the season ID (integer);
+#'  - `year`: the year assigned to each season;
+#'  - `season`: the season ID (progressive integer within each year);
 #'  - `begin`: the date of the begin of the season;
 #'  - `end`: the date of the end of the season;
 #'  - `maxval`: the date of the maximum value of the season.
@@ -22,13 +34,24 @@
 
 cut_seasons <- function(
   ts,
+  n_seas = Inf,
   min_win = 60,
   min_relh = 0.25,
-  max_relval = 0.3
+  max_relval = 0.3,
+  newyearday = "01-01"
 ) {
   
   ## Check arguments
   # TODO
+  
+  # Check newyearday
+  if (inherits(newyearday, "character")) {
+    if (grepl("^[0-1][0-9]?\\-[0-3][0-9]?$", newyearday)) {
+      newyearday <- as.Date(paste0("2021-",newyearday))
+    } else {
+      newyearday <- as.Date(newyearday)
+    }
+  }
   
   ## Check s2ts format
   # (must contain date, id, orbit, sensor, value, opt. quality)
@@ -120,23 +143,44 @@ cut_seasons <- function(
   ## Return output
   
   # DT with records of peaks
-  peak_dt <- ts_dt[peak1 == TRUE, list(season = seq_len(.N), maxval = date), by = id]
+  peak_dt <- ts_dt[peak1 == TRUE, list(s1 = seq_len(.N), maxval = date), by = id]
   # DT with records of begin of the season
-  begin_dt <- ts_dt[cut1 == TRUE, list(season = seq_len(.N), begin = date), by = id]
+  begin_dt <- ts_dt[cut1 == TRUE, list(s1 = seq_len(.N), begin = date), by = id]
   # DT with records of end of the season
-  end_dt <- begin_dt[season > 1,]
-  end_dt[,season := season-1]
+  end_dt <- begin_dt[s1 > 1,]
+  end_dt[,s1 := s1-1]
   setnames(end_dt, "begin", "end")
   # remove false begins of the season (dates only corresponding to ends)
-  begin_dt <- begin_dt[begin_dt[, .I[season < max(season)], by = id]$V1,]
+  begin_dt <- begin_dt[begin_dt[, .I[s1 < max(s1)], by = id]$V1,]
   # bind DTs
-  # pheno_dt <- rbind(peak_dt, begin_dt, end_dt)[order(id, date, season)]
-  pheno_dt <- merge(merge(begin_dt, end_dt, by = c("id", "season")), peak_dt, by = c("id", "season"))
-  # # check that all id-season have 3 records (begin-peak-end)
-  # valid_ids <- pheno_dt[,list(check=length(date)), by = list(id, season)][check==3, paste(id, season)]
-  # pheno_dt <- list(
-  #   "dates" = pheno_dt[paste(id, season) %in% valid_ids,][!is.na(date),]
-  # )
+  pheno_dt <- merge(merge(begin_dt, end_dt, by = c("id", "s1")), peak_dt, by = c("id", "s1"))
+
+  # Assign year
+  pheno_dt[,uid:=seq_len(.N)]
+  pheno_dt[,y1:=as.integer(strftime(maxval,"%Y"))]
+  pheno_dt[,newyear:=as.Date(paste0(y1,"-",strftime(newyearday,"%m-%d")))]
+  if (as.integer(strftime(newyearday,"%m")) >= 7) {
+    pheno_dt[,year:=ifelse(maxval>newyear,y1+1,y1)]
+  } else {
+    pheno_dt[,year:=ifelse(maxval>newyear,y1,y1-1)]
+  }
+  
+  ## Filter seasons basing on numbers
+  # Compute metric used to order seasons (for now a fixed metric: integral)
+  # TODO optimize speed
+  for (i in seq_len(pheno_dt[,.N])) {
+    pheno_dt[
+      i,
+      integral := ts_dt[date>=pheno_dt[i,begin] & date<pheno_dt[i,end] & id==pheno_dt[i,id], sum(relval)]
+    ]
+  }
+  # filter basing on this metric
+  pheno_dt[,rank:=1+.N-rank(integral),by=list(id,year)]
+  pheno_dt <- pheno_dt[rank<=n_seas,]
+
+  pheno_dt[,season:=seq_len(.N),by=list(id,year)]
+  pheno_dt[,c("newyear","y1","s1","uid","rank","integral"):=NULL]
+  pheno_dt <- pheno_dt[,list(id, year, season, begin, end, maxval)]
   
   attr(pheno_dt, "gen_by") <- "cut_seasons"
   pheno_dt

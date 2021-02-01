@@ -97,24 +97,25 @@ fit_curve <- function(
   ts_dt[,relval := (value - rescale[1]) / rescale[2]]
   
   # Set progress bar (time consuming function)
-  use_pb <- inherits(stdout(), "terminal") && seas[,length(unique(paste(id,season)))] > 1
+  use_pb <- inherits(stdout(), "terminal") && seas[,length(unique(paste(id,year,season)))] > 1
   if (use_pb) {
-    pb <- txtProgressBar(0, seas[,length(unique(paste(id,season)))], style = 3)
+    pb <- txtProgressBar(0, seas[,length(unique(paste(id,year,season)))], style = 3)
   }
   
-  # Fit for each ID/season
+  # Fit for each ID/year/season
   fit_out <- list()
   for (sel_id in unique(ts_dt$id)) {
-    
     fit_out[[sel_id]] <- list()
-    for (sel_season in seas[id == sel_id, unique(season)]) {
-      sel_cut_date <- as.Date(as.matrix(seas[id == sel_id & season == sel_season,][,list(begin, maxval, end)])[1,])
+    for (sel_year in seas[id == sel_id, unique(year)]) {
+    fit_out[[sel_id]][[as.character(sel_year)]] <- list()
+    for (sel_season in seas[id == sel_id & year == sel_year, unique(season)]) {
+      sel_cut_date <- as.Date(as.matrix(seas[id == sel_id & year == sel_year & season == sel_season,][,list(begin, maxval, end)])[1,])
       sel_ts_zoo <- zoo::zoo(
         ts_dt[id == sel_id & date >= sel_cut_date[1] & date < sel_cut_date[3], relval]
       )
       sel_fit <- try(fit.fun(ts = sel_ts_zoo, uncert = FALSE))
       if (!inherits(sel_fit, "try-error")) {
-        fit_out[[sel_id]][[as.character(sel_season)]] <- list(
+        fit_out[[sel_id]][[as.character(sel_year)]][[as.character(sel_season)]] <- list(
           "fit" = sel_fit$fit,
           "ts" = data.table(
             "date" = ts_dt[
@@ -128,7 +129,7 @@ fit_curve <- function(
       }
       if (use_pb) {setTxtProgressBar(pb, pb$getVal()+1)} # update progress bar
     } # end of sel_season FOR cycle
-    
+    } # end of sel_year FOR cycle
   } # end of id FOR cycle
   
   if (use_pb) {message("")} # separate progress bar
