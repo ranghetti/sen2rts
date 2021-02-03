@@ -304,10 +304,14 @@ setAs("s2ts", "list", function(from) {
 #' @description Plot a `s2ts` time series, using `{ggplot2}` routines.
 #' @param pheno (optional) Output of `cut_seasons()`
 #' @param fitted (optional) Output of `fit_curve()`
+#' @param dates (optional) Logical or character:
+#'  if TRUE, plot the dates of season cuts and phenology metrics;
+#'  if FALSE (default), plot nothing;
+#'  if `"seasons"` or `"pheno"`, plot only season cuts or phenology metrics.
 #' @author Luigi Ranghetti, PhD (2020) \email{luigi@@ranghetti.info}
 #' @import data.table
 #' @export
-plot.s2ts <- function(x, pheno, fitted, ...) {
+plot.s2ts <- function(x, pheno, fitted, dates = FALSE, ...) {
   
   # Check optional suggested ggplot2 to be present
   if (!requireNamespace("ggplot2", quietly = TRUE)) {
@@ -331,6 +335,11 @@ plot.s2ts <- function(x, pheno, fitted, ...) {
   }
   if (!missing(pheno)) {
     plot_mode <- c(plot_mode, "pheno", paste0("pheno_",attr(pheno, "info")$method))
+  }
+  
+  # Change "dates" value
+  if (dates == TRUE) {
+    dates <- c("pheno", "seasons")
   }
   
   # Extract input data.table
@@ -357,7 +366,7 @@ plot.s2ts <- function(x, pheno, fitted, ...) {
   } else if (!missing(fitted)) {
     pheno_dt <- fitted_dt[
       ,list("begin" = min(date), "end" = max(date)),
-      by = c("id", "season")
+      by = c("id", "year", "season")
       ]
     # TODO add maxval
   }
@@ -383,7 +392,7 @@ plot.s2ts <- function(x, pheno, fitted, ...) {
     if (!is.null(metrics_y)) {
       pheno_dt_y <- melt(
         pheno_dt, 
-        id.vars = c("id", "season", "begin", "end"), 
+        id.vars = c("id", "year", "season", "begin", "end"), 
         measure.vars = metrics_y,
         variable.name = "Value", value.name = "value"
       )
@@ -391,7 +400,7 @@ plot.s2ts <- function(x, pheno, fitted, ...) {
     if (!is.null(metrics_x)) {
       pheno_dt_x <- melt(
         pheno_dt, 
-        id.vars = c("id", "season"), 
+        id.vars = c("id", "year", "season"), 
         measure.vars = metrics_x,
         variable.name = "Phenology", value.name = "date"
       )
@@ -409,9 +418,10 @@ plot.s2ts <- function(x, pheno, fitted, ...) {
   
   # Add season cuts / peaks
   if (exists("pheno_dt_y")) {
-    for (sel_season in pheno[, unique(season)]) {
+    # for (sel_season in pheno[, unique(season)]) {
       out <- out + ggplot2::geom_segment(
-        data = pheno_dt_y[season==sel_season,], 
+        # data = pheno_dt_y[season==sel_season,], 
+        data = pheno_dt_y, 
         ggplot2::aes(
           x = begin, xend = end,
           y = value, yend = value,
@@ -419,34 +429,57 @@ plot.s2ts <- function(x, pheno, fitted, ...) {
         ),
         linetype = "dashed"
       )
-    }
+    # }
   }
   if (exists("pheno_dt_x")) {
     out <- out + 
       ggplot2::geom_vline(
         data = pheno_dt_x,
-        ggplot2::aes(xintercept = date, colour = Phenology)
+        ggplot2::aes(xintercept = as.numeric(date), colour = Phenology)
       )
+    if ("pheno" %in% dates) {
+      out <- out + 
+        ggplot2::geom_text(
+        data = pheno_dt_x,
+        ggplot2::aes(x = date, y = min(x_dt$value, na.rm=TRUE), label = date, colour = Phenology),
+        angle = 90, vjust = -0.25, hjust = 0, size = 3
+      )
+    }
   }
   if (exists("pheno_dt")) {
     out <- out + 
       ggplot2::geom_vline(
         data = pheno_dt,
-        ggplot2::aes(xintercept = begin), colour = "black"
-      ) + 
+        ggplot2::aes(xintercept = as.numeric(begin)), colour = "black"
+      ) +
       ggplot2::geom_vline(
         data = pheno_dt,
-        ggplot2::aes(xintercept = end), colour = "black"
+        ggplot2::aes(xintercept = as.numeric(end)), colour = "black"
       )
+    if ("seasons" %in% dates) {
+      out <- out + 
+        ggplot2::geom_text(
+          data = pheno_dt,
+          ggplot2::aes(x = begin, y = max(x_dt$value, na.rm=TRUE), label = begin), colour = "black",
+          angle = 90, vjust = 1.25, hjust = 1, size = 3
+        ) +
+        ggplot2::geom_text(
+          data = pheno_dt,
+          ggplot2::aes(x = end, y = max(x_dt$value, na.rm=TRUE), label = end), colour = "black",
+          angle = 90, vjust = -0.25, hjust = 1, size = 3
+        )
+    }
   }
   
   # Add fitted line
   if (exists("fitted_dt")) {
-    for (sel_season in fitted_dt[,unique(season)]) {
+    for (sel_year in fitted_dt[,unique(year)]) {
+    for (sel_season in fitted_dt[year == sel_year, unique(season)]) {
       out <- out + ggplot2::geom_line(
-        data = fitted_dt[season == sel_season,], 
+        data = fitted_dt[year == sel_year & season == sel_season,], 
         colour = "red", alpha = 0.5
       )
+    }
     }
   }
   
@@ -466,7 +499,11 @@ plot.s2ts <- function(x, pheno, fitted, ...) {
   
   # Facet in case of multiple IDs
   if (length(sort(unique(x_dt$id))) > 0) {
-    out <- out + ggplot2::facet_wrap(~id)
+    out <- out + ggplot2::facet_wrap(
+      ~id, 
+      ncol = round(sqrt(length(unique(x_dt$id))/2))
+      # ncol = max(1, round(length(unique(x_dt$id))/4))
+    )
   }
   
   # Format options
@@ -475,13 +512,29 @@ plot.s2ts <- function(x, pheno, fitted, ...) {
     ggplot2::scale_y_continuous(name = NULL) +
     ggplot2::theme_light()
   if (all(!"background" %in% plot_mode)) {
-    out <- out + ggplot2::scale_colour_viridis_d(
+    out <- out + ggplot2::scale_colour_viridis_c(
       option = "inferno", direction = -1
     )
   } else {
     out <- out + ggplot2::scale_colour_brewer(palette = "Set2")
   }
+
+  # out + ggplot2::geom_rect(
+  #   aes()
+  # )
+  date_range <- range(x_dt$date)
+  year_range <- as.integer(strftime(date_range,"%Y"))
+  year_seq <- seq(year_range[1]-1, year_range[2]+1)
+  dates_bands <- data.table(
+    begin = as.Date(apply(expand.grid(year_seq,seq(1,10,3),1),1,paste,collapse="-")),
+    end = as.Date(apply(expand.grid(year_seq,paste(seq(3,12,3),c(31,30,30,31),sep="-")),1,paste,collapse="-")),
+    seas = rep(c("winter","spring","summer","autumn"), each = length(year_seq))
+  )[order(begin),]
+  dates_bands <- dates_bands[begin<=date_range[2] & end>=date_range[1],]
+  dates_bands[1,begin:=date_range[1]]
+  dates_bands[nrow(dates_bands),end:=date_range[2]]
   
+  # TODO aggiungi bande con geom_rect, limiti Y a Inf, colore blu per winter e rosso per summer
   out
   
 }

@@ -5,12 +5,17 @@
 \alias{plot.s2ts}
 \title{Plot \code{s2ts} object}
 \usage{
-\method{plot}{s2ts}(x, pheno, fitted, ...)
+\method{plot}{s2ts}(x, pheno, fitted, dates = FALSE, ...)
 }
 \arguments{
 \item{pheno}{(optional) Output of \code{cut_seasons()}}
 
 \item{fitted}{(optional) Output of \code{fit_curve()}}
+
+\item{dates}{(optional) Logical or character:
+if TRUE, plot the dates of season cuts and phenology metrics;
+if FALSE (default), plot nothing;
+if \code{"seasons"} or \code{"pheno"}, plot only season cuts or phenology metrics.}
 }
 \description{
 Plot a \code{s2ts} time series, using \code{{ggplot2}} routines.
