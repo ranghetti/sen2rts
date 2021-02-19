@@ -7,6 +7,7 @@
 #' @param ... Additional arguments passed to `phenopix::PhenoExtract()`.
 #' @return A data table with the following fields:
 #'  - `id`: the time series ID (see `s2ts`);
+#'  - `year`: the year (integer);
 #'  - `season`: the season ID (integer);
 #'  - `begin`, `end`, `maxval`: the dates of begin, end and maximum value in
 #'      the season as computed by `cut_seasons()`;
@@ -73,6 +74,7 @@ extract_pheno <- function(
         "begin" = min(data[[sel_id]][[sel_year]][[sel_season]]$ts$date),
         "end" = max(data[[sel_id]][[sel_year]][[sel_season]]$ts$date),
         "maxval" = data[[sel_id]][[sel_year]][[sel_season]]$maxval,
+        "weight" = data[[sel_id]][[sel_year]][[sel_season]]$weight,
         as.data.frame(as.list(sel_metrics))
       )
       # sel_metrics_x <- sel_metrics[names(sel_metrics) %in% metrics_x]

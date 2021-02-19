@@ -10,7 +10,9 @@ cut_seasons(
   min_win = 60,
   min_relh = 0.25,
   max_relval = 0.3,
-  newyearday = "01-01"
+  newyearday = "01-01",
+  weight_metric = "integral",
+  export_weight = FALSE
 )
 }
 \arguments{
@@ -37,6 +39,11 @@ In case it is July 1 or higher, seasons falling in the last part of the year
 are assigned to the subsequent year; otherwise, seasons falling in the first
 part of the year are assigned to the previous year. Default is January 1
 (all seasons are assigned the the year in which they fall).}
+
+\item{export_weight}{(optional) Logical: should the metric used to "weight"
+seasons be exported? (Default: FALSE)}
+
+\item{rank_metric}{(optional) TODO}
 }
 \value{
 A data table with the following fields:

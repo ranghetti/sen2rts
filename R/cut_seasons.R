@@ -19,6 +19,9 @@
 #'  are assigned to the subsequent year; otherwise, seasons falling in the first
 #'  part of the year are assigned to the previous year. Default is January 1
 #'  (all seasons are assigned the the year in which they fall).
+#' @param rank_metric (optional) TODO
+#' @param export_weight (optional) Logical: should the metric used to "weight" 
+#'  seasons be exported? (Default: FALSE)
 #' @return A data table with the following fields:
 #'  - `id`: the time series ID (see `s2ts`);
 #'  - `year`: the year assigned to each season;
@@ -38,7 +41,9 @@ cut_seasons <- function(
   min_win = 60,
   min_relh = 0.25,
   max_relval = 0.3,
-  newyearday = "01-01"
+  newyearday = "01-01",
+  weight_metric = "integral",
+  export_weight = FALSE
 ) {
   
   ## Check arguments
@@ -166,21 +171,42 @@ cut_seasons <- function(
   }
   
   ## Filter seasons basing on numbers
-  # Compute metric used to order seasons (for now a fixed metric: integral)
+  # Compute metric used to order seasons
   # TODO optimize speed
-  for (i in seq_len(pheno_dt[,.N])) {
-    pheno_dt[
-      i,
-      integral := ts_dt[date>=pheno_dt[i,begin] & date<pheno_dt[i,end] & id==pheno_dt[i,id], sum(relval)]
-    ]
+  if (weight_metric == "integral") {
+    for (i in seq_len(pheno_dt[,.N])) {
+      pheno_dt[
+        i,
+        weight := ts_dt[
+          date>=pheno_dt[i,begin] & date<pheno_dt[i,end] & id==pheno_dt[i,id],
+          sum(relval)
+        ]
+      ]
+    }
+  } else if (weight_metric == "length") {
+    pheno_dt[, weight := as.numeric(end-begin)]
+  } else if (weight_metric == "maxval") {
+    for (i in seq_len(pheno_dt[,.N])) {
+      pheno_dt[
+        i,
+        weight := ts_dt[
+          date>=pheno_dt[i,begin] & date<pheno_dt[i,end] & id==pheno_dt[i,id],
+          max(relval)
+        ]
+      ]
+    }
+  } else {
+    pheno_dt[, weight := as.numeric(NA)]
   }
+  
   # filter basing on this metric
-  pheno_dt[,rank:=1+.N-rank(integral),by=list(id,year)]
+  pheno_dt[,rank:=1+.N-rank(weight),by=list(id,year)]
   pheno_dt <- pheno_dt[rank<=n_seas,]
 
   pheno_dt[,season:=seq_len(.N),by=list(id,year)]
-  pheno_dt[,c("newyear","y1","s1","uid","rank","integral"):=NULL]
-  pheno_dt <- pheno_dt[,list(id, year, season, begin, end, maxval)]
+  pheno_dt[,c("newyear","y1","s1","uid","rank"):=NULL]
+  pheno_dt <- pheno_dt[,list(id, year, season, begin, end, maxval, weight)]
+  if (export_weight==FALSE) {pheno_dt[,weight:=NULL]}
   
   attr(pheno_dt, "gen_by") <- "cut_seasons"
   pheno_dt

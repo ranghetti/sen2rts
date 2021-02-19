@@ -27,7 +27,7 @@ Each element is a list including the following elements:
 \code{date} (date of the record) and
 \code{value} (fitted value);
 \item \code{maxval}: the date of the maximum value in the season
-(reported from input \code{seas} and here reported).
+(obtained from input \code{seas} and here reported).
 }
 }
 \description{

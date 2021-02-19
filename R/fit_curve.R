@@ -42,7 +42,7 @@ fakeFit <- function (ts, uncert=NA, nrep=NA) {
 #'      `date` (date of the record) and
 #'      `value` (fitted value);
 #'  - `maxval`: the date of the maximum value in the season
-#'      (reported from input `seas` and here reported).
+#'      (obtained from input `seas` and here reported).
 #' @author Luigi Ranghetti, PhD (2020) \email{luigi@@ranghetti.info}
 #' @import data.table
 #' @importFrom zoo zoo
@@ -124,7 +124,8 @@ fit_curve <- function(
               ],
             "value" = rescale[1] + as.numeric(sel_fit$fit$predicted) * rescale[2]
           ),
-          "maxval" = sel_cut_date[2]
+          "maxval" = sel_cut_date[2],
+          "weight" = seas[id == sel_id & year == sel_year & season == sel_season,]$weight
         )
       }
       if (use_pb) {setTxtProgressBar(pb, pb$getVal()+1)} # update progress bar
