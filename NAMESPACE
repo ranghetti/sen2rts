@@ -3,6 +3,7 @@
 S3method(as.list,s2ts)
 S3method(plot,s2ts)
 S3method(print,s2ts)
+export(aggregate_pheno)
 export(as.s2ts)
 export(cut_seasons)
 export(extract_pheno)
