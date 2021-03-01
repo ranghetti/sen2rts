@@ -13,7 +13,7 @@
 #' @param spike Relative "y" difference for spike determination (default is 0.25).
 #' @param spike_window Maximum number of values for spike identification
 #'  (it must be an odd number). Default is 3.
-#' @param sg_window Argument `window` of function `w_savgol()`.
+#' @param sg_daywindow Half-size of the time window to be used to interpolate 
 #' @param sg_polynom Argument `polynom` of function `w_savgol()`.
 #' @param sg_n (optional) Positive integer: number of applications of the 
 #'  Savitzky-Golay filter. The minimum value is 1 (a single application
@@ -36,7 +36,7 @@ smooth_s2ts <- function(
   noise_dir = "low",
   spike = 0.25,
   spike_window = 5,
-  sg_window = 9,
+  sg_daywindow = 9,
   sg_polynom = 2,
   sg_n = 3,
   max_extrapolation = 0.1
@@ -115,23 +115,58 @@ smooth_s2ts <- function(
     ts_dt <- ts_dt[,qa0 := 1]
   }
   
+  # Reshape data to use a day-dependent window
+  # (this step is required to pass a "more or less time weighted")
+  if (length(unique(ts_dt$orbit)) > 5) {
+    print_message(
+      type = "warning",
+      "Using more than 5 orbits may deal to unattended results."
+    )
+  }
+  ts_dt_teor <- rbindlist(
+    sapply(unique(ts_dt$id), function(i) {
+      sen2r::s2_dop(
+        s2_orbits = unique(ts_dt[id==i,]$orbit),
+        timewindow = range(ts_dt[id==i,]$date),
+        mission = unique(ts_dt[id==i,]$sensor)
+      )
+    }, USE.NAMES = TRUE, simplify = FALSE),
+    idcol = "id"
+  )
+  setnames(ts_dt_teor, "mission", "sensor")
+  ts_dt_filled <- merge(
+    ts_dt,
+    ts_dt_teor,
+    by = c("id", "date", "sensor", "orbit"),
+    all = TRUE
+  )
+  ts_dt_filled[is.na(value), c("value0","qa0"):=list(0,0)]
+  sg_window <- ceiling(
+    (sg_daywindow*2+1) / 10 * 
+      ts_dt[,length(unique(orbit))*length(unique(sensor))]
+  )
+  
   # Compute Savitzky-Golay
-  ts_dt$value_smoothed <- numeric()
-  for (sel_id in unique(ts_dt$id)) { # cycle on IDs
-    qa <- ts_dt[id == sel_id, qa0]
-    value <- value_sg <- ts_dt[id == sel_id, value0]
+  ts_dt_filled$value_smoothed <- numeric()
+  for (sel_id in unique(ts_dt_filled$id)) { # cycle on IDs
+    qa <- ts_dt_filled[id == sel_id, qa0]
+    value <- value_sg <- ts_dt_filled[id == sel_id, value0]
     for (i in seq_len(sg_n)) {
-      qa <- (rank(value-value_sg) - 1) / (ts_dt[,sum(id == sel_id)] - 1) * qa
+      qa <- (rank(value-value_sg) - 1) / (ts_dt_filled[,sum(id == sel_id)] - 1) * qa
       value_sg <- w_savgol(
         value, 
-        x = ts_dt[id == sel_id, as.numeric(date)], 
+        x = ts_dt_filled[id == sel_id, as.numeric(date)], 
         q = qa, 
         window = sg_window, 
         polynom = sg_polynom
       )
     }
-    ts_dt[id == sel_id, value_smoothed := value_sg]
+    ts_dt_filled[id == sel_id, value_smoothed := value_sg]
   } # end of id FOR cycle
+  ts_dt <- ts_dt_filled[
+    ts_dt_filled[,paste(id, date, sensor, orbit)] %in% 
+      ts_dt[,paste(id, date, sensor, orbit)],
+  ]
   
   # Coerce values to original ranges
   if (max_extrapolation < Inf) {

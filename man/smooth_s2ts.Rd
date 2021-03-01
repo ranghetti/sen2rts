@@ -10,7 +10,7 @@ smooth_s2ts(
   noise_dir = "low",
   spike = 0.25,
   spike_window = 5,
-  sg_window = 9,
+  sg_daywindow = 9,
   sg_polynom = 2,
   sg_n = 3,
   max_extrapolation = 0.1
@@ -35,7 +35,7 @@ if \code{"undefined"} (default), no assumptions are done.}
 \item{spike_window}{Maximum number of values for spike identification
 (it must be an odd number). Default is 3.}
 
-\item{sg_window}{Argument \code{window} of function \code{w_savgol()}.}
+\item{sg_daywindow}{Half-size of the time window to be used to interpolate}
 
 \item{sg_polynom}{Argument \code{polynom} of function \code{w_savgol()}.}
 
