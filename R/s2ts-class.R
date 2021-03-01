@@ -302,12 +302,12 @@ setAs("s2ts", "list", function(from) {
 #' @name plot
 #' @title Plot `s2ts` object
 #' @description Plot a `s2ts` time series, using `{ggplot2}` routines.
-#' @param pheno (optional) Output of `cut_seasons()`
+#' @param pheno (optional) Output of `cut_cycles()`
 #' @param fitted (optional) Output of `fit_curve()`
 #' @param dates (optional) Logical or character:
-#'  if TRUE, plot the dates of season cuts and phenology metrics;
-#'  if FALSE (default), plot nothing;
-#'  if `"seasons"` or `"pheno"`, plot only season cuts or phenology metrics.
+#'  if TRUE, plot the dates of cycle cuts and phenology metrics;
+#'  if FALSE (default), do not plot anything;
+#'  if `"cycles"` or `"pheno"`, plot only cycle cuts or phenology metrics.
 #' @author Luigi Ranghetti, PhD (2020) \email{luigi@@ranghetti.info}
 #' @import data.table
 #' @export
@@ -339,7 +339,7 @@ plot.s2ts <- function(x, pheno, fitted, dates = FALSE, ...) {
   
   # Change "dates" value
   if (dates == TRUE) {
-    dates <- c("pheno", "seasons")
+    dates <- c("pheno", "cycles")
   }
   
   # Extract input data.table
@@ -366,7 +366,7 @@ plot.s2ts <- function(x, pheno, fitted, dates = FALSE, ...) {
   } else if (!missing(fitted)) {
     pheno_dt <- fitted_dt[
       ,list("begin" = min(date), "end" = max(date)),
-      by = c("id", "year", "season")
+      by = c("id", "year", "cycle")
       ]
     # TODO add maxval
   }
@@ -392,7 +392,7 @@ plot.s2ts <- function(x, pheno, fitted, dates = FALSE, ...) {
     if (!is.null(metrics_y)) {
       pheno_dt_y <- melt(
         pheno_dt, 
-        id.vars = c("id", "year", "season", "begin", "end"), 
+        id.vars = c("id", "year", "cycle", "begin", "end"), 
         measure.vars = metrics_y,
         variable.name = "Value", value.name = "value"
       )
@@ -400,7 +400,7 @@ plot.s2ts <- function(x, pheno, fitted, dates = FALSE, ...) {
     if (!is.null(metrics_x)) {
       pheno_dt_x <- melt(
         pheno_dt, 
-        id.vars = c("id", "year", "season"), 
+        id.vars = c("id", "year", "cycle"), 
         measure.vars = metrics_x,
         variable.name = "Phenology", value.name = "date"
       )
@@ -416,11 +416,11 @@ plot.s2ts <- function(x, pheno, fitted, dates = FALSE, ...) {
     alpha = if (any(c("smoothed", "filled", "background") %in% plot_mode)) {0.1} else {0.35}
   )
   
-  # Add season cuts / peaks
+  # Add cycle cuts / peaks
   if (exists("pheno_dt_y")) {
-    # for (sel_season in pheno[, unique(season)]) {
+    # for (sel_cycle in pheno[, unique(cycle)]) {
       out <- out + ggplot2::geom_segment(
-        # data = pheno_dt_y[season==sel_season,], 
+        # data = pheno_dt_y[cycle==sel_cycle,], 
         data = pheno_dt_y, 
         ggplot2::aes(
           x = begin, xend = end,
@@ -456,7 +456,7 @@ plot.s2ts <- function(x, pheno, fitted, dates = FALSE, ...) {
         data = pheno_dt,
         ggplot2::aes(xintercept = as.numeric(end)), colour = "black"
       )
-    if ("seasons" %in% dates) {
+    if ("cycles" %in% dates) {
       out <- out + 
         ggplot2::geom_text(
           data = pheno_dt,
@@ -474,9 +474,9 @@ plot.s2ts <- function(x, pheno, fitted, dates = FALSE, ...) {
   # Add fitted line
   if (exists("fitted_dt")) {
     for (sel_year in fitted_dt[,unique(year)]) {
-    for (sel_season in fitted_dt[year == sel_year, unique(season)]) {
+    for (sel_cycle in fitted_dt[year == sel_year, unique(cycle)]) {
       out <- out + ggplot2::geom_line(
-        data = fitted_dt[year == sel_year & season == sel_season,], 
+        data = fitted_dt[year == sel_year & cycle == sel_cycle,], 
         colour = "red", alpha = 0.5
       )
     }
@@ -601,7 +601,7 @@ print.s2ts <- function(x, ...) {
       cat(" raw")
     } else if (attr(x, "gen_by") == "smooth_s2ts") {
       cat(" smoothed")
-    } else if (attr(x, "gen_by") %in% c("fill_s2ts", "cut_seasons")) {
+    } else if (attr(x, "gen_by") %in% c("fill_s2ts", "cut_cycles")) {
       cat("n interpolated")
     } else if (attr(x, "gen_by") == "fit_curve") {
       cat(paste0(" fitted (",attr(x, "fit")," method)"))

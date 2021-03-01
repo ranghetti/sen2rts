@@ -8,9 +8,9 @@
 #' @return A data table with the following fields:
 #'  - `id`: the time series ID (see `s2ts`);
 #'  - `year`: the year (integer);
-#'  - `season`: the season ID (integer);
+#'  - `cycle`: the cycle ID (integer);
 #'  - `begin`, `end`, `maxval`: the dates of begin, end and maximum value in
-#'      the season as computed by `cut_seasons()`;
+#'      the cycle as computed by `cut_cycles()`;
 #'  - other phenology metrics, depending on `method`:
 #'      - if `method = "trs"` or `"derivatives"`: `sos`, `eos`, `los`, `pop`,
 #'          `mgs`, `rsp`, `rau`, `peak`, `msp`, `mau` (see
@@ -54,69 +54,69 @@ extract_pheno <- function(
   #   "Greenup", "Maturity", "Senescence", "Dormancy" # klosterman
   # )
   
-  # Fit for each ID/season
+  # Fit for each ID/cycle
   pheno_list <- list()
   for (sel_id in names(data)) {
     pheno_list[[sel_id]] <- list()
     for (sel_year in names(data[[sel_id]])) {
-    for (sel_season in names(data[[sel_id]][[sel_year]])) {
+    for (sel_cycle in names(data[[sel_id]][[sel_year]])) {
       sel_metrics <- PhenoExtract(
-        data[[sel_id]][[sel_year]][[sel_season]], 
+        data[[sel_id]][[sel_year]][[sel_cycle]], 
         method = method,
         uncert = FALSE, plot = FALSE,
         sf = c(0,1),
         trs = trs, ...
       )$metrics
-      pheno_list[[sel_id]][[sel_year]][[sel_season]] <- data.table(
+      pheno_list[[sel_id]][[sel_year]][[sel_cycle]] <- data.table(
         "id" = sel_id,
         "year" = sel_year,
-        "season" = sel_season,
-        "begin" = min(data[[sel_id]][[sel_year]][[sel_season]]$ts$date),
-        "end" = max(data[[sel_id]][[sel_year]][[sel_season]]$ts$date),
-        "maxval" = data[[sel_id]][[sel_year]][[sel_season]]$maxval,
-        "weight" = data[[sel_id]][[sel_year]][[sel_season]]$weight,
+        "cycle" = sel_cycle,
+        "begin" = min(data[[sel_id]][[sel_year]][[sel_cycle]]$ts$date),
+        "end" = max(data[[sel_id]][[sel_year]][[sel_cycle]]$ts$date),
+        "maxval" = data[[sel_id]][[sel_year]][[sel_cycle]]$maxval,
+        "weight" = data[[sel_id]][[sel_year]][[sel_cycle]]$weight,
         as.data.frame(as.list(sel_metrics))
       )
       # sel_metrics_x <- sel_metrics[names(sel_metrics) %in% metrics_x]
       # sel_metrics_y <- sel_metrics[names(sel_metrics) %in% metrics_y]
       # sel_metrics[names(sel_metrics) %in% metrics_x]
       # if (!all(is.na(sel_metrics_x))) {
-      #   # dates of the metrics: if metrics refer to dates in the season range,
+      #   # dates of the metrics: if metrics refer to dates in the cycle range,
       #   # use them (rounded) as indices of the vector of dates (safer method);
       #   # otherwise, add them to the first date (allowing catching the "outliers" dates)
       #   # (the two methods should be equal, since input "ts" must be a daily-filled s2ts).
       #   pheno_x_dates <- if (
-      #     any(!round(sel_metrics_x) %in% seq_along(data[[sel_id]][[sel_year]][[sel_season]]$ts$date))
+      #     any(!round(sel_metrics_x) %in% seq_along(data[[sel_id]][[sel_year]][[sel_cycle]]$ts$date))
       #   ) {
-      #     round(sel_metrics_x)-1 + data[[sel_id]][[sel_year]][[sel_season]]$ts$date[1]
+      #     round(sel_metrics_x)-1 + data[[sel_id]][[sel_year]][[sel_cycle]]$ts$date[1]
       #   } else {
-      #     data[[sel_id]][[sel_year]][[sel_season]]$ts$date[round(sel_metrics_x)]
+      #     data[[sel_id]][[sel_year]][[sel_cycle]]$ts$date[round(sel_metrics_x)]
       #   }
-      #   pheno_x_list[[sel_id]][[sel_season]] <- data.table(
+      #   pheno_x_list[[sel_id]][[sel_cycle]] <- data.table(
       #     "id" = sel_id,
-      #     "season" = sel_season,
+      #     "cycle" = sel_cycle,
       #     "date" = c(
-      #       range(data[[sel_id]][[sel_year]][[sel_season]]$ts$date), # begin - end of the season
-      #       data[[sel_id]][[sel_year]][[sel_season]]$maxval, # date of the peak
+      #       range(data[[sel_id]][[sel_year]][[sel_cycle]]$ts$date), # begin - end of the cycle
+      #       data[[sel_id]][[sel_year]][[sel_cycle]]$maxval, # date of the peak
       #       pheno_x_dates # dates of the metrics
       #     ),
       #     "pheno" = c(
       #       "begin", "end", 
-      #       if (!is.null(data[[sel_id]][[sel_year]][[sel_season]]$maxval)) "maxval",
+      #       if (!is.null(data[[sel_id]][[sel_year]][[sel_cycle]]$maxval)) "maxval",
       #       names(sel_metrics_x)
       #     )
       #   )
       # }
       # if (!all(is.na(sel_metrics_y))) {
-      #   pheno_y_list[[sel_id]][[sel_season]] <- data.table(
+      #   pheno_y_list[[sel_id]][[sel_cycle]] <- data.table(
       #     "id" = sel_id,
-      #     "season" = sel_season,
+      #     "cycle" = sel_cycle,
       #     "value" = attr(data, "info")$rescale[1] + 
       #       sel_metrics_y * attr(data, "info")$rescale[2], # rescaled metrics
       #     "pheno" = names(sel_metrics_y)
       #   )
       # }
-    } # end of sel_season FOR cycle
+    } # end of sel_cycle FOR cycle
     } # end of sel_year FOR cycle
   } # end of id FOR cycle
 

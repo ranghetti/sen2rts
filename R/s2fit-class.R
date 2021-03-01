@@ -6,9 +6,9 @@ s2fit_to_s2ts <- function(fit) {
   # TODO
   rbindlist(lapply(names(fit), function(sel_id) {
     rbindlist(lapply(names(fit[[sel_id]]), function(sel_year) {
-    rbindlist(lapply(names(fit[[sel_id]][[sel_year]]), function(sel_season) {
-      fit[[sel_id]][[sel_year]][[sel_season]][["ts"]][
-        ,list("id" = sel_id, "year" = sel_year, "season" = sel_season, date, value)
+    rbindlist(lapply(names(fit[[sel_id]][[sel_year]]), function(sel_cycle) {
+      fit[[sel_id]][[sel_year]][[sel_cycle]][["ts"]][
+        ,list("id" = sel_id, "year" = sel_year, "cycle" = sel_cycle, date, value)
         ]
     }))
     }))

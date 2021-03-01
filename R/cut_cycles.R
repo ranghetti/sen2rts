@@ -1,49 +1,49 @@
-#' @title Cut seasons
-#' @description Cut Sentinel-2 time series into separate seasons,
+#' @title Cut cycles
+#' @description Cut Sentinel-2 time series into separate cycles,
 #'  detecting dates of cuts and of peaks.
 #' @param ts Time series in `s2ts` format (generated using `fill_s2ts()`).
-#' @param n_seas (optional) Maximum number of seasons to be detected in one year
-#'  (default: Inf, meaning that all the identified seasons are kept).
-#'  A season overlapping the new year's day (argument `newyearday`)
+#' @param n_cycles (optional) Maximum number of cycles to be detected in one year
+#'  (default: Inf, meaning that all the identified cycles are kept).
+#'  A cycle overlapping the new year's day (argument `newyearday`)
 #'  is assigned to the year in which the date of maximum value falls.
 #' @param min_win (optional) Minimum time window between two consecutive 
-#'  maxima / minima to consider a separate season.
+#'  maxima / minima to consider a separate cycle.
 #' @param min_relh (optional) Minimum relative difference between the maximum
-#'  and each of the two minima to consider a separate season.
+#'  and each of the two minima to consider a separate cycle.
 #' @param max_relval (optional) Maximum relative value to consider a 
-#'  season breakpoint.
+#'  cycle breakpoint.
 #' @param newyearday (optional) day to be considered as new year's day, used
-#'  to assign seasons to the proper year. It can be an object of class `Date`
-#'  (in which case the year is ignored) or a character value in the form `mm-dd`.
-#'  In case it is July 1 or higher, seasons falling in the last part of the year
-#'  are assigned to the subsequent year; otherwise, seasons falling in the first
-#'  part of the year are assigned to the previous year. Default is January 1
-#'  (all seasons are assigned the the year in which they fall).
+#'  to assign cycles to the proper year.
+#'  It can be an object of class `Date` (in which case the year is ignored) 
+#'  or a character value in the form `mm-dd`.
+#'  In case it is July 1 or higher, cycles whose maximum value is falling in
+#'  the last  part of the year are assigned to the subsequent year; 
+#'  otherwise, cycles whose maximum value is falling in the first part of the
+#'  year are assigned  to the previous year. Default is January 1
+#'  (all cycles are assigned the the year in which their maximum value falls).
 #' @param rank_metric (optional) TODO
-#' @param export_weight (optional) Logical: should the metric used to "weight" 
-#'  seasons be exported? (Default: FALSE)
 #' @return A data table with the following fields:
 #'  - `id`: the time series ID (see `s2ts`);
-#'  - `year`: the year assigned to each season;
-#'  - `season`: the season ID (progressive integer within each year);
-#'  - `begin`: the date of the begin of the season;
-#'  - `end`: the date of the end of the season;
-#'  - `maxval`: the date of the maximum value of the season.
+#'  - `year`: the year assigned to each cycle;
+#'  - `cycle`: the cycle ID (progressive integer within each year);
+#'  - `begin`: the date of the begin of the cycle;
+#'  - `end`: the date of the end of the cycle;
+#'  - `maxval`: the date of the maximum value of the cycle;
+#'  - `weight`: the value of the metric used for ranking seasons.
 #' @author Luigi Ranghetti, PhD (2020) \email{luigi@@ranghetti.info}
 #' @import data.table
 #' @importFrom stats quantile
 #' @importFrom methods as
 #' @export
 
-cut_seasons <- function(
+cut_cycles <- function(
   ts,
-  n_seas = Inf,
+  n_cycles = Inf,
   min_win = 60,
   min_relh = 0.25,
   max_relval = 0.3,
   newyearday = "01-01",
-  weight_metric = "integral",
-  export_weight = FALSE
+  weight_metric = "integral"
 ) {
   
   ## Check arguments
@@ -134,7 +134,7 @@ cut_seasons <- function(
       }
     }
     
-    # Remove "false seasons"
+    # Remove "false cycles"
     for (i in ts_dt[id == sel_id & cut1 == TRUE, uid]) {
       j <- ts_dt[id == sel_id & uid > i & cut1 == TRUE,][1, uid]
       if (!is.na(j) && ts_dt[seq(i,j), !any(peak1)]) {
@@ -149,13 +149,13 @@ cut_seasons <- function(
   
   # DT with records of peaks
   peak_dt <- ts_dt[peak1 == TRUE, list(s1 = seq_len(.N), maxval = date), by = id]
-  # DT with records of begin of the season
+  # DT with records of begin of the cycle
   begin_dt <- ts_dt[cut1 == TRUE, list(s1 = seq_len(.N), begin = date), by = id]
-  # DT with records of end of the season
+  # DT with records of end of the cycle
   end_dt <- begin_dt[s1 > 1,]
   end_dt[,s1 := s1-1]
   setnames(end_dt, "begin", "end")
-  # remove false begins of the season (dates only corresponding to ends)
+  # remove false begins of the cycle (dates only corresponding to ends)
   begin_dt <- begin_dt[begin_dt[, .I[s1 < max(s1)], by = id]$V1,]
   # bind DTs
   pheno_dt <- merge(merge(begin_dt, end_dt, by = c("id", "s1")), peak_dt, by = c("id", "s1"))
@@ -170,9 +170,9 @@ cut_seasons <- function(
     pheno_dt[,year:=ifelse(maxval>newyear,y1,y1-1)]
   }
   
-  ## Filter seasons basing on numbers
-  # Compute metric used to order seasons
-  # TODO optimize speed
+  ## Filter cycles basing on numbers
+  # Compute metric used to order cycles
+  # TODO optimise speed
   if (weight_metric == "integral") {
     for (i in seq_len(pheno_dt[,.N])) {
       pheno_dt[
@@ -201,14 +201,14 @@ cut_seasons <- function(
   
   # filter basing on this metric
   pheno_dt[,rank:=1+.N-rank(weight),by=list(id,year)]
-  pheno_dt <- pheno_dt[rank<=n_seas,]
+  pheno_dt <- pheno_dt[rank<=n_cycles,]
 
-  pheno_dt[,season:=seq_len(.N),by=list(id,year)]
+  pheno_dt[,cycle:=seq_len(.N),by=list(id,year)]
   pheno_dt[,c("newyear","y1","s1","uid","rank"):=NULL]
-  pheno_dt <- pheno_dt[,list(id, year, season, begin, end, maxval, weight)]
-  if (export_weight==FALSE) {pheno_dt[,weight:=NULL]}
+  pheno_dt <- pheno_dt[,list(id, year, cycle, begin, end, maxval, weight)]
+  # if (export_weight==FALSE) {pheno_dt[,weight:=NULL]}
   
-  attr(pheno_dt, "gen_by") <- "cut_seasons"
+  attr(pheno_dt, "gen_by") <- "cut_cycles"
   pheno_dt
   
 }
