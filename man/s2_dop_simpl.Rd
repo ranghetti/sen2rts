@@ -31,5 +31,5 @@ Sentinel-2 launch can also be returned, since this is required by
 License: GPL 3.0
 }
 \author{
-Luigi Ranghetti, phD (2021) \email{luigi@ranghetti.info}
+Luigi Ranghetti, PhD (2021) \email{luigi@ranghetti.info}
 }

@@ -4,7 +4,7 @@
 \alias{fit_curve}
 \title{Fit curve over cycles}
 \usage{
-fit_curve(ts, cycles, fit = "gu")
+fit_curve(ts, cycles, fit = c("gu", "klosterman"))
 }
 \arguments{
 \item{ts}{Time series in \code{s2ts} format (generated using \code{fill_s2ts()}).}
@@ -14,7 +14,9 @@ fit_curve(ts, cycles, fit = "gu")
 \item{fit}{Fitting function among \code{"klosterman"}, \code{"beck"},
 \code{"elmore"}, \code{"gu"} and \code{"no"} (see \code{phenopix::greenProcess()}).
 Value \code{"no"} can be used to convert a \code{s2ts} time series in the format
-returned by this function without making any interpolation.}
+returned by this function without making any interpolation.
+A vector of length > 1 can be specified, in which case the second element
+is used if the first method fails.}
 }
 \value{
 A named list of \code{n} elements (being \code{n} the number of IDs included

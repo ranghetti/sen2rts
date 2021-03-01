@@ -33,6 +33,8 @@ fakeFit <- function (ts, uncert=NA, nrep=NA) {
 #'  `"elmore"`, `"gu"` and `"no"` (see `phenopix::greenProcess()`).
 #'  Value `"no"` can be used to convert a `s2ts` time series in the format
 #'  returned by this function without making any interpolation.
+#'  A vector of length > 1 can be specified, in which case the second element
+#'  is used if the first method fails.
 #' @return A named list of `n` elements (being `n` the number of IDs included
 #'  in `ts`). Each element is a named list of `m` elements (being `m` the
 #'  number of detected cycles).
@@ -53,7 +55,7 @@ fakeFit <- function (ts, uncert=NA, nrep=NA) {
 fit_curve <- function(
   ts,
   cycles,
-  fit = "gu"
+  fit = c("gu", "klosterman")
 ) {
   
   
@@ -61,16 +63,13 @@ fit_curve <- function(
   # TODO
   
   # Check fit
-  fit.fun <- if (fit=="beck") phenopix::BeckFit else
-    if (fit=="elmore") phenopix::ElmoreFit else
-      if (fit=="klosterman") phenopix::KlostermanFit else
-        if (fit=="gu") phenopix::GuFit else
-          if (fit=="no") fakeFit else
-            print_message(
-            type = "error",
-            "Argument 'fun' only accepts values \"klosterman\", \"beck\", ",
-            "\"elmore\", \"gu\" and \"no\"."
-          )
+  if (any(!fit %in% c("beck", "elmore", "klosterman", "gu", "no"))) {
+    print_message(
+      type = "error",
+      "Argument 'fun' only accepts values \"klosterman\", \"beck\", ",
+      "\"elmore\", \"gu\" and \"no\"."
+    )
+  }
   
   ## Check s2ts format
   # (must contain date, id, orbit, sensor, value, opt. quality)
@@ -96,6 +95,22 @@ fit_curve <- function(
   rescale <- ts_dt[,c(min(value, na.rm=TRUE), diff(range(value, na.rm=TRUE)))]
   ts_dt[,relval := (value - rescale[1]) / rescale[2]]
   
+  # Assign fit.funs
+  fit.funs <- lapply(fit, function(f) {
+    if (f=="beck") phenopix::BeckFit else
+      if (f=="elmore") phenopix::ElmoreFit else
+        if (f=="klosterman") phenopix::KlostermanFit else
+          if (f=="gu") phenopix::GuFit else
+            if (f=="no") fakeFit
+  })
+  fit.funs <- list(
+    "beck" = phenopix::BeckFit,
+    "elmore" = phenopix::ElmoreFit,
+    "klosterman" = phenopix::KlostermanFit,
+    "gu" = phenopix::GuFit,
+    "no" = fakeFit
+  )
+  
   # Set progress bar (time consuming function)
   use_pb <- inherits(stdout(), "terminal") && cycles[,length(unique(paste(id,year,cycle)))] > 1
   if (use_pb) {
@@ -113,19 +128,29 @@ fit_curve <- function(
       sel_ts_zoo <- zoo::zoo(
         ts_dt[id == sel_id & date >= sel_cut_date[1] & date < sel_cut_date[3], relval]
       )
-      sel_fit <- try(fit.fun(ts = sel_ts_zoo, uncert = FALSE))
-      if (!inherits(sel_fit, "try-error")) {
+# if(sel_id=="09"&sel_year==2017){browser()}
+      sel_fit_success <- FALSE
+      for (sel_fit in fit) {
+        if (!sel_fit_success) {
+          sel_fit_out <- try(fit.funs[[sel_fit]](ts = sel_ts_zoo, uncert = FALSE), silent = TRUE)
+          attr(sel_fit_out, "info") <- list("method" = sel_fit)
+          sel_fit_success <- !inherits(sel_fit_out, "try-error") &&
+            !all(is.na(sel_fit_out$fit$predicted))
+        }
+      }
+      if (sel_fit_success) {
         fit_out[[sel_id]][[as.character(sel_year)]][[as.character(sel_cycle)]] <- list(
-          "fit" = sel_fit$fit,
+          "fit" = sel_fit_out$fit,
           "ts" = data.table(
             "date" = ts_dt[
               id == sel_id & date >= sel_cut_date[1] & date < sel_cut_date[3], 
               date
               ],
-            "value" = rescale[1] + as.numeric(sel_fit$fit$predicted) * rescale[2]
+            "value" = rescale[1] + as.numeric(sel_fit_out$fit$predicted) * rescale[2]
           ),
           "maxval" = sel_cut_date[2],
-          "weight" = cycles[id == sel_id & year == sel_year & cycle == sel_cycle,]$weight
+          "weight" = cycles[id == sel_id & year == sel_year & cycle == sel_cycle,]$weight,
+          "info" = attr(sel_fit_out, "info")
         )
       }
       if (use_pb) {setTxtProgressBar(pb, pb$getVal()+1)} # update progress bar
@@ -136,7 +161,7 @@ fit_curve <- function(
   if (use_pb) {message("")} # separate progress bar
   
   attr(fit_out, "gen_by") <- "fit_curve"
-  attr(fit_out, "info") <- list("fit" = fit, "rescale" = rescale)
+  attr(fit_out, "info") <- list("rescale" = rescale)
   fit_out
   
 }

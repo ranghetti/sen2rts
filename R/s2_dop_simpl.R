@@ -12,7 +12,7 @@
 #'  ("2A", "2B" or both).
 #' @return A data table with the dates (column "date"), the missions
 #' (column "mission") and the orbits (column "orbit").
-#' @author Luigi Ranghetti, phD (2021) \email{luigi@@ranghetti.info}
+#' @author Luigi Ranghetti, PhD (2021) \email{luigi@@ranghetti.info}
 #' @note License: GPL 3.0
 #' @import data.table
 #' @importFrom jsonlite fromJSON
