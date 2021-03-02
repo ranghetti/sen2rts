@@ -30,7 +30,10 @@
 #'  - `end`: the date of the end of the cycle;
 #'  - `maxval`: the date of the maximum value of the cycle;
 #'  - `weight`: the value of the metric used for ranking seasons.
-#' @author Luigi Ranghetti, PhD (2020) \email{luigi@@ranghetti.info}
+#' @note The steps used to discriminate seasons are partially based on the method
+#'  exposed in Meroni et al. (2021) (\doi{10.1016/j.rse.2020.112232}).
+#'  The methodology will be documented in future.
+#' @author Luigi Ranghetti, PhD (2021) \email{luigi@@ranghetti.info}
 #' @import data.table
 #' @importFrom stats quantile
 #' @importFrom methods as

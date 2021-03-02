@@ -59,6 +59,11 @@ A data table with the following fields:
 Cut Sentinel-2 time series into separate cycles,
 detecting dates of cuts and of peaks.
 }
+\note{
+The steps used to discriminate seasons are partially based on the method
+exposed in Meroni et al. (2021) (\doi{10.1016/j.rse.2020.112232}).
+The methodology will be documented in future.
+}
 \author{
-Luigi Ranghetti, PhD (2020) \email{luigi@ranghetti.info}
+Luigi Ranghetti, PhD (2021) \email{luigi@ranghetti.info}
 }
