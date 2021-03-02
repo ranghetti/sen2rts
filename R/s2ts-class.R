@@ -304,14 +304,37 @@ setAs("s2ts", "list", function(from) {
 #' @description Plot a `s2ts` time series, using `{ggplot2}` routines.
 #' @param pheno (optional) Output of `cut_cycles()`
 #' @param fitted (optional) Output of `fit_curve()`
-#' @param dates (optional) Logical or character:
+#' @param plot_points (optional) Logical: should raw point values be plotted?
+#'  Default: only if `pheno` and `fitted` are not provided.
+#' @param plot_rawline (optional) Logical: should lines connecting raw points
+#'  be plotted? Default: yes.
+#'  They are represented as dark grey lines, or as almost transparent lines
+#'  if smoothed values exist and are represented.
+#' @param plot_smoothed (optional) Logical: should lines connecting smoothed
+#'  values be plotted? Default: yes (if exist).
+#'  They are represented as dark grey lines.
+#' @param plot_fitted (optional) Logical: should double logistic curves be 
+#'  plotted? Default: yes, if provided. They are represented as red curves.
+#' @param plot_cuts (optional) Logical: should cuts between cycles be plotted?
+#'  Default: yes, if provided in `pheno` or in `fitted`.
+#'  They are represented as black vertical lines.
+#' @param plot_dates (optional) Logical or character:
 #'  if TRUE, plot the dates of cycle cuts and phenology metrics;
 #'  if FALSE (default), do not plot anything;
 #'  if `"cycles"` or `"pheno"`, plot only cycle cuts or phenology metrics.
+#' @param pheno_metrics (optional) Character vector containing the names of
+#'  the phenological metrics to be plotted. 
+#'  If not provided or if `pheno_metrics = "all"`, all available metrics
+#'  are plotted.
 #' @author Luigi Ranghetti, PhD (2020) \email{luigi@@ranghetti.info}
 #' @import data.table
 #' @export
-plot.s2ts <- function(x, pheno, fitted, dates = FALSE, ...) {
+plot.s2ts <- function(
+  x, pheno, fitted, 
+  plot_points, plot_rawline, plot_smoothed, plot_fitted, plot_cuts,
+  plot_dates = FALSE, pheno_metrics, 
+  ...
+) {
   
   # Check optional suggested ggplot2 to be present
   if (!requireNamespace("ggplot2", quietly = TRUE)) {
@@ -333,13 +356,37 @@ plot.s2ts <- function(x, pheno, fitted, dates = FALSE, ...) {
   } else { # including attr(x, "gen_by") == "extract_s2ts"
     "base"
   }
-  if (!missing(pheno)) {
-    plot_mode <- c(plot_mode, "pheno", paste0("pheno_",attr(pheno, "info")$method))
+  plot_elements <- list()
+  plot_elements$points <- if (!missing(plot_points)) {
+    plot_points
+  } else {
+    # by default, plot points if both `pheno` and `fitted` are missing
+    all(!"background" %in% plot_mode)
+  }
+  plot_elements$rawline <- if (!missing(plot_rawline)) {plot_rawline} else {TRUE}
+  plot_elements$smoothedline <- if (!missing(plot_smoothed)) {
+    plot_smoothed
+  } else {
+    # by default, plot smoothed line in all cases except "base"
+    any(c("smoothed", "filled", "background") %in% plot_mode)
+  }
+  plot_elements$fitted <- if (!missing(fitted) & !missing(plot_fitted)) {
+    plot_fitted
+  } else {
+    !missing(fitted)
+  }
+  plot_elements$cuts <- if (!missing(plot_cuts)) {
+    plot_cuts
+  } else {
+    TRUE # meaning to plot if existing
+  }
+  plot_elements$pheno_method <- if (!missing(pheno)) {
+    attr(pheno, "info")$method
   }
   
-  # Change "dates" value
-  if (dates == TRUE) {
-    dates <- c("pheno", "cycles")
+  # Change "plot_dates" value
+  if (plot_dates == TRUE) {
+    plot_dates <- c("pheno", "cycles")
   }
   
   # Extract input data.table
@@ -370,26 +417,31 @@ plot.s2ts <- function(x, pheno, fitted, dates = FALSE, ...) {
       ]
     # TODO add maxval
   }
-  if ("pheno" %in% plot_mode) {
+  if (!is.null(plot_elements$pheno_method)) {
     # Define which metrics are quantitative (y) and which refer to dates (x)
     metrics_y <- c(
-      if (any(c("pheno_trs", "pheno_derivatives") %in% plot_mode)) {
+      if (plot_elements$pheno_method %in% c("trs", "derivatives")) {
         c("mgs", "peak", "msp", "mau")
-      } else if ("pheno_gu" %in% plot_mode) {
+      } else if (plot_elements$pheno_method %in% c("gu")) {
         c("maxline", "baseline")
       }
     )
     metrics_x <- c(
       "maxval", #"begin", "end",
-      if (any(c("pheno_trs", "pheno_derivatives") %in% plot_mode)) {
+      if (plot_elements$pheno_method %in% c("trs", "derivatives")) {
         c("sos", "eos", "pop")
-      } else if ("pheno_gu" %in% plot_mode) {
+      } else if (plot_elements$pheno_method %in% c("gu")) {
         c("UD", "SD", "DD", "RD")
-      } else if ("pheno_klosterman" %in% plot_mode) {
+      } else if (plot_elements$pheno_method %in% c("klosterman")) {
         c("Greenup", "Maturity", "Senescence", "Dormancy")
       }
     )
-    if (!is.null(metrics_y)) {
+    if (!missing(pheno_metrics) && 
+        !(length(pheno_metrics) == 1 && "all" %in% pheno_metrics)) {
+      metrics_x <- metrics_x[metrics_x %in% pheno_metrics]
+      metrics_y <- metrics_y[metrics_y %in% pheno_metrics]
+    }
+    if (length(metrics_y) > 0) {
       pheno_dt_y <- melt(
         pheno_dt, 
         id.vars = c("id", "year", "cycle", "begin", "end"), 
@@ -397,7 +449,7 @@ plot.s2ts <- function(x, pheno, fitted, dates = FALSE, ...) {
         variable.name = "Value", value.name = "value"
       )
     }
-    if (!is.null(metrics_x)) {
+    if (length(metrics_x) > 0) {
       pheno_dt_x <- melt(
         pheno_dt, 
         id.vars = c("id", "year", "cycle"), 
@@ -411,10 +463,12 @@ plot.s2ts <- function(x, pheno, fitted, dates = FALSE, ...) {
   out <- ggplot2::ggplot(x_dt, ggplot2::aes(x = date, y = value))
   
   # Add raw line
-  out <- out + ggplot2::geom_line(
-    data = x_dt_raw, 
-    alpha = if (any(c("smoothed", "filled", "background") %in% plot_mode)) {0.1} else {0.35}
-  )
+  if (plot_elements$rawline == TRUE) {
+    out <- out + ggplot2::geom_line(
+      data = x_dt_raw, 
+      alpha = if (plot_elements$smoothedline == TRUE) {0.1} else {0.35}
+    )
+  }
   
   # Add cycle cuts / peaks
   if (exists("pheno_dt_y")) {
@@ -437,7 +491,7 @@ plot.s2ts <- function(x, pheno, fitted, dates = FALSE, ...) {
         data = pheno_dt_x,
         ggplot2::aes(xintercept = as.numeric(date), colour = Phenology)
       )
-    if ("pheno" %in% dates) {
+    if ("pheno" %in% plot_dates) {
       out <- out + 
         ggplot2::geom_text(
         data = pheno_dt_x,
@@ -446,7 +500,7 @@ plot.s2ts <- function(x, pheno, fitted, dates = FALSE, ...) {
       )
     }
   }
-  if (exists("pheno_dt")) {
+  if (exists("pheno_dt") & plot_elements$cuts == TRUE) {
     out <- out + 
       ggplot2::geom_vline(
         data = pheno_dt,
@@ -456,7 +510,7 @@ plot.s2ts <- function(x, pheno, fitted, dates = FALSE, ...) {
         data = pheno_dt,
         ggplot2::aes(xintercept = as.numeric(end)), colour = "black"
       )
-    if ("cycles" %in% dates) {
+    if ("cycles" %in% plot_dates) {
       out <- out + 
         ggplot2::geom_text(
           data = pheno_dt,
@@ -472,7 +526,7 @@ plot.s2ts <- function(x, pheno, fitted, dates = FALSE, ...) {
   }
   
   # Add fitted line
-  if (exists("fitted_dt")) {
+  if (plot_elements$fitted == TRUE) {
     for (sel_year in fitted_dt[,unique(year)]) {
     for (sel_cycle in fitted_dt[year == sel_year, unique(cycle)]) {
       out <- out + ggplot2::geom_line(
@@ -484,16 +538,16 @@ plot.s2ts <- function(x, pheno, fitted, dates = FALSE, ...) {
   }
   
   # Add smoothed line
-  if (any(c("smoothed", "filled", "background") %in% plot_mode)) {
+  if (plot_elements$smoothedline == TRUE) {
     out <- out + ggplot2::geom_line(data = x_dt_smooth, alpha = 0.5)
   }
   
   # Add points
-  if (any(c("base", "smoothed", "filled") %in% plot_mode)) {
+  if (plot_elements$points == TRUE) {
     out <- out + ggplot2::geom_point(
       data = x_dt_raw, 
-      if (!is.null(x_dt$QA)) {ggplot2::aes(colour = QA)}, 
-      size = 0.75
+      if (!is.null(x_dt$QA)) {ggplot2::aes(fill = QA)}, 
+      shape = 21, colour = "#00000000"
     )
   }
   
@@ -511,11 +565,12 @@ plot.s2ts <- function(x, pheno, fitted, dates = FALSE, ...) {
     ggplot2::scale_x_date(name = "Date") +
     ggplot2::scale_y_continuous(name = NULL) +
     ggplot2::theme_light()
-  if (all(!"background" %in% plot_mode)) {
-    out <- out + ggplot2::scale_colour_viridis_c(
+  if (plot_elements$points == TRUE) {
+    out <- out + ggplot2::scale_fill_viridis_c(
       option = "inferno", direction = -1
     )
-  } else {
+  }
+  if (exists("pheno_dt")) {
     out <- out + ggplot2::scale_colour_brewer(palette = "Set2")
   }
 
