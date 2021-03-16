@@ -8,8 +8,10 @@ cut_cycles(
   ts,
   n_cycles = Inf,
   min_win = 60,
-  min_relh = 0.25,
-  max_relval = 0.3,
+  min_peakvalue = 0.1,
+  max_dropvalue = 0.3,
+  value_type = "relative",
+  min_rel_thresh = 0.15,
   newyearday = "01-01",
   weight_metric = "integral"
 )
@@ -25,11 +27,19 @@ is assigned to the year in which the date of maximum value falls.}
 \item{min_win}{(optional) Minimum time window between two consecutive
 maxima / minima to consider a separate cycle.}
 
-\item{min_relh}{(optional) Minimum relative difference between the maximum
-and each of the two minima to consider a separate cycle.}
+\item{min_peakvalue}{(optional) Minimum value to consider a cycle peak.}
 
-\item{max_relval}{(optional) Maximum relative value to consider a
-cycle breakpoint.}
+\item{max_dropvalue}{(optional) Maximum value to consider a cycle drop
+(breakpoint).}
+
+\item{value_type}{(optional) Character: if \code{"relative"} (default), values
+set with arguments \code{min_peakval} and \code{max_dropval} are relative
+values (normalised to 0-1 range among IDs);
+if \code{"absolute"}, absolute values are considered.}
+
+\item{min_rel_thresh}{(optional) Numeric: threshold used to consider
+local minima as relevant, according to Meroni et al. (2021)
+(see for reference). Default is 0.15 as in this reference.}
 
 \item{newyearday}{(optional) day to be considered as new year's day, used
 to assign cycles to the proper year.
@@ -41,7 +51,11 @@ otherwise, cycles whose maximum value is falling in the first part of the
 year are assigned  to the previous year. Default is January 1
 (all cycles are assigned the the year in which their maximum value falls).}
 
-\item{rank_metric}{(optional) TODO}
+\item{weight_metric}{(optional) Criterion used to assign a weight value
+to each seasons (used by subsequent functions:
+\code{"integral"} (default: sum of values among the cycle),
+\code{"length"} (length of the cycle) or
+\code{"maxval"} (maximum value reached in the cycle).}
 }
 \value{
 A data table with the following fields:

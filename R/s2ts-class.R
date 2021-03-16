@@ -552,7 +552,7 @@ plot.s2ts <- function(
   }
   
   # Facet in case of multiple IDs
-  if (length(sort(unique(x_dt$id))) > 0) {
+  if (length(unique(x_dt$id)) > 0) {
     out <- out + ggplot2::facet_wrap(
       ~id, 
       ncol = round(sqrt(length(unique(x_dt$id))/2))
@@ -574,22 +574,19 @@ plot.s2ts <- function(
     out <- out + ggplot2::scale_colour_brewer(palette = "Set2")
   }
 
-  # out + ggplot2::geom_rect(
-  #   aes()
-  # )
-  date_range <- range(x_dt$date)
-  year_range <- as.integer(strftime(date_range,"%Y"))
-  year_seq <- seq(year_range[1]-1, year_range[2]+1)
-  dates_bands <- data.table(
-    begin = as.Date(apply(expand.grid(year_seq,seq(1,10,3),1),1,paste,collapse="-")),
-    end = as.Date(apply(expand.grid(year_seq,paste(seq(3,12,3),c(31,30,30,31),sep="-")),1,paste,collapse="-")),
-    seas = rep(c("winter","spring","summer","autumn"), each = length(year_seq))
-  )[order(begin),]
-  dates_bands <- dates_bands[begin<=date_range[2] & end>=date_range[1],]
-  dates_bands[1,begin:=date_range[1]]
-  dates_bands[nrow(dates_bands),end:=date_range[2]]
+  # date_range <- range(x_dt$date)
+  # year_range <- as.integer(strftime(date_range,"%Y"))
+  # year_seq <- seq(year_range[1]-1, year_range[2]+1)
+  # dates_bands <- data.table(
+  #   begin = as.Date(apply(expand.grid(year_seq,seq(1,10,3),1),1,paste,collapse="-")),
+  #   end = as.Date(apply(expand.grid(year_seq,paste(seq(3,12,3),c(31,30,30,31),sep="-")),1,paste,collapse="-")),
+  #   seas = rep(c("winter","spring","summer","autumn"), each = length(year_seq))
+  # )[order(begin),]
+  # dates_bands <- dates_bands[begin<=date_range[2] & end>=date_range[1],]
+  # dates_bands[1,begin:=date_range[1]]
+  # dates_bands[nrow(dates_bands),end:=date_range[2]]
+  # # TODO aggiungi bande con geom_rect, limiti Y a Inf, colore blu per winter e rosso per summer
   
-  # TODO aggiungi bande con geom_rect, limiti Y a Inf, colore blu per winter e rosso per summer
   out
   
 }

@@ -128,7 +128,6 @@ fit_curve <- function(
       sel_ts_zoo <- zoo::zoo(
         ts_dt[id == sel_id & date >= sel_cut_date[1] & date < sel_cut_date[3], relval]
       )
-# if(sel_id=="09"&sel_year==2017){browser()}
       sel_fit_success <- FALSE
       for (sel_fit in fit) {
         if (!sel_fit_success) {
