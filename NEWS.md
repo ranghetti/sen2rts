@@ -1,3 +1,22 @@
+# Version 0.3.1
+
+## Implementations
+- `fit_curve()`: add value `"no"` for argument `fit` (useful to skip interpolation to extract phenological metrics with TRS).
+- New function `aggregate_pheno()` to aggregate phenological metrics.
+- New function `assign_season()` to assign a season label to cycles.
+- Change SG window: from n. images to days. In this way there are no differences among periods with/without S2B (when only S2A exists the curve is less smoothed, but the window is the same in terms of days).
+- Allow multiple `fit` values in `fit_curve()`, so to use the secondary method in case of failure of the first.
+- Rewrite `cut_cycles()` to follow Meroni et al. (2021).
+
+## Minor changes
+- Semantic change: season -> cycle, involving name of functions (`cut_seasons()` -> `cut_cycles()`) and parameters.
+- Patch `PhenoTrs()` to ensure `sos` < `pop` < `eos`.
+- `year` is added to outputs of functions since `cut_cycles()`.
+- Allow specifying a maximum number of seasons per year.
+- Adapt plot methods.
+- Fixes.
+
+
 # Version 0.3.0
 
 - New functions to reach [milestone 2](https://github.com/ranghetti/sen2rts/milestone/2):

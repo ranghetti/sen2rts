@@ -5,12 +5,53 @@
 \alias{plot.s2ts}
 \title{Plot \code{s2ts} object}
 \usage{
-plot.s2ts(x, pheno, fitted, ...)
+\method{plot}{s2ts}(
+  x,
+  pheno,
+  fitted,
+  plot_points,
+  plot_rawline,
+  plot_smoothed,
+  plot_fitted,
+  plot_cuts,
+  plot_dates = FALSE,
+  pheno_metrics,
+  ...
+)
 }
 \arguments{
-\item{pheno}{(optional) Output of \code{cut_seasons()}}
+\item{pheno}{(optional) Output of \code{cut_cycles()}}
 
 \item{fitted}{(optional) Output of \code{fit_curve()}}
+
+\item{plot_points}{(optional) Logical: should raw point values be plotted?
+Default: only if \code{pheno} and \code{fitted} are not provided.}
+
+\item{plot_rawline}{(optional) Logical: should lines connecting raw points
+be plotted? Default: yes.
+They are represented as dark grey lines, or as almost transparent lines
+if smoothed values exist and are represented.}
+
+\item{plot_smoothed}{(optional) Logical: should lines connecting smoothed
+values be plotted? Default: yes (if exist).
+They are represented as dark grey lines.}
+
+\item{plot_fitted}{(optional) Logical: should double logistic curves be
+plotted? Default: yes, if provided. They are represented as red curves.}
+
+\item{plot_cuts}{(optional) Logical: should cuts between cycles be plotted?
+Default: yes, if provided in \code{pheno} or in \code{fitted}.
+They are represented as black vertical lines.}
+
+\item{plot_dates}{(optional) Logical or character:
+if TRUE, plot the dates of cycle cuts and phenology metrics;
+if FALSE (default), do not plot anything;
+if \code{"cycles"} or \code{"pheno"}, plot only cycle cuts or phenology metrics.}
+
+\item{pheno_metrics}{(optional) Character vector containing the names of
+the phenological metrics to be plotted.
+If not provided or if \code{pheno_metrics = "all"}, all available metrics
+are plotted.}
 }
 \description{
 Plot a \code{s2ts} time series, using \code{{ggplot2}} routines.

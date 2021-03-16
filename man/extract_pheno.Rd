@@ -20,9 +20,10 @@ extract_pheno(data, method = "trs", trs = 0.5, ...)
 A data table with the following fields:
 \itemize{
 \item \code{id}: the time series ID (see \code{s2ts});
-\item \code{season}: the season ID (integer);
+\item \code{year}: the year (integer);
+\item \code{cycle}: the cycle ID (integer);
 \item \code{begin}, \code{end}, \code{maxval}: the dates of begin, end and maximum value in
-the season as computed by \code{cut_seasons()};
+the cycle as computed by \code{cut_cycles()};
 \item other phenology metrics, depending on \code{method}:
 \itemize{
 \item if \code{method = "trs"} or \code{"derivatives"}: \code{sos}, \code{eos}, \code{los}, \code{pop},
