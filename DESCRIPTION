@@ -18,7 +18,11 @@ Imports:
   data.table,
   sf,
   stars,
-  dplyr
+  dplyr,
+  jsonlite,
+  dplyr,
+  phenopix,
+  zoo
 Suggests:
   MASS,
   ggplot2,
