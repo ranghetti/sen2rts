@@ -9,6 +9,9 @@
 #' @param max_na_days (optional) maximum number of consecutive days with missing
 #'  values which can be filled (in case of longer time windows with missing data,
 #'  NA are returned).
+#'  Default is to fit everything (unless this could lead to errors in case of
+#'  long NT time windows, currently it is the only way to get subsequent functions 
+#'  working).
 #' @param max_extrapolation (optional) Numeric: maximum allowed extrapolation
 #'  out of original range (relative value).
 #'  Default is 0.1 (+10%). Set to Inf in order not to set any constraint.
@@ -20,7 +23,7 @@ fill_s2ts <- function(
   ts,
   frequency = "daily",
   method = "fmm",
-  max_na_days = 30,
+  max_na_days = Inf,
   max_extrapolation = 0.1
 ) {
   
@@ -99,7 +102,7 @@ fill_s2ts <- function(
       xout = ts_dt_out2[date %in% valid_xrange, date],
       method = method
     )
-    sel_spline$x <- as.Date(sel_spline$x, origin = "1970-01-01")
+    # sel_spline$x <- as.Date(sel_spline$x, origin = "1970-01-01")
     ts_dt_out2[date %in% valid_xrange, value := sel_spline$y]
     
     # Coerce to original min/max ranges

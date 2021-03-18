@@ -32,7 +32,7 @@
 
 smooth_s2ts <- function(
   ts,
-  min_qa = 0.5,
+  min_qa = 0.2,
   noise_dir = "low",
   spike = 0.25,
   spike_window = 5,
@@ -58,8 +58,8 @@ smooth_s2ts <- function(
   
   # Check sg_n
   if (any(
-    sg_n < 1,
-    sg_n > 1 & !noise_dir %in% c("low", "high")
+    sg_n < 1#,
+    # sg_n > 1 & !noise_dir %in% c("low", "high")
   )) {
     sg_n <- 1
   }
@@ -95,25 +95,31 @@ smooth_s2ts <- function(
   ts_dt$spike <- NULL
   
   ## Exclude low-quality values and reshape others
+  ts_dt <- ts_dt[,value0 := value]
   if (!is.null(ts_dt$qa)) {
-    
-    # Recompute low-quality values
-    ts_dt$value0 <- ts_dt$value
-    for (sel_id in unique(ts_dt$id)) { # cycle on IDs
-      valid_range <- range(ts_dt[id == sel_id & qa > min_qa, date])
-      ts_dt_interp <- approx(
-        ts_dt[id == sel_id & qa > min_qa, date],
-        ts_dt[id == sel_id & qa > min_qa, value],
-        xout = ts_dt[id == sel_id & date >= valid_range[1] & date <= valid_range[2], date]
-      )
-      ts_dt[id == sel_id & date >= valid_range[1] & date <= valid_range[2],
-            value0 := ts_dt_interp$y]
-    }
+    ts_dt <- ts_dt[qa > min_qa,]
     ts_dt <- ts_dt[,qa0 := qa]
   } else {
-    ts_dt <- ts_dt[,value0 := value]
     ts_dt <- ts_dt[,qa0 := 1]
   }
+  # if (!is.null(ts_dt$qa)) {
+  #   # Recompute low-quality values
+  #   ts_dt$value0 <- ts_dt$value
+  #   for (sel_id in unique(ts_dt$id)) { # cycle on IDs
+  #     valid_range <- range(ts_dt[id == sel_id & qa > min_qa, date])
+  #     ts_dt_interp <- approx(
+  #       ts_dt[id == sel_id & qa > min_qa, date],
+  #       ts_dt[id == sel_id & qa > min_qa, value],
+  #       xout = ts_dt[id == sel_id & date >= valid_range[1] & date <= valid_range[2], date]
+  #     )
+  #     ts_dt[id == sel_id & date >= valid_range[1] & date <= valid_range[2],
+  #           value0 := ts_dt_interp$y]
+  #   }
+  #   ts_dt <- ts_dt[,qa0 := qa]
+  # } else {
+  #   ts_dt <- ts_dt[,value0 := value]
+  #   ts_dt <- ts_dt[,qa0 := 1]
+  # }
   
   # Reshape data to use a day-dependent window
   # (this step is required to pass a "more or less time weighted")
@@ -125,7 +131,7 @@ smooth_s2ts <- function(
   }
   ts_dt_teor <- rbindlist(
     sapply(unique(ts_dt$id), function(i) {
-      sen2r::s2_dop(
+      s2_dop_simpl(
         s2_orbits = unique(ts_dt[id==i,]$orbit),
         timewindow = range(ts_dt[id==i,]$date),
         mission = unique(ts_dt[id==i,]$sensor)
@@ -140,7 +146,19 @@ smooth_s2ts <- function(
     by = c("id", "date", "sensor", "orbit"),
     all = TRUE
   )
-  ts_dt_filled[is.na(value), c("value0","qa0"):=list(0,0)]
+  # Recompute low-quality and missing values
+  for (sel_id in unique(ts_dt_filled$id)) { # cycle on IDs
+    valid_range <- range(ts_dt_filled[id == sel_id & !is.na(value), date])
+    ts_dt_interp <- approx(
+      ts_dt_filled[id == sel_id & !is.na(value), date],
+      ts_dt_filled[id == sel_id & !is.na(value), value],
+      xout = ts_dt_filled[id == sel_id & date >= valid_range[1] & date <= valid_range[2], date]
+    )
+    ts_dt_filled[id == sel_id & date >= valid_range[1] & date <= valid_range[2],
+          value0 := ts_dt_interp$y]
+  }
+  # ts_dt_filled[is.na(value), c("value0","qa0"):=list(0,0)]
+  ts_dt_filled <- ts_dt_filled[is.na(value), "qa0" := 1e-2]
   sg_window <- ceiling(
     (sg_daywindow*2+1) / 10 * 
       ts_dt[,length(unique(orbit))*length(unique(sensor))]
@@ -167,6 +185,7 @@ smooth_s2ts <- function(
     ts_dt_filled[,paste(id, date, sensor, orbit)] %in% 
       ts_dt[,paste(id, date, sensor, orbit)],
   ]
+  
   
   # Coerce values to original ranges
   if (max_extrapolation < Inf) {

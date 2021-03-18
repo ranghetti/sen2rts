@@ -8,7 +8,7 @@ fill_s2ts(
   ts,
   frequency = "daily",
   method = "fmm",
-  max_na_days = 30,
+  max_na_days = Inf,
   max_extrapolation = 0.1
 )
 }
@@ -26,7 +26,10 @@ the theoretic Sentinel-2 dates of passage.
 
 \item{max_na_days}{(optional) maximum number of consecutive days with missing
 values which can be filled (in case of longer time windows with missing data,
-NA are returned).}
+NA are returned).
+Default is to fit everything (unless this could lead to errors in case of
+long NT time windows, currently it is the only way to get subsequent functions
+working).}
 
 \item{max_extrapolation}{(optional) Numeric: maximum allowed extrapolation
 out of original range (relative value).

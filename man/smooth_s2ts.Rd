@@ -6,7 +6,7 @@
 \usage{
 smooth_s2ts(
   ts,
-  min_qa = 0.5,
+  min_qa = 0.2,
   noise_dir = "low",
   spike = 0.25,
   spike_window = 5,
