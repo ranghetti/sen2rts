@@ -1,6 +1,8 @@
 
 # Internal function which will be used as methods of the upcoming class "s2fit"
 
+#' @import data.table
+
 s2fit_to_s2ts <- function(fit) {
   # Check s2fit format
   # TODO
