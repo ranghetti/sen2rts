@@ -11,6 +11,7 @@
 #'  if `"high"`, lower values are generally maintained;
 #'  if `"undefined"` (default), no assumptions are done.
 #' @param spike Relative "y" difference for spike determination (default is 0.25).
+#'  Set to NA to skip spike removal.
 #' @param spike_window Maximum number of values for spike identification
 #'  (it must be an odd number). Default is 3.
 #' @param sg_daywindow Half-size of the time window to be used to interpolate 
@@ -65,34 +66,36 @@ smooth_s2ts <- function(
   }
   
   ## Build relative TS
-  ts_dt[,relval := (value - min(value, na.rm=TRUE)) / diff(range(value, na.rm=TRUE))]
+  ts_dt[,relval := (value - min(value, na.rm=TRUE)) / diff(range(value, na.rm=TRUE)), by = id]
   
   ## Remove spikes
-  ts_dt$spike <- FALSE #initialisation
-  for (sel_id in unique(ts_dt$id)) { # cycle on IDs
-    ## Convert inputs
-    shw <- trunc(spike_window/2) # spike half window
-    sel_id_rows <- ts_dt[,which(id == sel_id)]
-    for (j in seq(sel_id_rows[1]+shw, sel_id_rows[length(sel_id_rows)]-shw)) {
-      val <- ts_dt[seq(j-shw, j+shw), relval]
-      if (all(
-        noise_dir %in% c("undefined", "high"),
-        any(val[shw+1] - val[seq(1,shw)] > spike),
-        any(val[shw+1] - val[seq(shw+2,2*shw+1)] > spike)
-      )) {
-        ts_dt[j, spike := TRUE]
+  if (!is.na(spike)) {
+    ts_dt$spike <- FALSE #initialisation
+    for (sel_id in unique(ts_dt$id)) { # cycle on IDs
+      ## Convert inputs
+      shw <- trunc(spike_window/2) # spike half window
+      sel_id_rows <- ts_dt[,which(id == sel_id)]
+      for (j in seq(sel_id_rows[1]+shw, sel_id_rows[length(sel_id_rows)]-shw)) {
+        val <- ts_dt[seq(j-shw, j+shw), relval]
+        if (all(
+          noise_dir %in% c("undefined", "high"),
+          any(val[shw+1] - val[seq(1,shw)] > spike),
+          any(val[shw+1] - val[seq(shw+2,2*shw+1)] > spike)
+        )) {
+          ts_dt[j, spike := TRUE]
+        }
+        if (all(
+          noise_dir %in% c("undefined", "low"),
+          any(val[seq(1,shw)] - val[shw+1] > spike),
+          any(val[seq(shw+2,2*shw+1)] - val[shw+1] > spike)
+        )) {
+          ts_dt[j, spike := TRUE]
+        }
       }
-      if (all(
-        noise_dir %in% c("undefined", "low"),
-        any(val[seq(1,shw)] - val[shw+1] > spike),
-        any(val[seq(shw+2,2*shw+1)] - val[shw+1] > spike)
-      )) {
-        ts_dt[j, spike := TRUE]
-      }
-    }
-  } # end of id FOR cycle
-  ts_dt <- ts_dt[spike == FALSE,]
-  ts_dt$spike <- NULL
+    } # end of id FOR cycle
+    ts_dt <- ts_dt[spike == FALSE,]
+    ts_dt$spike <- NULL
+  }
   
   ## Exclude low-quality values and reshape others
   ts_dt <- ts_dt[,value0 := value]
@@ -155,18 +158,18 @@ smooth_s2ts <- function(
       xout = ts_dt_filled[id == sel_id & date >= valid_range[1] & date <= valid_range[2], date]
     )
     ts_dt_filled[id == sel_id & date >= valid_range[1] & date <= valid_range[2],
-          value0 := ts_dt_interp$y]
+                 value0 := ts_dt_interp$y]
   }
   # ts_dt_filled[is.na(value), c("value0","qa0"):=list(0,0)]
   ts_dt_filled <- ts_dt_filled[is.na(value), "qa0" := 1e-2]
-  sg_window <- ceiling(
-    (sg_daywindow*2+1) / 10 * 
-      ts_dt[,length(unique(orbit))*length(unique(sensor))]
-  )
   
   # Compute Savitzky-Golay
   ts_dt_filled$value_smoothed <- numeric()
   for (sel_id in unique(ts_dt_filled$id)) { # cycle on IDs
+    sg_window <- ceiling(
+      sg_daywindow / 10 * 
+        ts_dt_filled[id == sel_id, length(unique(orbit))*length(unique(sensor))]
+    ) * 2 + 1
     qa <- ts_dt_filled[id == sel_id, qa0]
     value <- value_sg <- ts_dt_filled[id == sel_id, value0]
     for (i in seq_len(sg_n)) {
