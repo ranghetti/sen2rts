@@ -25,12 +25,14 @@
 #' @importFrom stars read_stars st_redimension
 #'
 #' @examples
+#' \dontrun{
 #' json_path <- sen2r::build_example_param_file()
 #' out_paths_2 <- sen2r::sen2r(json_path, timewindow = c("2019-07-13", "2019-07-23"))
 #' inpath <- file.path(unique(dirname(dirname(out_paths_2))), "MSAVI2")
 #' extent <- sf::st_read(system.file("extdata/vector/barbellino.geojson", package = "sen2r"))
 #' in_paths <- read_s2cube(inpath)
 #' in_stars <- read_s2cube(inpath, out_format = "stars")
+#' }
 
 
 read_s2cube <- function(
@@ -64,10 +66,16 @@ read_s2cube <- function(
   
   # Filter data by arguments
   in_meta <- in_meta[type != "unrecognised",]
-  if (!missing(prod_type)) {in_meta <- in_meta[prod_type == prod_type,]}
+  if (!missing(prod_type)) {
+    sel_rows <- in_meta[, .I[prod_type == ..prod_type]]
+    in_meta <- in_meta[sel_rows,]
+  }
   if (!missing(s2_orbits)) {in_meta <- in_meta[id_orbit %in% s2_orbits,]}
   if (!missing(s2_sensors)) {in_meta <- in_meta[paste0("2",mission) %in% s2_sensors,]}
-  if (!missing(file_ext)) {in_meta <- in_meta[file_ext == file_ext,]}
+  if (!missing(file_ext)) {
+    sel_rows <- in_meta[, .I[file_ext == file_ext]]
+    in_meta <- in_meta[sel_rows,]
+  }
   if (!missing(time_window)) {
     in_meta <- in_meta[sensing_date >= time_window[1] & sensing_date <= time_window[2],]
   }

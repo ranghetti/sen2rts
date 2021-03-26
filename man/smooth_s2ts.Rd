@@ -30,7 +30,8 @@ most vegetation indices like NDVI);
 if \code{"high"}, lower values are generally maintained;
 if \code{"undefined"} (default), no assumptions are done.}
 
-\item{spike}{Relative "y" difference for spike determination (default is 0.25).}
+\item{spike}{Relative "y" difference for spike determination (default is 0.25).
+Set to NA to skip spike removal.}
 
 \item{spike_window}{Maximum number of values for spike identification
 (it must be an odd number). Default is 3.}

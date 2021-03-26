@@ -318,6 +318,8 @@ setAs("s2ts", "list", function(from) {
 #' @param plot_cuts (optional) Logical: should cuts between cycles be plotted?
 #'  Default: yes, if provided in `pheno` or in `fitted`.
 #'  They are represented as black vertical lines.
+#' @param plot_cycles (optional) Logical: should existing cycles be highlighted?
+#'  If TRUE (default), existing cycles are highlighted with yellow bands.
 #' @param plot_dates (optional) Logical or character:
 #'  if TRUE, plot the dates of cycle cuts and phenology metrics;
 #'  if FALSE (default), do not plot anything;
@@ -332,7 +334,7 @@ setAs("s2ts", "list", function(from) {
 plot.s2ts <- function(
   x, pheno, fitted, 
   plot_points, plot_rawline, plot_smoothed, plot_fitted, plot_cuts,
-  plot_dates = FALSE, pheno_metrics, 
+  plot_cycles = TRUE, plot_dates = FALSE, pheno_metrics, 
   ...
 ) {
   
@@ -410,11 +412,12 @@ plot.s2ts <- function(
   }
   if (!missing(pheno)) {
     pheno_dt <- pheno[id %in% x_dt$id,]
+    pheno_dt <- pheno_dt[,c("date","value") := list(as.Date(NA),Inf)] # to plot geom_rect()
   } else if (!missing(fitted)) {
     pheno_dt <- fitted_dt[
-      ,list("begin" = min(date), "end" = max(date)),
+      ,list("begin" = min(date), "end" = max(date), "date" = as.Date(NA), "value" = Inf),
       by = c("id", "year", "cycle")
-      ]
+    ]
     # TODO add maxval
   }
   if (!is.null(plot_elements$pheno_method)) {
@@ -458,9 +461,21 @@ plot.s2ts <- function(
       )
     }
   }
-
+  
   # Base plot
   out <- ggplot2::ggplot(x_dt, ggplot2::aes(x = date, y = value))
+  
+  # Add background bands
+  if (exists("pheno_dt") & plot_elements$cuts == TRUE & plot_cycles == TRUE) {
+    out <- out +
+      ggplot2::geom_rect(
+        data = pheno_dt,
+        ggplot2::aes(xmin = begin, xmax = end), 
+        ymin = -Inf, 
+        ymax = min(x_dt$value, na.rm=TRUE) - diff(range(x_dt$value, na.rm=TRUE))*.025,
+        fill = "yellow", alpha = 0.5
+      )
+  }
   
   # Add raw line
   if (plot_elements$rawline == TRUE) {
@@ -473,16 +488,16 @@ plot.s2ts <- function(
   # Add cycle cuts / peaks
   if (exists("pheno_dt_y")) {
     # for (sel_cycle in pheno[, unique(cycle)]) {
-      out <- out + ggplot2::geom_segment(
-        # data = pheno_dt_y[cycle==sel_cycle,], 
-        data = pheno_dt_y, 
-        ggplot2::aes(
-          x = begin, xend = end,
-          y = value, yend = value,
-          colour = Value
-        ),
-        linetype = "dashed"
-      )
+    out <- out + ggplot2::geom_segment(
+      # data = pheno_dt_y[cycle==sel_cycle,], 
+      data = pheno_dt_y, 
+      ggplot2::aes(
+        x = begin, xend = end,
+        y = value, yend = value,
+        colour = Value
+      ),
+      linetype = "dashed"
+    )
     # }
   }
   if (exists("pheno_dt_x")) {
@@ -494,10 +509,10 @@ plot.s2ts <- function(
     if ("pheno" %in% plot_dates) {
       out <- out + 
         ggplot2::geom_text(
-        data = pheno_dt_x,
-        ggplot2::aes(x = date, y = min(x_dt$value, na.rm=TRUE), label = date, colour = Phenology),
-        angle = 90, vjust = -0.25, hjust = 0, size = 3
-      )
+          data = pheno_dt_x,
+          ggplot2::aes(x = date, y = min(x_dt$value, na.rm=TRUE), label = date, colour = Phenology),
+          angle = 90, vjust = -0.25, hjust = 0, size = 3
+        )
     }
   }
   if (exists("pheno_dt") & plot_elements$cuts == TRUE) {
@@ -528,12 +543,12 @@ plot.s2ts <- function(
   # Add fitted line
   if (plot_elements$fitted == TRUE) {
     for (sel_year in fitted_dt[,unique(year)]) {
-    for (sel_cycle in fitted_dt[year == sel_year, unique(cycle)]) {
-      out <- out + ggplot2::geom_line(
-        data = fitted_dt[year == sel_year & cycle == sel_cycle,], 
-        colour = "red", alpha = 0.5
-      )
-    }
+      for (sel_cycle in fitted_dt[year == sel_year, unique(cycle)]) {
+        out <- out + ggplot2::geom_line(
+          data = fitted_dt[year == sel_year & cycle == sel_cycle,], 
+          colour = "red", alpha = 0.5
+        )
+      }
     }
   }
   
@@ -573,7 +588,7 @@ plot.s2ts <- function(
   if (exists("pheno_dt")) {
     out <- out + ggplot2::scale_colour_brewer(palette = "Set2")
   }
-
+  
   # date_range <- range(x_dt$date)
   # year_range <- as.integer(strftime(date_range,"%Y"))
   # year_seq <- seq(year_range[1]-1, year_range[2]+1)
@@ -665,7 +680,7 @@ print.s2ts <- function(x, ...) {
     cat(" s2ts time series with", nrow(x_dt_cast), "dates")
     if (length(ids) > 0) {cat(" and", length(ids), "IDs")}
     cat(".\n")
-    print(x_dt_cast)
+    print(x_dt_cast, ...)
     if (length(ids) > n_ids) {
       cat("...with", length(ids)-n_ids, "more IDs.\n")
     }

@@ -49,12 +49,14 @@ The output raster cube in the selected format.
 TODO
 }
 \examples{
+\dontrun{
 json_path <- sen2r::build_example_param_file()
 out_paths_2 <- sen2r::sen2r(json_path, timewindow = c("2019-07-13", "2019-07-23"))
 inpath <- file.path(unique(dirname(dirname(out_paths_2))), "MSAVI2")
 extent <- sf::st_read(system.file("extdata/vector/barbellino.geojson", package = "sen2r"))
 in_paths <- read_s2cube(inpath)
 in_stars <- read_s2cube(inpath, out_format = "stars")
+}
 }
 \author{
 Luigi Ranghetti, PhD (2020) \email{luigi@ranghetti.info}

@@ -14,6 +14,7 @@
   plot_smoothed,
   plot_fitted,
   plot_cuts,
+  plot_cycles = TRUE,
   plot_dates = FALSE,
   pheno_metrics,
   ...
@@ -42,6 +43,9 @@ plotted? Default: yes, if provided. They are represented as red curves.}
 \item{plot_cuts}{(optional) Logical: should cuts between cycles be plotted?
 Default: yes, if provided in \code{pheno} or in \code{fitted}.
 They are represented as black vertical lines.}
+
+\item{plot_cycles}{(optional) Logical: should existing cycles be highlighted?
+If TRUE (default), existing cycles are highlighted with yellow bands.}
 
 \item{plot_dates}{(optional) Logical or character:
 if TRUE, plot the dates of cycle cuts and phenology metrics;

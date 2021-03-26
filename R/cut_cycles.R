@@ -54,7 +54,7 @@ cut_cycles <- function(
   n_cycles = Inf,
   min_win = 60,
   min_peakvalue = 0.1,
-  max_dropvalue = 0.3,
+  max_dropvalue = 0.6,
   value_type = "relative",
   min_rel_thresh = 0.15,
   newyearday = "01-01",
