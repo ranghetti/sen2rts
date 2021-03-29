@@ -68,6 +68,33 @@ smooth_s2ts <- function(
   ## Build relative TS
   ts_dt[,relval := (value - min(value, na.rm=TRUE)) / diff(range(value, na.rm=TRUE)), by = id]
   
+  ## Exclude low-quality values and reshape others
+  ts_dt <- ts_dt[,value0 := value]
+  if (!is.null(ts_dt$qa)) {
+    ts_dt <- ts_dt[qa > min_qa,]
+    ts_dt <- ts_dt[,qa0 := qa]
+  } else {
+    ts_dt <- ts_dt[,qa0 := 1]
+  }
+  # if (!is.null(ts_dt$qa)) {
+  #   # Recompute low-quality values
+  #   ts_dt$value0 <- ts_dt$value
+  #   for (sel_id in unique(ts_dt$id)) { # cycle on IDs
+  #     valid_range <- range(ts_dt[id == sel_id & qa > min_qa, date])
+  #     ts_dt_interp <- approx(
+  #       ts_dt[id == sel_id & qa > min_qa, date],
+  #       ts_dt[id == sel_id & qa > min_qa, value],
+  #       xout = ts_dt[id == sel_id & date >= valid_range[1] & date <= valid_range[2], date]
+  #     )
+  #     ts_dt[id == sel_id & date >= valid_range[1] & date <= valid_range[2],
+  #           value0 := ts_dt_interp$y]
+  #   }
+  #   ts_dt <- ts_dt[,qa0 := qa]
+  # } else {
+  #   ts_dt <- ts_dt[,value0 := value]
+  #   ts_dt <- ts_dt[,qa0 := 1]
+  # }
+  
   ## Remove spikes
   if (!is.na(spike)) {
     ts_dt$spike <- FALSE #initialisation
@@ -96,33 +123,6 @@ smooth_s2ts <- function(
     ts_dt <- ts_dt[spike == FALSE,]
     ts_dt$spike <- NULL
   }
-  
-  ## Exclude low-quality values and reshape others
-  ts_dt <- ts_dt[,value0 := value]
-  if (!is.null(ts_dt$qa)) {
-    ts_dt <- ts_dt[qa > min_qa,]
-    ts_dt <- ts_dt[,qa0 := qa]
-  } else {
-    ts_dt <- ts_dt[,qa0 := 1]
-  }
-  # if (!is.null(ts_dt$qa)) {
-  #   # Recompute low-quality values
-  #   ts_dt$value0 <- ts_dt$value
-  #   for (sel_id in unique(ts_dt$id)) { # cycle on IDs
-  #     valid_range <- range(ts_dt[id == sel_id & qa > min_qa, date])
-  #     ts_dt_interp <- approx(
-  #       ts_dt[id == sel_id & qa > min_qa, date],
-  #       ts_dt[id == sel_id & qa > min_qa, value],
-  #       xout = ts_dt[id == sel_id & date >= valid_range[1] & date <= valid_range[2], date]
-  #     )
-  #     ts_dt[id == sel_id & date >= valid_range[1] & date <= valid_range[2],
-  #           value0 := ts_dt_interp$y]
-  #   }
-  #   ts_dt <- ts_dt[,qa0 := qa]
-  # } else {
-  #   ts_dt <- ts_dt[,value0 := value]
-  #   ts_dt <- ts_dt[,qa0 := 1]
-  # }
   
   # Reshape data to use a day-dependent window
   # (this step is required to pass a "more or less time weighted")
