@@ -5,19 +5,15 @@ from Sentinel-2 archives created with the package [sen2r](https://sen2r.ranghett
 
 This package is currently under development (alpha version).
 
-This functions are currently available and can be used in this order
-to obtain a smoothed equally-weighted time series:
-- `read_s2cube()` to build data cubes from Sentinel-2 archives;
-- `extract_s2ts()` to build raw time series in `s2ts` format;
-- `smooth_s2ts()` to smooth and filter time series;
-- `fill_s2ts()` to fill non equally-temporally weighted time series;
-- `cut_cycles()` to cut Sentinel-2 time series into separate cycles
-    and associate them with a reference year;
-- `fit_curve()` to fit a curve using a parametric function;
-- `extract_pheno()` to extract phenological metrics;
-- `assign_season()` to assign season names to cycles.
+The vignette ["The {sen2rts} workflows"](./articles/workflow.html) shows a simple,
+reproducible use case to obtain a smoothed equally-weighted time series, 
+isolate cycles and extract metrics,
+showing how the currently implemented functions can be used to perform a 
+common workflow.
+For documentation about specific functions, see the [Reference](./reference) page
+(currently examples are not provided, so refer to 
+[the vignette](./articles/workflow.html) for an example of functions usage).
 
-An adequate documentation of these functions will be written in a future release.
 
 See [issues](https://github.com/ranghetti/sen2rts/issues) to know which 
 improvements are planned for future release
@@ -25,7 +21,7 @@ improvements are planned for future release
 
 ## Credits
 
-`{sen2rts}` is being developed by Luigi Ranghetti and Lorenzo Busetto
+`{sen2rts}` is being developed by Luigi Ranghetti
 ([IREA-CNR](http://www.irea.cnr.it)), and it is released under the [GNU
 General Public License
 version 3](https://www.gnu.org/licenses/gpl-3.0.html) (GPL‑3).
