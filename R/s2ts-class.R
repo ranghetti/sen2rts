@@ -399,7 +399,7 @@ plot.s2ts <- function(
   } else {
     x_dt_smooth <- x_dt[!is.na(value),]
   }
-  if ("base" %in% plot_mode) {
+  if ("base" %in% plot_mode || is.null(x_dt$rawval)) {
     x_dt_raw <- x_dt[!is.na(value),]
   } else {
     x_dt_raw <- x_dt[!is.na(rawval),]
