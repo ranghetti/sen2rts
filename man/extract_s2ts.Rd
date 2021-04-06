@@ -11,7 +11,7 @@ extract_s2ts(
   in_sf_id,
   scl_paths,
   cld_paths,
-  scl_weights,
+  scl_w,
   fun_w = "mean"
 )
 }
@@ -45,7 +45,7 @@ See details for the conversion between SCL and weights.}
 to \code{in_paths}); see \code{scl_paths}.
 See details for the conversion between SCL and weights.}
 
-\item{scl_weights}{(optional) weights to be used for each SCL class,
+\item{scl_w}{(optional) weights to be used for each SCL class,
 which can be created using function \code{scl_weights()}.
 If missing, the default outputs of \code{scl_weights()} are used.
 See details for the conversion between SCL and weights.}

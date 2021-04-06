@@ -180,7 +180,7 @@ ts_ndvi_w <- extract_s2ts(
   sen2r_ndvi_paths, 
   samplecrops, 
   scl_paths = sen2r_scl_paths,
-  scl_weights = scl_weights(snow = 0),
+  scl_w = scl_weights(snow = 0),
   in_sf_id = "fid"
 )
 

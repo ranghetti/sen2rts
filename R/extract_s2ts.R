@@ -21,7 +21,7 @@
 #' @param cld_paths (optional) Paths of the CLD files (they must correspond
 #'  to `in_paths`); see `scl_paths`.
 #'  See details for the conversion between SCL and weights.
-#' @param scl_weights (optional) weights to be used for each SCL class,
+#' @param scl_w (optional) weights to be used for each SCL class,
 #'  which can be created using function `scl_weights()`.
 #'  If missing, the default outputs of `scl_weights()` are used.
 #'  See details for the conversion between SCL and weights.
@@ -75,7 +75,7 @@ extract_s2ts <- function(
   in_sf_id,
   scl_paths,
   cld_paths,
-  scl_weights,
+  scl_w,
   fun_w = "mean"
 ) {
   
@@ -210,22 +210,22 @@ extract_s2ts <- function(
     # Check consistency between in_cube and scl_cube
     # TODO
     
-    # Check scl_weights
-    if (missing(scl_weights)) {
-      scl_weights <- scl_weights()
-    } else if (!setequal(names(scl_weights), names(scl_weights()))) {
+    # Check scl_w
+    if (missing(scl_w)) {
+      scl_w <- scl_weights()
+    } else if (!setequal(names(scl_w), names(scl_weights()))) {
       print_message(
         type = "error",
-        "\"scl_weights\" must be a named numeric vector ",
+        "\"scl_w\" must be a named numeric vector ",
         "created with function scl_weights()."
       )
     }
     
     # Convert SCL to weights
     w_cube_scl_raw <- scl_cube
-    for (i in seq_along(scl_weights)) {
+    for (i in seq_along(scl_w)) {
       sel_scl <- i - 1 # 0:11 in a 12-length vector
-      w_cube_scl_raw[scl_cube == sel_scl] <- scl_weights[i]
+      w_cube_scl_raw[scl_cube == sel_scl] <- scl_w[i]
     }
     
     # Reshape it
