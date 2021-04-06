@@ -37,7 +37,7 @@ smooth_s2ts <- function(
   noise_dir = "low",
   spike = 0.25,
   spike_window = 5,
-  sg_daywindow = 9,
+  sg_daywindow = 15,
   sg_polynom = 2,
   sg_n = 3,
   max_extrapolation = 0.1
