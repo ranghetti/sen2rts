@@ -16,7 +16,6 @@
 #' @note License: GPL 3.0
 #' @import data.table
 #' @importFrom jsonlite fromJSON
-#' @importFrom methods is
 
 
 s2_dop_simpl <- function(s2_orbits, timewindow, mission) {

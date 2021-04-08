@@ -44,7 +44,6 @@
 #' If `seasons = NA` this field is not returned.
 #' @author Luigi Ranghetti, PhD (2020) \email{luigi@@ranghetti.info}
 #' @import data.table
-#' @importFrom methods as
 #' @export
 
 assign_season <- function(

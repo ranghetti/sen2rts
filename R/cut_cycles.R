@@ -56,7 +56,6 @@
 #' @author Luigi Ranghetti, PhD (2021) \email{luigi@@ranghetti.info}
 #' @import data.table
 #' @importFrom stats quantile
-#' @importFrom methods as
 #' @export
 
 cut_cycles <- function(

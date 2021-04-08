@@ -33,7 +33,6 @@
 #'  - `value`: output aggregated value.
 #' @author Luigi Ranghetti, PhD (2021) \email{luigi@@ranghetti.info}
 #' @import data.table
-#' @importFrom methods as
 #' @export
 
 aggregate_pheno <- function(

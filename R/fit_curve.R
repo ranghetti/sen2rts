@@ -49,7 +49,6 @@ fakeFit <- function (ts, uncert=NA, nrep=NA) {
 #' @import data.table
 #' @importFrom zoo zoo
 #' @importFrom phenopix KlostermanFit BeckFit ElmoreFit GuFit
-#' @importFrom methods as
 #' @importFrom utils txtProgressBar setTxtProgressBar
 #' @export
 fit_curve <- function(
