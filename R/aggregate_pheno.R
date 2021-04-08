@@ -46,6 +46,9 @@ aggregate_pheno <- function(
   ...
 ) {
   
+  # Avoid check notes for data.table related variables
+  id <- cycle <- NULL
+  
   ## Check arguments
   # TODO
   

@@ -1,6 +1,8 @@
 # Patch phenopix::PhenoDeriv() in order to allow also the retrieval of
 # derivatives different from the maximum one.
 
+#' @importFrom stats na.omit window
+
 patch_PhenoDeriv <- function() {
   
   PhenoDeriv_fun <- deparse(phenopix::PhenoDeriv)

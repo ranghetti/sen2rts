@@ -29,6 +29,8 @@
 #'  Default is 0.1 (+10%). Set to Inf in order not to set any constraint.
 #' @return The output time series in `s2ts` format.
 #' @author Luigi Ranghetti, PhD (2020) \email{luigi@@ranghetti.info}
+#' @importFrom stats approx
+#' @importFrom methods as
 #' @export
 
 smooth_s2ts <- function(
@@ -42,6 +44,9 @@ smooth_s2ts <- function(
   sg_n = 3,
   max_extrapolation = 0.1
 ) {
+  
+  # Avoid check notes for data.table related variables
+  id <- relval <- value0 <- qa0 <- orbit <- sensor <- value_smoothed <- NULL
   
   ## Check arguments
   # TODO

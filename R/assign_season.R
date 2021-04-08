@@ -63,6 +63,9 @@ assign_season <- function(
   rm_unassigned = TRUE
 ) {
   
+  # Avoid check notes for data.table related variables
+  season <- weight <- id <- pop_diff <- NULL
+  
   ## Check arguments
   
   # change seasons if not provided

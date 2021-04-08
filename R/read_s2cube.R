@@ -52,6 +52,10 @@ read_s2cube <- function(
   .use_vrt = FALSE
 ) {
   
+  # Avoid check notes for data.table related variables
+  path <- sensing_date <- type <- 
+    ..prod_type <- id_orbit <- mission <- extent_name <- NULL
+  
   # Check inpath and read metadata
   inpath <- normalize_path(inpath)
   in_paths <- list.files(inpath, full.names = TRUE, recursive = TRUE)

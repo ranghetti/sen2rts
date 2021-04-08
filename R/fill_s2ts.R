@@ -16,6 +16,8 @@
 #'  out of original range (relative value).
 #'  Default is 0.1 (+10%). Set to Inf in order not to set any constraint.
 #' @return The output time series in tabular format (see `extract_ts()`).
+#' @importFrom stats spline
+#' @importFrom methods as
 #' @author Luigi Ranghetti, PhD (2020) \email{luigi@@ranghetti.info}
 #' @export
 
@@ -27,10 +29,13 @@ fill_s2ts <- function(
   max_extrapolation = 0.1
 ) {
   
+  # Avoid check notes for data.table related variables
+  id <- orbit <- sensor <- interpolated <- value <- NULL
+
   ## Define Greater Common Divisor
   gcd <- function(x) {
     if (length(x) == 2) {
-      ifelse(x[2]==0, x[1], gcd2(x[2], x[1] %% x[2]))
+      ifelse(x[2]==0, x[1], gcd(x[2], x[1] %% x[2]))
     } else {
       gcd(c(x[1], gcd(x[2:length(x)])))
     }

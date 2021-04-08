@@ -62,10 +62,14 @@
 #'  
 #' @author Luigi Ranghetti, PhD (2020) \email{luigi@@ranghetti.info}
 #' @import data.table
+#' @importFrom methods as
 #' @importFrom sen2r raster_metadata sen2r_getElements
-#' @importFrom sf gdal_utils st_bbox st_buffer st_crs st_sf st_transform 
+#' @importFrom sf gdal_utils st_as_sfc st_bbox st_buffer st_crs st_intersection
+#'  st_sf st_transform 
 #' @importFrom stars read_stars st_get_dimension_values st_set_dimensions st_warp
+#' @importFrom stats weighted.mean
 #' @importFrom dplyr group_by summarise
+#' @importFrom methods as
 #' @export
 
 extract_s2ts <- function(
@@ -79,6 +83,9 @@ extract_s2ts <- function(
   fun_w = "mean"
 ) {
   
+  # Avoid check notes for data.table related variables
+  sensing_date <- value <- NULL
+
   ## Check arguments ----
   #TODO
   if (all(
@@ -289,7 +296,7 @@ extract_s2ts <- function(
     w_cube_cld_raw_0 <- 1 - cld_cube/100
     scl_cld_val <- scl_weights()[c("cloud_high_probability", "cloud_medium_probability", "unclassified")]
     if (any(diff(scl_cld_val) < 0)) {
-      print_error(
+      print_message(
         type = "error",
         "SCL weight for class \"cloud_high_probability\" must be higher than for ",
         "\"cloud_medium_probability\", as well as \"cloud_medium_probability\" ",

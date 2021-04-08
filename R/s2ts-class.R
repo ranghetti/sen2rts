@@ -50,6 +50,7 @@
 #'  `<s2ts_obj>$<fieldname>` and `<s2ts_obj>[["<fieldname>"]]`
 #'  can not be used (use instead `<s2ts_obj>[,<fieldname>]`).
 #' @author Luigi Ranghetti, PhD (2020) \email{luigi@@ranghetti.info}
+#' @importFrom methods as setAs
 #' @export
 
 s2ts <- function(value, date, id = NA, qa, orbit, sensor, rawval, ...) {
@@ -230,10 +231,12 @@ s2ts_id <- function(x) {
   sort(unique(unclass(x)[["id"]]))
 }
 s2ts_value <- function(x) {
+  value <- NULL # avoid check notes for data.table related variables
   stopifnot(inherits(x, "s2ts"))
   dcast(as.data.table(x)[!is.na(value),], date ~ id, value.var = "value")
 }
 s2ts_qa <- function(x) {
+  qa <- NULL # avoid check notes for data.table related variables
   stopifnot(inherits(x, "s2ts"))
   if (!is.null(unclass(x)[["qa"]])) {
     dcast(as.data.table(x)[!is.na(qa),], date ~ id, value.var = "qa")
@@ -246,6 +249,7 @@ s2ts_qa <- function(x) {
   }
 }
 s2ts_rawval <- function(x) {
+  rawval <- NULL # avoid check notes for data.table related variables
   stopifnot(inherits(x, "s2ts"))
   if (!is.null(unclass(x)[["rawval"]])) {
     dcast(as.data.table(x)[!is.na(rawval),], date ~ id, value.var = "rawval")
@@ -273,6 +277,7 @@ s2ts_rawval <- function(x) {
 }
 
 `[[.s2ts` = function(x, name) {
+  id <- NULL # avoid check notes for data.table related variables
   x_dt <- as.data.table(x)
   as(x_dt[id %in% name,], "s2ts")
 }
@@ -302,6 +307,7 @@ setAs("s2ts", "list", function(from) {
 #' @name plot
 #' @title Plot `s2ts` object
 #' @description Plot a `s2ts` time series, using `{ggplot2}` routines.
+#' @param x Object of class `s2ts` to be plotted.
 #' @param pheno (optional) Output of `cut_cycles()`
 #' @param fitted (optional) Output of `fit_curve()`
 #' @param plot_points (optional) Logical: should raw point values be plotted?
@@ -328,6 +334,7 @@ setAs("s2ts", "list", function(from) {
 #'  the phenological metrics to be plotted. 
 #'  If not provided or if `pheno_metrics = "all"`, all available metrics
 #'  are plotted.
+#' @param ... Not currently used.
 #' @author Luigi Ranghetti, PhD (2020) \email{luigi@@ranghetti.info}
 #' @import data.table
 #' @export
@@ -337,6 +344,10 @@ plot.s2ts <- function(
   plot_cycles = TRUE, plot_dates = FALSE, pheno_metrics, 
   ...
 ) {
+  
+  # Avoid check notes for data.table related variables
+  value <- rawval <- id <- begin <- end <- 
+    Value <- Phenology <- cycle <- QA <- NULL
   
   # Check optional suggested ggplot2 to be present
   if (!requireNamespace("ggplot2", quietly = TRUE)) {
@@ -609,8 +620,12 @@ plot.s2ts <- function(
 
 ## Print ----
 
+#' @importFrom stats as.formula
 #' @export
 print.s2ts <- function(x, ...) {
+  
+  # Avoid check notes for data.table related variables
+  id <- flag <- qa <- interpolated <- NULL
   
   # Define constants
   # maximum number of IDs to print
@@ -691,7 +706,7 @@ print.s2ts <- function(x, ...) {
       cat("Quality flags:  \u25CF [1]  \u25D5 [0.9,1)  \u25D1 [0.75,0.9)  \u25D4 [0.5,0.75)  \u25CB [0,0.5)\n")
     }
     if (!is.null(attr(x, "gen_by")) && attr(x, "gen_by") == "fill_s2ts") {
-      cat("Interpolated values are marked with ‘~’.\n")
+      cat("Interpolated values are marked with \"~\".\n")
     }
   }
   

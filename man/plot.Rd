@@ -21,6 +21,8 @@
 )
 }
 \arguments{
+\item{x}{Object of class \code{s2ts} to be plotted.}
+
 \item{pheno}{(optional) Output of \code{cut_cycles()}}
 
 \item{fitted}{(optional) Output of \code{fit_curve()}}
@@ -56,6 +58,8 @@ if \code{"cycles"} or \code{"pheno"}, plot only cycle cuts or phenology metrics.
 the phenological metrics to be plotted.
 If not provided or if \code{pheno_metrics = "all"}, all available metrics
 are plotted.}
+
+\item{...}{Not currently used.}
 }
 \description{
 Plot a \code{s2ts} time series, using \code{{ggplot2}} routines.

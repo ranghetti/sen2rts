@@ -20,8 +20,8 @@
 
 s2_dop_simpl <- function(s2_orbits, timewindow, mission) {
   
-  # to avoid NOTE on check
-  type <- orbit <- doybase <- orbit <- NULL
+  # Avoid check notes for data.table related variables
+  type <- orbit <- doybase <- orbit <- json_path <- NULL
   
   # generate doybase.json if missing
   eval(parse(text = "json_path <- sen2r:::create_s2_dop()"))

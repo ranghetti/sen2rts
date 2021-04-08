@@ -2,7 +2,8 @@
 # do not come from fitting procedures (or which are not monotonic).
 
 #' @importFrom zoo index
-#' @importFrom phenopix PhenoGu PhenoKl
+#' @importFrom phenopix PhenoGu PhenoKl PhenoPlot
+#' @importFrom stats median na.omit
 
 patch_PhenoTrs <- function() {
   

@@ -4,6 +4,8 @@
 #' @import data.table
 
 s2fit_to_s2ts <- function(fit) {
+  # Avoid check notes for data.table related variables
+  value <- NULL
   # Check s2fit format
   # TODO
   rbindlist(lapply(names(fit), function(sel_id) {

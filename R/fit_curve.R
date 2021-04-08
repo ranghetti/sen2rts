@@ -57,6 +57,8 @@ fit_curve <- function(
   fit = c("gu", "klosterman")
 ) {
   
+  # Avoid check notes for data.table related variables
+  id <- value <- relval <- cycle <- begin <- maxval <- end <- NULL
   
   ## Check arguments
   # TODO

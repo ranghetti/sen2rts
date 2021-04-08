@@ -30,6 +30,11 @@ extract_pheno <- function(
   trs = 0.5, ...
 ) {
   
+  # Avoid check notes for data.table related variables
+  sos <- begin <- eos <- pop <- mgs <- peak <- msp <- mau <- los <- 
+    Greenup <- Maturity <- Senescence <- Dormancy <- 
+    UD <- SD <- DD <- maxline <- baseline <- NULL
+  
   ## Check arguments
   # TODO
   

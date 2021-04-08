@@ -73,6 +73,16 @@ cut_cycles <- function(
   weight_metric = "integral"
 ) {
   
+  # Avoid check notes for data.table related variables
+  id <- uid <- relval <- value <-
+    peak0_l <- peak0_r <- peak0_p <- peak0 <- 
+    cut0_l <- cut0_r <- cut0_p <- cut0 <-
+    ground <- cutground <- 
+    peak1 <- cut1 <- peak2 <- cut2 <- peak3 <- cut3 <- 
+    s1 <- y1 <- maxval <- maxyear <- weight <- 
+    begin <- end <- cycle <- newyear <- 
+    NULL
+  
   ## Check arguments
   # TODO
   
@@ -115,6 +125,8 @@ cut_cycles <- function(
     check_peaks = TRUE, # if FALSE, check only cuts
     check_cuts = TRUE # if FALSE, check only peaks
   ) {
+    # Avoid check notes for data.table related variables
+    id <- uid <- relval <- NULL
     if (missing(ids)) {ids <- unique(ts_dt$id)}
     for (sel_id in ids) {
       # Check peaks among cuts (one peak per couple of cuts)
