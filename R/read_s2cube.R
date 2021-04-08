@@ -20,19 +20,24 @@
 #' @author Luigi Ranghetti, PhD (2020) \email{luigi@@ranghetti.info}
 #' @export
 #' @import data.table
-#' @importFrom sf gdal_utils
+#' @importFrom sf gdal_utils st_as_sfc st_bbox st_crs st_transform
 #' @importFrom sen2r normalize_path sen2r_getElements
-#' @importFrom stars read_stars st_redimension
+#' @importFrom stars read_stars st_redimension st_set_dimensions
 #'
 #' @examples
-#' \dontrun{
-#' json_path <- sen2r::build_example_param_file()
-#' out_paths_2 <- sen2r::sen2r(json_path, timewindow = c("2019-07-13", "2019-07-23"))
-#' inpath <- file.path(unique(dirname(dirname(out_paths_2))), "MSAVI2")
-#' extent <- sf::st_read(system.file("extdata/vector/barbellino.geojson", package = "sen2r"))
-#' in_paths <- read_s2cube(inpath)
-#' in_stars <- read_s2cube(inpath, out_format = "stars")
-#' }
+#' # Path of a sample archive created with {sen2r}
+#' archive_dir <- system.file("extdata/sen2r/mincrops", package = "sen2rts")
+#' # Default behaviour
+#' sen2r_ndvi_paths <- read_s2cube(file.path(archive_dir, "NDVI"))
+#' # Specifying argument prod_type, the parent directory can also be provided:
+#' sen2r_ndvi_paths <- read_s2cube(archive_dir, prod_type = "NDVI")
+#' head(sen2r_ndvi_paths)
+#' # Using some filters
+#' read_s2cube(
+#'   archive_dir, prod_type = "NDVI", 
+#'   time_window = c("2020-06-01", "2020-06-30"), 
+#'   s2_sensors = "2A"
+#' )
 
 
 read_s2cube <- function(

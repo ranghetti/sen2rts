@@ -38,8 +38,8 @@ maxima / minima to consider a separate cycle.}
 \item{max_groundvalue}{(optional) Maximum value to identify a ground plain
 (window without cycles).}
 
-\item{ground_buffer}{(optional) n. of days of begginning / ending of grounds
-to be included in previosu / next seasons.}
+\item{ground_buffer}{(optional) n. of days of beginning / ending of grounds
+to be included in previous / next seasons.}
 
 \item{value_type}{(optional) Character: if \code{"relative"} (default), values
 set with arguments \code{min_peakval} and \code{max_dropval} are relative

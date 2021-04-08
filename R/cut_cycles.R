@@ -13,8 +13,8 @@
 #'  (breakpoint).
 #' @param max_groundvalue (optional) Maximum value to identify a ground plain
 #'  (window without cycles).
-#' @param ground_buffer (optional) n. of days of begginning / ending of grounds 
-#'  to be included in previosu / next seasons.
+#' @param ground_buffer (optional) n. of days of beginning / ending of grounds 
+#'  to be included in previous / next seasons.
 #' @param value_type (optional) Character: if `"relative"` (default), values
 #'  set with arguments `min_peakval` and `max_dropval` are relative
 #'  values (normalised to 0-1 range among IDs);

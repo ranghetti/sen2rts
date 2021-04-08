@@ -27,11 +27,13 @@ this workflow:
 
 1. [produce raster archive with {sen2r}](#produce-raster-archive-with-sen2r);
 2. [extract time series over spatial features](#extract-time-series-over-spatial-features);
-3. [smooth raw time series and fill gaps](#smooth-raw-time-series-and-fill-gaps);
-4. [cut cycles and assign them to specific seasons](#cut-cycles-and-assign-them-to-specific-seasons);
-5. [interpolate cycles](#interpolate-cycles);
-6. [extract phenological metrics](#extract-phenological-metrics);
-7. [aggregate time series over seasons](#aggregate-time-series-over-seasons).
+3. [smooth raw time series](#smooth-raw-time-series);
+4. [fill temporal gaps](#fill-temporal-gaps);
+5. [cut cycles](#cut-cycles);
+6. [assign cycles to specific seasons](#assign-cycles-to-specific-seasons);
+7. [interpolate cycles](#interpolate-cycles);
+8. [extract phenological metrics](#extract-phenological-metrics);
+9. [aggregate time series over seasons](#aggregate-time-series-over-seasons).
 
 
 ## Produce raster archive with {sen2r}
@@ -56,6 +58,7 @@ The following code _could_ be used to produce it
 
 ```{r sen2r, eval = FALSE}
 library(sen2r)
+library(sf)
 ## Define the directories to store SAFE archives and outputs
 samplecrops_dir <- file.path(dirname(attr(load_binpaths(), "path")), "samplecrops")
 safe_dir <- file.path(dirname(attr(load_binpaths(), "path")), "safe")
@@ -176,7 +179,7 @@ data(samplecrops)
 samplecrops <- samplecrops[1:4,]
 
 ## Extract TS
-ts_ndvi_w <- extract_s2ts(
+ts_raw <- extract_s2ts(
   sen2r_ndvi_paths, 
   samplecrops, 
   scl_paths = sen2r_scl_paths,
@@ -186,7 +189,7 @@ ts_ndvi_w <- extract_s2ts(
 
 # Rescale values (this is needed since rasters were saved as Int16 
 # with a scale factor of 10000)
-ts_ndvi_w$value <- ts_ndvi_w$value / 1E4
+ts_raw$value <- ts_raw$value / 1E4
 ```
 
 The output is an object of class `s2ts`, which basically is a `data.table`
@@ -196,9 +199,9 @@ first/last 5 dates; values are accompanied by symbols which summarises
 the value of the quality flag.
 
 ```{r print_extract}
-print(ts_ndvi_w, topn = 5) # standard visualisation
-data.table::as.data.table(ts_ndvi_w) # conversion in data.table allows showing all attributes
-plot(ts_ndvi_w)
+print(ts_raw, topn = 5) # standard visualisation
+data.table::as.data.table(ts_raw) # conversion in data.table allows showing all attributes
+plot(ts_raw)
 ```
 
 The `plot` method for class `s2ts` calls `ggplot2::ggplot()` (`{ggplot2}`,
@@ -211,46 +214,85 @@ correspondence between SCL classes and 0-1 values:
 scl_weights(snow = 0)
 ```
 
-## Smooth raw time series and fill gaps
+## Smooth raw time series
 
-This step allows: 
-1. removing evident temporal discontinuities like drops, usually 
-    due to low quality points or points with a wrong associated quality flag
-    (misclassification), by applying a Savitzky-Golay low-pass filter;
-2. filling gaps (missing dates, or dates characterised by a quality flag = 0)
-    to obtain continuous time series.
+This step allows removing evident temporal discontinuities like drops, usually 
+due to low quality points or points with a wrong associated quality flag
+(misclassification), by applying a Savitzky-Golay low-pass filter.
 
 Function `smooth_s2ts()` is used for the first step.
 It takes as input a `s2ts` object created with `extract_s2ts()` (raw time series)
 and optional parameter values which can be used to adjust the output
 (see the documentation for details), returning a `s2ts` object (the same class 
 of the input) containing both raw and smoothed values.
-Gap filling can be done with `fill_s2ts()`, with a similar behaviour: it takes
-an input smoothed `s2ts` object and setting additional parameters, producing
-an output `s2ts` filled time series.
 
 In the following example `smooth_ts()` is launched increasing the default value 
-of the low-pass filter, and `fill_s2ts()` with default parameters.
+of the low-pass filter.
 
 ```{r smooth_s2ts}
-ts_ndvi_w_s4 <- smooth_s2ts(ts_ndvi_w, sg_daywindow = 15)
-ts_ndvi_w_f2 <- fill_s2ts(ts_ndvi_w_s4)
-print(ts_ndvi_w_s4, topn = 5)
-ts_ndvi_w_f2
-plot(ts_ndvi_w_f2)
+ts_smoothed <- smooth_s2ts(ts_raw, sg_daywindow = 30)
+print(ts_smoothed, topn = 5)
+plot(ts_smoothed)
 ```
-                                                                                                                                                                                                                                                                     
-Filled values can be discriminated by smoothed ones because of the
-`~` symbol used instead of the quality symbol.
 
 Plotting output time series allows raw values (points
-joined by a light-grey line) together with smoothed and filled values
+joined by a light-grey line) together with smoothed values
 (joined by a dark line).
 Points can be hidden with `plot(..., plot_points = FALSE)`
 (see the [`plot.s2ts`](../reference/plot.s2ts.md) documentation for details 
 about the plotting method).
 
-## Cut cycles and assign them to specific seasons
+At this stage, a manual inspection can help to refine optional arguments
+in order to better suit the smoothing to the user real case.
+In this example, overestimations occur when seasonal cycles starts and ends.
+Moreover, a specific date is causing the presence of an artifact
+in fields 01, 02 and 04 (the reason can be understood visualising the 
+corresponding image:
+some clouds were marked as bare soil, causing a higher index value not 
+correctly labelled with a low quality flag).
+
+Editing function arguments can help to avoid this problem:
+
+```{r fix_smooth_s2ts}
+ts_smoothed2 <- smooth_s2ts(
+  ts_raw, 
+  noise_dir = "undefined", spike = 0.1, spike_window = 3
+)
+print(ts_smoothed2, topn = 5)
+plot(ts_smoothed2)
+```
+
+Here an explanation: the high `sg_daywindow = 30` value was determining the use of 
+too many images in the smoothing filter, causing overestimations in correspondence
+of high slopes; so, the default window of 15 days was restored.
+Regarding the specific date: by default only spikes with a `"low`" direction
+are removed, while the problematic spikes have a `"high"` direction, 
+so `noise_dir = "undefined"` was used to remove both.
+`spike = 0.1` was then used to reduce the relative "y" difference for spike
+determination, because the default one (`0.25`) is too high for spikes with a
+`"high"` direction (correct values would be removed).
+For the same reason, `spike_window` was reduced from 5 to 3 (only isolated values
+are removed).
+
+## Fill temporal gaps
+
+In order to obtain temporally homogeneous time series by filling gaps
+(missing dates, or dates characterised by a quality flag = 0), 
+function `fill_s2ts()` can be used.
+Inputs are similar to `smooth_s2ts()`: function takes a smoothed `s2ts` object 
+and additional optional parameters, producing an output `s2ts` filled time series.
+
+```{r fill_s2ts}
+( ts_filled <- fill_s2ts(ts_smoothed2) )
+```
+
+Filled values can be discriminated by smoothed ones because of the
+`~` symbol used instead of the quality symbol.
+
+Plotting method (here not shown) is equivalent to the one used for smoothed
+`s2ts` objects.
+
+## Cut cycles
 
 _Note: here and in the whole package a phenological time window characterised 
 by a begin (low index value), a peak (high value) and an end (low value)
@@ -283,9 +325,11 @@ In this example, cycles are cut with default parameters with the exception
 of the minimum length of the cycle (30 days).
 
 ```{r cut_cycles}
-cutseas_ndvi_p2 <- cut_cycles(ts_ndvi_w_f2, min_win = 30)
-head(cutseas_ndvi_p2)
+dt_cycles <- cut_cycles(ts_filled, min_win = 30)
+head(dt_cycles)
 ```
+
+## Assign cycles to specific seasons
 
 For a finer selection of cycles to be maintained, function `assign_season()`
 can be used.
@@ -302,8 +346,8 @@ keep a single, summer cycle: in this case, the output data table includes the
 same fields of the input.
 
 ```{r assign_season}
-( cutseas_ndvi_ps1 <- assign_season(
-  cutseas_ndvi_p2, max_n_cycles = 1, 
+( dt_cycles_seas <- assign_season(
+  dt_cycles, max_n_cycles = 1, 
   pop_win = c("04-01", "08-31"), pop_name = "maxval"
 ) )
 ```
@@ -313,13 +357,13 @@ season), the output would have included an additional field with the season name
 (see the example below).
 
 ```{r assign_season2}
-cutseas_ndvi_ps2 <- assign_season(
-  cutseas_ndvi_p2, max_n_cycles = 1, 
+dt_cycles_seas2 <- assign_season(
+  dt_cycles, max_n_cycles = 1, 
   seasons = c("winter", "summer"),
   pop_win = list(c("12-01", "03-31"), c("04-01", "08-31")), 
   pop_name = "maxval"
 )
-head(cutseas_ndvi_ps2)
+head(dt_cycles_seas2)
 ```
 
 The retrieved cycles can be plotted together with time series passing
@@ -329,7 +373,7 @@ highlight existing cycles (unless `plot_cycles = FALSE`).
 Adding the argument `plot_dates = TRUE` allows printing dates of cuts.
 
 ```{r plot_assign}
-plot(ts_ndvi_w_f2, pheno = cutseas_ndvi_ps1, plot_dates = TRUE, plot_points = TRUE)
+plot(ts_filled, pheno = dt_cycles_seas, plot_dates = TRUE, plot_points = TRUE)
 ```
 
 Notice also that, when `pheno` or `fitted` arguments are passed to the plot,
@@ -358,8 +402,8 @@ this object to the argument `fitted` (the example below shows it).
 Interpolations are shown with red curves.
 
 ```{r fit_curve}
-ts_ndvi_cf1 <- fit_curve(ts_ndvi_w_f2, cutseas_ndvi_ps1, fit = "gu")
-plot(ts_ndvi_w_f2, fitted = ts_ndvi_cf1)
+cf <- fit_curve(ts_filled, dt_cycles_seas, fit = "gu")
+plot(ts_filled, fitted = cf)
 ```
 
 This function can require a large amount of time.
@@ -382,8 +426,8 @@ Output is a `data.table` in a format similar to the one produced by
 begin and end of cycles.
 
 ```{r extract_pheno}
-( pheno_ndvi_p5 <- extract_pheno(ts_ndvi_cf1, method = "trs", trs = 0.25) )
-plot(ts_ndvi_w_f2, fitted = ts_ndvi_cf1, pheno = pheno_ndvi_p5)
+( dt_pheno <- extract_pheno(cf, method = "trs", trs = 0.25) )
+plot(ts_filled, fitted = cf, pheno = dt_pheno)
 ```
 
 Here phenological metrics based on threshold at 10% of relative values is used,
@@ -393,8 +437,8 @@ Different methods produce different metrics; for examples, using
 `method = "klosterman"`:
 
 ```{r extract_pheno2}
-pheno_ndvi_p6 <- extract_pheno(ts_ndvi_cf1, method = "klosterman")
-plot(ts_ndvi_w_f2, pheno = pheno_ndvi_p6)
+dt_pheno2 <- extract_pheno(cf, method = "klosterman")
+plot(ts_filled, pheno = dt_pheno2)
 ```
 
 As stated in paragraph 
@@ -404,13 +448,13 @@ In the example below, late-seeded crops are extracted basing on dates of
 Start of Season:
 
 ```{r assign_after_extract}
-( pheno_ndvi_ps1 <- assign_season(
-  pheno_ndvi_p5, max_n_cycles = 1, 
+( dt_pheno_seas <- assign_season(
+  dt_pheno, max_n_cycles = 1, 
   sos_win = c("05-01", "06-15"),
 ) )
 ```
 
-##  Aggregate time series over seasons
+## Aggregate time series over seasons
 
 This additional step can be performed to aggregate time series on the basis 
 of the information extracted from the seasonal analysis.
@@ -426,9 +470,8 @@ In the example below, 95% percentiles among the dates of Start and End of Season
 (used as quasi-maximum values) are extracted.
 
 ```{r aggregate_pheno}
-( ts_ndvi_w_a1 <- aggregate_pheno(
-  ts_ndvi_w_f2, pheno_ndvi_ps1, 
+( dt_aggr <- aggregate_pheno(
+  ts_filled, dt_pheno_seas, 
   metrics = c("sos", "eos"), fun = "quantile", probs = 0.95, na.rm = TRUE
 ) )
 ```
-
