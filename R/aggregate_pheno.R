@@ -34,6 +34,24 @@
 #' @author Luigi Ranghetti, PhD (2021) \email{luigi@@ranghetti.info}
 #' @import data.table
 #' @export
+#' @examples
+#' # Load input data
+#' data("ts_filled")
+#' data("dt_cycles")
+#' data("dt_pheno")
+#' 
+#' # Aggregate time series over detected cycles (computing the median, as default)
+#' dt_aggr_0 <- aggregate_pheno(ts_filled, dt_cycles)
+#' dt_aggr_0
+#' 
+#' # Aggregate time series over phenological metrics using 95% percentile
+#' dt_aggr <- aggregate_pheno(
+#'   ts_filled, dt_pheno, 
+#'   metrics = c("sos", "eos"), 
+#'   fun = "quantile", probs = 0.95, na.rm = TRUE
+#' )
+#' dt_aggr
+
 
 aggregate_pheno <- function(
   data, 

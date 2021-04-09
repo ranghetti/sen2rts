@@ -71,6 +71,39 @@
 #' @importFrom dplyr group_by summarise
 #' @importFrom methods as
 #' @export
+#' @examples
+#' # Load input data
+#' data("sampleroi")
+#' sen2r_ndvi_paths <- sample_paths("NDVI")
+#' sen2r_scl_paths <- sample_paths("SCL")
+#' 
+#' \donttest{
+#' # Simple TS extraction from polygons (without quality flags)
+#' ts_raw_0 <- extract_s2ts(sen2r_ndvi_paths, sampleroi)
+#' print(ts_raw_0, topn = 5)
+#' }
+#' 
+#' # TS extraction from polygons using a SCL archive for quality flags
+#' # (example used to produce the sample dataset "ts_raw")
+#' ts_raw <- extract_s2ts(
+#'   sen2r_ndvi_paths, 
+#'   sampleroi,
+#'   scl_paths = sen2r_scl_paths
+#' )
+#' ts_raw$value <- ts_raw$value / 1E4 # reshape to standard NDVI range -1 to 1
+#' print(ts_raw, topn = 5) # standard print
+#' head(as.data.frame(ts_raw)) # see content
+#' plot(ts_raw)
+#' 
+#' \donttest{
+#' # TS extraction from polygons using a different aggregation function
+#' ts_raw_2 <- extract_s2ts(sen2r_ndvi_paths, sampleroi, fun = "max")
+#' 
+#' # TS extraction from points
+#' samplepts <- suppressWarnings(sf::st_centroid(sampleroi))
+#' ts_raw_3 <- extract_s2ts(sen2r_ndvi_paths, samplepts)
+#' }
+
 
 extract_s2ts <- function(
   in_paths,

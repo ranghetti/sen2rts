@@ -33,6 +33,7 @@
 #' @examples 
 #' # Default weights
 #' scl_weights()
+#' 
 #' # Custom weights changing two classes
 #' scl_weights(unclassified = 0.25, snow = 0)
 

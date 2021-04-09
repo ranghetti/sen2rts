@@ -25,13 +25,17 @@
 #' @importFrom stars read_stars st_redimension st_set_dimensions
 #'
 #' @examples
-#' # Path of a sample archive created with {sen2r}
-#' archive_dir <- system.file("extdata/sen2r/mincrops", package = "sen2rts")
-#' # Default behaviour
+#' # Path of a sample archive created with {sen2r} (see ?sample_paths)
+#' archive_dir <- system.file("extdata/sen2r/sampleroi", package = "sen2rts")
+#' 
+#' # Default function behaviour
 #' sen2r_ndvi_paths <- read_s2cube(file.path(archive_dir, "NDVI"))
-#' # Specifying argument prod_type, the parent directory can also be provided:
-#' sen2r_ndvi_paths <- read_s2cube(archive_dir, prod_type = "NDVI")
 #' head(sen2r_ndvi_paths)
+#' 
+#' # Specifying argument prod_type, the parent directory can also be provided:
+#' sen2r_scl_paths <- read_s2cube(archive_dir, prod_type = "SCL")
+#' head(sen2r_scl_paths)
+#' 
 #' # Using some filters
 #' read_s2cube(
 #'   archive_dir, prod_type = "NDVI", 

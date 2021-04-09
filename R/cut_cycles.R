@@ -1,6 +1,6 @@
 #' @title Cut cycles
 #' @description Cut Sentinel-2 time series into separate cycles,
-#'  detecting dates of cuts and of peaks.
+#'  detecting dates of cuts and peaks.
 #' @param ts Time series in `s2ts` format (generated using `fill_s2ts()`).
 #' @param n_cycles (optional) Maximum number of cycles to be detected in one year
 #'  (default: Inf, meaning that all the identified cycles are kept).
@@ -57,6 +57,26 @@
 #' @import data.table
 #' @importFrom stats quantile
 #' @export
+#' @examples 
+#' # Load input data
+#' data("ts_filled")
+#' 
+#' # Cut seasons with standard parameters
+#' dt_cycles <- cut_cycles(ts_filled)
+#' dt_cycles
+#' # Plot the TS highlighting the extracted cycles
+#' plot(ts_filled, pheno = dt_cycles, plot_dates = TRUE)
+#' 
+#' # Cut cycles considering separate cycles only if the maximum NDVI is > 0.7
+#' dt_cycles_2 <- cut_cycles(
+#'   ts_filled,
+#'   min_win = 120, # exclude cycles shorter than 4 months
+#'   min_peakvalue = 0.7, # exclude cycles with NDVI of peak < 0.7
+#'   value_type = "absolute", # 0.7 is the absolute NDVI value, not relative
+#'   newyearday = "10-01" # consider a year from 1st October to 30th September
+#' )
+#' plot(ts_filled, pheno = dt_cycles_2)
+
 
 cut_cycles <- function(
   ts,

@@ -4,6 +4,9 @@
 #' @param method Thresholding method among `"trs"`, `"derivatives"`, 
 #'  `"klosterman"` and `"gu"` (see `phenopix::PhenoExtract()`).
 #' @param trs Argument passed to `phenopix::PhenoExtract()` if `method = "trs"`.
+#'  It is valid also for `method = "derivatives"` thanks to a {sen2rts}
+#'  implementation (it will be documented soon).
+#'  Other methods do not make use of this argument.
 #' @param ... Additional arguments passed to `phenopix::PhenoExtract()`.
 #' @return A data table with the following fields:
 #'  - `id`: the time series ID (see `s2ts`);
@@ -22,6 +25,28 @@
 #' @author Luigi Ranghetti, PhD (2020) \email{luigi@@ranghetti.info}
 #' @import data.table
 #' @export
+#' @examples
+#' # Load input data
+#' data("cf")
+#' data("ts_filled") # used for plots
+#' 
+#' # Default extraction ("trs" method with 50% threshold)
+#' dt_pheno <- extract_pheno(cf)
+#' plot(ts_filled, fitted = cf, pheno = dt_pheno, plot_dates = TRUE)
+#' 
+#' # Customize parameters (e.g. "derivatives" method with 30% threshold)
+#' dt_pheno_2 <- extract_pheno(cf, method = "derivatives", trs = 0.3)
+#' plot(ts_filled, fitted = cf, pheno = dt_pheno_2, plot_dates = TRUE)
+#' 
+#' \donttest{
+#' # Other methods: Klosterman
+#' dt_pheno_kl <- extract_pheno(cf, method = "klosterman")
+#' plot(ts_filled, fitted = cf, pheno = dt_pheno_kl, plot_dates = TRUE)
+#' 
+#' # Other methods: Gu
+#' dt_pheno_gu <- extract_pheno(cf, method = "gu")
+#' plot(ts_filled, fitted = cf, pheno = dt_pheno_gu, plot_dates = TRUE)
+#' }
 
 
 extract_pheno <- function(

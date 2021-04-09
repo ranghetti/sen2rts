@@ -77,6 +77,42 @@ If \code{seasons = NA} this field is not returned.
 Filter detected cycles basing on dates of begin / end / peak,
 or limit the number of cycles allowed for any specified season.
 }
+\examples{
+# Load input data
+data("dt_cycles")
+data("dt_pheno")
+data("ts_filled") # used for plots
+
+# Filter one cycle per year, standard parameters (keep the most relevant cycle)
+dt_cycles
+dt_cycles_seas <- assign_season(dt_cycles, max_n_cycles = 1)
+dt_cycles_seas
+plot(ts_filled, pheno = dt_cycles_seas)
+
+# Filter one cycle per year, keep the one with the peak clostest to 1st August
+dt_pheno_seas1 <- assign_season(dt_pheno, max_n_cycles = 1, pop = "08-01")
+plot(ts_filled, pheno = dt_pheno_seas1)
+
+# Filter cycles with start of season between 1st February and 30th April
+dt_pheno_seas2 <- assign_season(
+  dt_pheno, 
+  sos_win = c("02-01", "04-30"),
+)
+plot(ts_filled, pheno = dt_pheno_seas2)
+
+# Assign season names: "winter" for winter crops, "summer" for summer crops
+# (defining winter crops as crops seeded between October and March,
+# summer crops as crops seeded between April and August)
+dt_pheno_seas3 <- assign_season(
+  dt_pheno, 
+  seasons = c("winter", "summer"),
+  sos_win = list(c("10-01", "03-31"), c("04-01", "08-31")),
+  sos_name = "begin",
+  rm_unassigned = FALSE
+)
+# notice the new column "season"
+dt_pheno_seas3
+}
 \author{
 Luigi Ranghetti, PhD (2020) \email{luigi@ranghetti.info}
 }

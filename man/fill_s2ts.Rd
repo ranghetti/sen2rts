@@ -41,6 +41,20 @@ The output time series in tabular format (see \code{extract_ts()}).
 \description{
 TODO
 }
+\examples{
+#' # Load input data
+data("ts_smoothed")
+
+# Gap filling using default parameters (daily)
+ts_filled <- fill_s2ts(ts_smoothed)
+ts_filled # standard print
+head(as.data.frame(ts_filled)) # see content
+plot(ts_filled)
+
+# Generate a regular time series using the minimum number of required records
+ts_filled_2 <- fill_s2ts(ts_smoothed, frequency = "dop")
+print(ts_filled_2, topn = 5) # standard print
+}
 \author{
 Luigi Ranghetti, PhD (2020) \email{luigi@ranghetti.info}
 }

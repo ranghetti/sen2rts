@@ -32,6 +32,26 @@
 #' @importFrom stats approx
 #' @importFrom methods as
 #' @export
+#' @examples
+#' # Load input data
+#' data("ts_raw")
+#' 
+#' # Smoothing time series using default parameters
+#' ts_smoothed <- smooth_s2ts(ts_raw)
+#' print(ts_smoothed, topn = 5) # standard print
+#' head(as.data.frame(ts_smoothed)) # see content
+#' plot(ts_smoothed)
+#' 
+#' # Apply a more pronounced smoothing
+#' ts_smoothed_2 <- smooth_s2ts(
+#'   ts_raw,
+#'   min_qa = 0.5, # exclude values with qa < 0.5
+#'   sg_daywindow = 30, # larger moving window
+#'   sg_polynom = 3, # cubic interpolation
+#'   sg_n = 5 # apply the SG filter 5 times
+#' )
+#' plot(ts_smoothed_2)
+
 
 smooth_s2ts <- function(
   ts,

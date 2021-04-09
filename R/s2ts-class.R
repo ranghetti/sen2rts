@@ -565,7 +565,7 @@ plot.s2ts <- function(
   
   # Add smoothed line
   if (plot_elements$smoothedline == TRUE) {
-    out <- out + ggplot2::geom_line(data = x_dt_smooth, alpha = 0.5)
+    out <- out + ggplot2::geom_line(data = x_dt_smooth[!is.na(value),], alpha = 0.5)
   }
   
   # Add points
