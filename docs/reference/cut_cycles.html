@@ -41,7 +41,7 @@
 
 <meta property="og:title" content="Cut cycles — cut_cycles" />
 <meta property="og:description" content="Cut Sentinel-2 time series into separate cycles,
-detecting dates of cuts and of peaks." />
+detecting dates of cuts and peaks." />
 
 
 
@@ -131,7 +131,7 @@ detecting dates of cuts and of peaks." />
 
     <div class="ref-description">
     <p>Cut Sentinel-2 time series into separate cycles,
-detecting dates of cuts and of peaks.</p>
+detecting dates of cuts and peaks.</p>
     </div>
 
     <pre class="usage"><span class='fu'>cut_cycles</span><span class='op'>(</span>
@@ -253,6 +253,29 @@ The methodology will be documented in future.</p>
 
     <p>Luigi Ranghetti, PhD (2021) <a href='mailto:luigi@ranghetti.info'>luigi@ranghetti.info</a></p>
 
+    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <pre class="examples"><div class='input'><span class='co'># Load input data</span>
+<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='st'>"ts_filled"</span><span class='op'>)</span>
+
+<span class='co'># Cut seasons with standard parameters</span>
+<span class='va'>dt_cycles</span> <span class='op'>&lt;-</span> <span class='fu'>cut_cycles</span><span class='op'>(</span><span class='va'>ts_filled</span><span class='op'>)</span>
+<span class='va'>dt_cycles</span>
+</div><div class='output co'>#&gt;    id year cycle      begin        end     maxval   weight
+#&gt; 1:  1 2020     1 2020-04-27 2020-10-15 2020-07-13 88.71541
+#&gt; 2:  2 2020     1 2020-01-04 2020-07-16 2020-04-21 92.78070
+#&gt; 3:  2 2020     2 2020-07-16 2020-10-16 2020-08-08 13.91427</div><div class='input'><span class='co'># Plot the TS highlighting the extracted cycles</span>
+<span class='fu'><a href='plot.html'>plot</a></span><span class='op'>(</span><span class='va'>ts_filled</span>, pheno <span class='op'>=</span> <span class='va'>dt_cycles</span>, plot_dates <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>
+</div><div class='img'><img src='cut_cycles-1.png' alt='' width='700' height='433' /></div><div class='input'>
+<span class='co'># Cut cycles considering separate cycles only if the maximum NDVI is &gt; 0.7</span>
+<span class='va'>dt_cycles_2</span> <span class='op'>&lt;-</span> <span class='fu'>cut_cycles</span><span class='op'>(</span>
+  <span class='va'>ts_filled</span>,
+  min_win <span class='op'>=</span> <span class='fl'>120</span>, <span class='co'># exclude cycles shorter than 4 months</span>
+  min_peakvalue <span class='op'>=</span> <span class='fl'>0.7</span>, <span class='co'># exclude cycles with NDVI of peak &lt; 0.7</span>
+  value_type <span class='op'>=</span> <span class='st'>"absolute"</span>, <span class='co'># 0.7 is the absolute NDVI value, not relative</span>
+  newyearday <span class='op'>=</span> <span class='st'>"10-01"</span> <span class='co'># consider a year from 1st October to 30th September</span>
+<span class='op'>)</span>
+<span class='fu'><a href='plot.html'>plot</a></span><span class='op'>(</span><span class='va'>ts_filled</span>, pheno <span class='op'>=</span> <span class='va'>dt_cycles_2</span><span class='op'>)</span>
+</div><div class='img'><img src='cut_cycles-2.png' alt='' width='700' height='433' /></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

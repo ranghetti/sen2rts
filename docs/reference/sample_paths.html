@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Read raster cubes from sen2r archives — read_s2cube • sen2rts</title>
+<title>Paths of the rasters used in documentation examples — sample_paths • sen2rts</title>
 
 
 <!-- jquery -->
@@ -39,8 +39,11 @@
 
 
 
-<meta property="og:title" content="Read raster cubes from sen2r archives — read_s2cube" />
-<meta property="og:description" content="TODO" />
+<meta property="og:title" content="Paths of the rasters used in documentation examples — sample_paths" />
+<meta property="og:description" content="The sample dataset contains Sentinel-2 derived images
+(NDVI index and SCL) used in the documentation examples of extract_s2ts().
+This archive is not provided as a raster stack using standard data() way
+because extract_s2ts() accepts paths as input." />
 
 
 
@@ -123,113 +126,61 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Read raster cubes from sen2r archives</h1>
-    <small class="dont-index">Source: <a href='https://github.com/ranghetti/sen2rts/blob/master/R/read_s2cube.R'><code>R/read_s2cube.R</code></a></small>
-    <div class="hidden name"><code>read_s2cube.Rd</code></div>
+    <h1>Paths of the rasters used in documentation examples</h1>
+    <small class="dont-index">Source: <a href='https://github.com/ranghetti/sen2rts/blob/master/R/data.R'><code>R/data.R</code></a></small>
+    <div class="hidden name"><code>sample_paths.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>TODO</p>
+    <p>The sample dataset contains Sentinel-2 derived images
+(NDVI index and SCL) used in the documentation examples of <code><a href='extract_s2ts.html'>extract_s2ts()</a></code>.
+This archive is not provided as a raster stack using standard <code><a href='https://rdrr.io/r/utils/data.html'>data()</a></code> way
+because <code><a href='extract_s2ts.html'>extract_s2ts()</a></code> accepts paths as input.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>read_s2cube</span><span class='op'>(</span>
-  <span class='va'>inpath</span>,
-  out_format <span class='op'>=</span> <span class='st'>"path"</span>,
-  <span class='va'>prod_type</span>,
-  <span class='va'>time_window</span>,
-  <span class='va'>s2_orbits</span>,
-  <span class='va'>s2_sensors</span>,
-  <span class='va'>file_ext</span>,
-  <span class='va'>bbox</span>,
-  .use_vrt <span class='op'>=</span> <span class='cn'>FALSE</span>
-<span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>sample_paths</span><span class='op'>(</span>prod <span class='op'>=</span> <span class='st'>"NDVI"</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>inpath</th>
-      <td><p>Path of the directory in which sen2r files are.</p></td>
-    </tr>
-    <tr>
-      <th>out_format</th>
-      <td><p>(optional) Output format, being one among
-<code>"path"</code> (default), <code>"stars"</code> and <code>"stars_proxy"</code>).</p></td>
-    </tr>
-    <tr>
-      <th>prod_type</th>
-      <td><p>(optional) sen2r product type to import
-(used for filtering among <code>inpath</code> content).</p></td>
-    </tr>
-    <tr>
-      <th>time_window</th>
-      <td><p>(optional) time window to import
-(used for filtering among <code>inpath</code> content).</p></td>
-    </tr>
-    <tr>
-      <th>s2_orbits</th>
-      <td><p>(optional) Sentinel-2 orbits to import
-(used for filtering among <code>inpath</code> content).</p></td>
-    </tr>
-    <tr>
-      <th>s2_sensors</th>
-      <td><p>(optional) Sentinel-2 sensor to import  (<code>"2A"</code>, <code>"2B"</code> or both)
-(used for filtering among <code>inpath</code> content).</p></td>
-    </tr>
-    <tr>
-      <th>file_ext</th>
-      <td><p>(optional) input file extension
-(used for filtering among <code>inpath</code> content).</p></td>
-    </tr>
-    <tr>
-      <th>bbox</th>
-      <td><p>(optional) object of class <code>sf</code>, <code>sfc</code> or <code>bbox</code> used to import
-a subset of the original raster extent.</p></td>
-    </tr>
-    <tr>
-      <th>.use_vrt</th>
-      <td><p>(optional) pass through a temporary VRT before creating <code>stars</code>?</p></td>
+      <th>prod</th>
+      <td><p><code>"NDVI"</code> or <code>"SCL"</code>.</p></td>
     </tr>
     </table>
 
+    <h2 class="hasAnchor" id="format"><a class="anchor" href="#format"></a>Format</h2>
+
+    <p>Each sample archive include 60 images acquired between 2020-01-01 and
+2020-09-30 covering the <code><a href='sampleroi.html'>sampleroi</a></code> extent, provided in the
+<a href='https://sen2r.ranghetti.info/articles/outstructure.html'>sen2r output format</a>.
+NDVI images are saved in integer format (values are scaled using a 10^4
+factor).</p>
+<p>Data size is very small (13x4 pixels per each image) in order not to be heavy
+in terms of data size and to ensure examples to be rapidly runnable.
+The vignette <a href='../articles/workflow.html'>"The sen2rts workflow"</a> makes use
+of a larger dataset in order to show a more plausible use case.</p>
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>The output raster cube in the selected format.</p>
-    <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
-
-    <p>Luigi Ranghetti, PhD (2020) <a href='mailto:luigi@ranghetti.info'>luigi@ranghetti.info</a></p>
+    <p><code>sample_paths()</code> returns the paths of the sample archive
+(NDVI or SCL, depending on argument <code>prod</code>).</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='co'># Path of a sample archive created with {sen2r} (see ?sample_paths)</span>
-<span class='va'>archive_dir</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span><span class='op'>(</span><span class='st'>"extdata/sen2r/sampleroi"</span>, package <span class='op'>=</span> <span class='st'>"sen2rts"</span><span class='op'>)</span>
-
-<span class='co'># Default function behaviour</span>
-<span class='va'>sen2r_ndvi_paths</span> <span class='op'>&lt;-</span> <span class='fu'>read_s2cube</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/file.path.html'>file.path</a></span><span class='op'>(</span><span class='va'>archive_dir</span>, <span class='st'>"NDVI"</span><span class='op'>)</span><span class='op'>)</span>
+    <pre class="examples"><div class='input'><span class='va'>sen2r_ndvi_paths</span> <span class='op'>&lt;-</span> <span class='fu'>sample_paths</span><span class='op'>(</span><span class='st'>"NDVI"</span><span class='op'>)</span>
 <span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span><span class='op'>(</span><span class='va'>sen2r_ndvi_paths</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; [1] "/home/lranghetti/share/git/github/ranghetti/sen2rts/inst/extdata/sen2r/sampleroi/NDVI/S2B2A_20200104_022_sampleroi_NDVI_10.tif"
 #&gt; [2] "/home/lranghetti/share/git/github/ranghetti/sen2rts/inst/extdata/sen2r/sampleroi/NDVI/S2A2A_20200109_022_sampleroi_NDVI_10.tif"
 #&gt; [3] "/home/lranghetti/share/git/github/ranghetti/sen2rts/inst/extdata/sen2r/sampleroi/NDVI/S2B2A_20200114_022_sampleroi_NDVI_10.tif"
 #&gt; [4] "/home/lranghetti/share/git/github/ranghetti/sen2rts/inst/extdata/sen2r/sampleroi/NDVI/S2A2A_20200119_022_sampleroi_NDVI_10.tif"
 #&gt; [5] "/home/lranghetti/share/git/github/ranghetti/sen2rts/inst/extdata/sen2r/sampleroi/NDVI/S2B2A_20200124_022_sampleroi_NDVI_10.tif"
-#&gt; [6] "/home/lranghetti/share/git/github/ranghetti/sen2rts/inst/extdata/sen2r/sampleroi/NDVI/S2A2A_20200129_022_sampleroi_NDVI_10.tif"</div><div class='input'>
-<span class='co'># Specifying argument prod_type, the parent directory can also be provided:</span>
-<span class='va'>sen2r_scl_paths</span> <span class='op'>&lt;-</span> <span class='fu'>read_s2cube</span><span class='op'>(</span><span class='va'>archive_dir</span>, prod_type <span class='op'>=</span> <span class='st'>"SCL"</span><span class='op'>)</span>
+#&gt; [6] "/home/lranghetti/share/git/github/ranghetti/sen2rts/inst/extdata/sen2r/sampleroi/NDVI/S2A2A_20200129_022_sampleroi_NDVI_10.tif"</div><div class='input'><span class='va'>sen2r_scl_paths</span> <span class='op'>&lt;-</span> <span class='fu'>sample_paths</span><span class='op'>(</span><span class='st'>"SCL"</span><span class='op'>)</span>
 <span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span><span class='op'>(</span><span class='va'>sen2r_scl_paths</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; [1] "/home/lranghetti/share/git/github/ranghetti/sen2rts/inst/extdata/sen2r/sampleroi/SCL/S2B2A_20200104_022_sampleroi_SCL_10.tif"
 #&gt; [2] "/home/lranghetti/share/git/github/ranghetti/sen2rts/inst/extdata/sen2r/sampleroi/SCL/S2A2A_20200109_022_sampleroi_SCL_10.tif"
 #&gt; [3] "/home/lranghetti/share/git/github/ranghetti/sen2rts/inst/extdata/sen2r/sampleroi/SCL/S2B2A_20200114_022_sampleroi_SCL_10.tif"
 #&gt; [4] "/home/lranghetti/share/git/github/ranghetti/sen2rts/inst/extdata/sen2r/sampleroi/SCL/S2A2A_20200119_022_sampleroi_SCL_10.tif"
 #&gt; [5] "/home/lranghetti/share/git/github/ranghetti/sen2rts/inst/extdata/sen2r/sampleroi/SCL/S2B2A_20200124_022_sampleroi_SCL_10.tif"
-#&gt; [6] "/home/lranghetti/share/git/github/ranghetti/sen2rts/inst/extdata/sen2r/sampleroi/SCL/S2A2A_20200129_022_sampleroi_SCL_10.tif"</div><div class='input'>
-<span class='co'># Using some filters</span>
-<span class='fu'>read_s2cube</span><span class='op'>(</span>
-  <span class='va'>archive_dir</span>, prod_type <span class='op'>=</span> <span class='st'>"NDVI"</span>, 
-  time_window <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"2020-06-01"</span>, <span class='st'>"2020-06-30"</span><span class='op'>)</span>, 
-  s2_sensors <span class='op'>=</span> <span class='st'>"2A"</span>
-<span class='op'>)</span>
-</div><div class='output co'>#&gt; [1] "/home/lranghetti/share/git/github/ranghetti/sen2rts/inst/extdata/sen2r/sampleroi/NDVI/S2A2A_20200607_022_sampleroi_NDVI_10.tif"
-#&gt; [2] "/home/lranghetti/share/git/github/ranghetti/sen2rts/inst/extdata/sen2r/sampleroi/NDVI/S2A2A_20200617_022_sampleroi_NDVI_10.tif"
-#&gt; [3] "/home/lranghetti/share/git/github/ranghetti/sen2rts/inst/extdata/sen2r/sampleroi/NDVI/S2A2A_20200627_022_sampleroi_NDVI_10.tif"</div></pre>
+#&gt; [6] "/home/lranghetti/share/git/github/ranghetti/sen2rts/inst/extdata/sen2r/sampleroi/SCL/S2A2A_20200129_022_sampleroi_SCL_10.tif"</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

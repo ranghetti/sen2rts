@@ -210,6 +210,46 @@ Default is 0.1 (+10%). Set to Inf in order not to set any constraint.</p></td>
 
     <p>Luigi Ranghetti, PhD (2020) <a href='mailto:luigi@ranghetti.info'>luigi@ranghetti.info</a></p>
 
+    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <pre class="examples"><div class='input'><span class='co'># Load input data</span>
+<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='st'>"ts_raw"</span><span class='op'>)</span>
+
+<span class='co'># Smoothing time series using default parameters</span>
+<span class='va'>ts_smoothed</span> <span class='op'>&lt;-</span> <span class='fu'>smooth_s2ts</span><span class='op'>(</span><span class='va'>ts_raw</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/base/print.html'>print</a></span><span class='op'>(</span><span class='va'>ts_smoothed</span>, topn <span class='op'>=</span> <span class='fl'>5</span><span class='op'>)</span> <span class='co'># standard print</span>
+</div><div class='output co'>#&gt; A smoothed s2ts time series with 60 dates and 2 IDs.
+#&gt;           Date Orbit Sensor          1            2   
+#&gt;  1: 2020-01-04   022     2B 0.11606015 ○  0.1740709 ○ 
+#&gt;  2: 2020-01-09   022     2A         NA ○         NA ○ 
+#&gt;  3: 2020-01-14   022     2B         NA ○         NA ○ 
+#&gt;  4: 2020-01-19   022     2A         NA ○         NA ○ 
+#&gt;  5: 2020-01-24   022     2B 0.12343408 ○  0.2060596 ○ 
+#&gt; ---                                                   
+#&gt; 56: 2020-10-10   022     2B 0.05760022 ○  0.1021135 ○ 
+#&gt; 57: 2020-10-15   022     2A         NA ○         NA ○ 
+#&gt; 58: 2020-10-20   022     2B 0.05767390 ○  0.1016156 ○ 
+#&gt; 59: 2020-10-25   022     2A         NA ○         NA ○ 
+#&gt; 60: 2020-10-30   022     2B         NA ○         NA ○ 
+#&gt; 
+#&gt; Quality flags:  ● [1]  ◕ [0.9,1)  ◑ [0.75,0.9)  ◔ [0.5,0.75)  ○ [0,0.5)</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/as.data.frame.html'>as.data.frame</a></span><span class='op'>(</span><span class='va'>ts_smoothed</span><span class='op'>)</span><span class='op'>)</span> <span class='co'># see content</span>
+</div><div class='output co'>#&gt;   id       date orbit sensor     value   qa       rawval
+#&gt; 1  1 2020-01-04   022     2B 0.1160602 0.33  0.116133333
+#&gt; 2  1 2020-01-09   022     2A        NA 0.00  0.020170833
+#&gt; 3  1 2020-01-14   022     2B        NA 0.00 -0.004372917
+#&gt; 4  1 2020-01-19   022     2A        NA 0.00  0.116368750
+#&gt; 5  1 2020-01-24   022     2B 0.1234341 0.33  0.123387500
+#&gt; 6  1 2020-01-29   022     2A 0.1137065 0.33  0.114379167</div><div class='input'><span class='fu'><a href='plot.html'>plot</a></span><span class='op'>(</span><span class='va'>ts_smoothed</span><span class='op'>)</span>
+</div><div class='img'><img src='smooth_s2ts-1.png' alt='' width='700' height='433' /></div><div class='input'>
+<span class='co'># Apply a more pronounced smoothing</span>
+<span class='va'>ts_smoothed_2</span> <span class='op'>&lt;-</span> <span class='fu'>smooth_s2ts</span><span class='op'>(</span>
+  <span class='va'>ts_raw</span>,
+  min_qa <span class='op'>=</span> <span class='fl'>0.5</span>, <span class='co'># exclude values with qa &lt; 0.5</span>
+  sg_daywindow <span class='op'>=</span> <span class='fl'>30</span>, <span class='co'># larger moving window</span>
+  sg_polynom <span class='op'>=</span> <span class='fl'>3</span>, <span class='co'># cubic interpolation</span>
+  sg_n <span class='op'>=</span> <span class='fl'>5</span> <span class='co'># apply the SG filter 5 times</span>
+<span class='op'>)</span>
+<span class='fu'><a href='plot.html'>plot</a></span><span class='op'>(</span><span class='va'>ts_smoothed_2</span><span class='op'>)</span>
+</div><div class='img'><img src='smooth_s2ts-2.png' alt='' width='700' height='433' /></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

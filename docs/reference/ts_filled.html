@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Fill not equally-spaced time series — fill_s2ts • sen2rts</title>
+<title>Sample daily time series — ts_filled • sen2rts</title>
 
 
 <!-- jquery -->
@@ -39,8 +39,13 @@
 
 
 
-<meta property="og:title" content="Fill not equally-spaced time series — fill_s2ts" />
-<meta property="og:description" content="TODO" />
+<meta property="og:title" content="Sample daily time series — ts_filled" />
+<meta property="og:description" content="Sample time series obtained from the dataset ts_smoothed,
+created following the example provided in the fill_s2ts()
+documentation.
+It is used in the documentation of functions with takes a processed
+time series as input, like cut_cycles(), fit_curve() and
+aggregate_pheno()." />
 
 
 
@@ -123,73 +128,31 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Fill not equally-spaced time series</h1>
-    <small class="dont-index">Source: <a href='https://github.com/ranghetti/sen2rts/blob/master/R/fill_s2ts.R'><code>R/fill_s2ts.R</code></a></small>
-    <div class="hidden name"><code>fill_s2ts.Rd</code></div>
+    <h1>Sample daily time series</h1>
+    <small class="dont-index">Source: <a href='https://github.com/ranghetti/sen2rts/blob/master/R/data.R'><code>R/data.R</code></a></small>
+    <div class="hidden name"><code>ts_filled.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>TODO</p>
+    <p>Sample time series obtained from the dataset <code><a href='ts_smoothed.html'>ts_smoothed</a></code>,
+created following the example provided in the <code><a href='fill_s2ts.html'>fill_s2ts()</a></code>
+documentation.
+It is used in the documentation of functions with takes a processed
+time series as input, like <code><a href='cut_cycles.html'>cut_cycles()</a></code>, <code><a href='fit_curve.html'>fit_curve()</a></code> and
+<code><a href='aggregate_pheno.html'>aggregate_pheno()</a></code>.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>fill_s2ts</span><span class='op'>(</span>
-  <span class='va'>ts</span>,
-  frequency <span class='op'>=</span> <span class='st'>"daily"</span>,
-  method <span class='op'>=</span> <span class='st'>"fmm"</span>,
-  max_na_days <span class='op'>=</span> <span class='cn'>Inf</span>,
-  max_extrapolation <span class='op'>=</span> <span class='fl'>0.1</span>
-<span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>ts_filled</span><span class='op'>)</span></pre>
 
-    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
-    <table class="ref-arguments">
-    <colgroup><col class="name" /><col class="desc" /></colgroup>
-    <tr>
-      <th>ts</th>
-      <td><p>Time series in <code>s2ts</code> format (generated using <code><a href='smooth_s2ts.html'>smooth_s2ts()</a></code>).</p></td>
-    </tr>
-    <tr>
-      <th>frequency</th>
-      <td><p>(optional) One of the followings:</p><ul>
-<li><p><code>daily</code>: daily frequency (default);</p></li>
-<li><p><code>dop</code> (Days Of Passage): values are returned corresponding to
-the theoretic Sentinel-2 dates of passage.</p></li>
-</ul></td>
-    </tr>
-    <tr>
-      <th>method</th>
-      <td><p>(optional) Argument passed to <code><a href='https://rdrr.io/r/stats/splinefun.html'>spline()</a></code>.</p></td>
-    </tr>
-    <tr>
-      <th>max_na_days</th>
-      <td><p>(optional) maximum number of consecutive days with missing
-values which can be filled (in case of longer time windows with missing data,
-NA are returned).
-Default is to fit everything (unless this could lead to errors in case of
-long NT time windows, currently it is the only way to get subsequent functions
-working).</p></td>
-    </tr>
-    <tr>
-      <th>max_extrapolation</th>
-      <td><p>(optional) Numeric: maximum allowed extrapolation
-out of original range (relative value).
-Default is 0.1 (+10%). Set to Inf in order not to set any constraint.</p></td>
-    </tr>
-    </table>
 
-    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
+    <h2 class="hasAnchor" id="format"><a class="anchor" href="#format"></a>Format</h2>
 
-    <p>The output time series in tabular format (see <code>extract_ts()</code>).</p>
-    <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
-
-    <p>Luigi Ranghetti, PhD (2020) <a href='mailto:luigi@ranghetti.info'>luigi@ranghetti.info</a></p>
+    <p>A <code><a href='s2ts.html'>s2ts</a></code> object with 301 dates (in the period 2020-01-01 to
+2020-09-30) and 2 IDs (corresponding to <code><a href='sampleroi.html'>sampleroi</a></code> polygons).</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='co'>#' # Load input data</span>
-<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='st'>"ts_smoothed"</span><span class='op'>)</span>
-
-<span class='co'># Gap filling using default parameters (daily)</span>
-<span class='va'>ts_filled</span> <span class='op'>&lt;-</span> <span class='fu'>fill_s2ts</span><span class='op'>(</span><span class='va'>ts_smoothed</span><span class='op'>)</span>
-<span class='va'>ts_filled</span> <span class='co'># standard print</span>
+    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>ts_filled</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/base/print.html'>print</a></span><span class='op'>(</span><span class='va'>ts_filled</span>, topn <span class='op'>=</span> <span class='fl'>5</span><span class='op'>)</span> <span class='co'># standard print</span>
 </div><div class='output co'>#&gt; An interpolated s2ts time series with 301 dates and 2 IDs.
 #&gt;            Date Orbit Sensor         1            2   
 #&gt;   1: 2020-01-04   022     2B 0.1160602 ○  0.1740709 ○ 
@@ -213,26 +176,7 @@ Default is 0.1 (+10%). Set to Inf in order not to set any constraint.</p></td>
 #&gt; 4  1 2020-01-07  &lt;NA&gt;   &lt;NA&gt; 0.1281397   NA         NA         TRUE
 #&gt; 5  1 2020-01-08  &lt;NA&gt;   &lt;NA&gt; 0.1309599   NA         NA         TRUE
 #&gt; 6  1 2020-01-09   022     2A 0.1332310 0.00 0.02017083         TRUE</div><div class='input'><span class='fu'><a href='plot.html'>plot</a></span><span class='op'>(</span><span class='va'>ts_filled</span><span class='op'>)</span>
-</div><div class='img'><img src='fill_s2ts-1.png' alt='' width='700' height='433' /></div><div class='input'>
-<span class='co'># Generate a regular time series using the minimum number of required records</span>
-<span class='va'>ts_filled_2</span> <span class='op'>&lt;-</span> <span class='fu'>fill_s2ts</span><span class='op'>(</span><span class='va'>ts_smoothed</span>, frequency <span class='op'>=</span> <span class='st'>"dop"</span><span class='op'>)</span>
-<span class='fu'><a href='https://rdrr.io/r/base/print.html'>print</a></span><span class='op'>(</span><span class='va'>ts_filled_2</span>, topn <span class='op'>=</span> <span class='fl'>5</span><span class='op'>)</span> <span class='co'># standard print</span>
-</div><div class='output co'>#&gt; An interpolated s2ts time series with 61 dates and 2 IDs.
-#&gt;           Date Orbit Sensor          1             2   
-#&gt;  1: 2020-01-04   022     2B 0.11606015 ○  0.17407087 ○ 
-#&gt;  2: 2020-01-09   022     2A 0.13323097 ~  0.17989257 ~ 
-#&gt;  3: 2020-01-14   022     2B 0.13748313 ~  0.18856602 ~ 
-#&gt;  4: 2020-01-19   022     2A 0.13286728 ~  0.19798907 ~ 
-#&gt;  5: 2020-01-24   022     2B 0.12343408 ○  0.20605959 ○ 
-#&gt; ---                                                    
-#&gt; 57: 2020-10-10   022     2B 0.05760022 ○  0.10211348 ○ 
-#&gt; 58: 2020-10-15   022     2A 0.04666769 ~  0.09472827 ~ 
-#&gt; 59: 2020-10-20   022     2B 0.05767390 ○  0.10161563 ○ 
-#&gt; 60: 2020-10-25   022     2A         NA ~          NA ~ 
-#&gt; 61: 2020-10-30   022     2B         NA ~          NA ~ 
-#&gt; 
-#&gt; Quality flags:  ● [1]  ◕ [0.9,1)  ◑ [0.75,0.9)  ◔ [0.5,0.75)  ○ [0,0.5)
-#&gt; Interpolated values are marked with "~".</div></pre>
+</div><div class='img'><img src='ts_filled-1.png' alt='' width='700' height='433' /></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

@@ -233,6 +233,54 @@ If <code>seasons = NA</code> this field is not returned.</p>
 
     <p>Luigi Ranghetti, PhD (2020) <a href='mailto:luigi@ranghetti.info'>luigi@ranghetti.info</a></p>
 
+    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <pre class="examples"><div class='input'><span class='co'># Load input data</span>
+<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='st'>"dt_cycles"</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='st'>"dt_pheno"</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='st'>"ts_filled"</span><span class='op'>)</span> <span class='co'># used for plots</span>
+
+<span class='co'># Filter one cycle per year, standard parameters (keep the most relevant cycle)</span>
+<span class='va'>dt_cycles</span>
+</div><div class='output co'>#&gt;    id year cycle      begin        end     maxval   weight
+#&gt; 1:  1 2020     1 2020-04-27 2020-10-15 2020-07-13 88.71541
+#&gt; 2:  2 2020     1 2020-01-04 2020-07-16 2020-04-21 92.78070
+#&gt; 3:  2 2020     2 2020-07-16 2020-10-16 2020-08-08 13.91427</div><div class='input'><span class='va'>dt_cycles_seas</span> <span class='op'>&lt;-</span> <span class='fu'>assign_season</span><span class='op'>(</span><span class='va'>dt_cycles</span>, max_n_cycles <span class='op'>=</span> <span class='fl'>1</span><span class='op'>)</span>
+<span class='va'>dt_cycles_seas</span>
+</div><div class='output co'>#&gt;    id year cycle      begin        end     maxval   weight
+#&gt; 1:  1 2020     1 2020-04-27 2020-10-15 2020-07-13 88.71541
+#&gt; 2:  2 2020     1 2020-01-04 2020-07-16 2020-04-21 92.78070</div><div class='input'><span class='fu'><a href='plot.html'>plot</a></span><span class='op'>(</span><span class='va'>ts_filled</span>, pheno <span class='op'>=</span> <span class='va'>dt_cycles_seas</span><span class='op'>)</span>
+</div><div class='img'><img src='assign_season-1.png' alt='' width='700' height='433' /></div><div class='input'>
+<span class='co'># Filter one cycle per year, keep the one with the peak clostest to 1st August</span>
+<span class='va'>dt_pheno_seas1</span> <span class='op'>&lt;-</span> <span class='fu'>assign_season</span><span class='op'>(</span><span class='va'>dt_pheno</span>, max_n_cycles <span class='op'>=</span> <span class='fl'>1</span>, pop <span class='op'>=</span> <span class='st'>"08-01"</span><span class='op'>)</span>
+<span class='fu'><a href='plot.html'>plot</a></span><span class='op'>(</span><span class='va'>ts_filled</span>, pheno <span class='op'>=</span> <span class='va'>dt_pheno_seas1</span><span class='op'>)</span>
+</div><div class='img'><img src='assign_season-2.png' alt='' width='700' height='433' /></div><div class='input'>
+<span class='co'># Filter cycles with start of season between 1st February and 30th April</span>
+<span class='va'>dt_pheno_seas2</span> <span class='op'>&lt;-</span> <span class='fu'>assign_season</span><span class='op'>(</span>
+  <span class='va'>dt_pheno</span>, 
+  sos_win <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"02-01"</span>, <span class='st'>"04-30"</span><span class='op'>)</span>,
+<span class='op'>)</span>
+<span class='fu'><a href='plot.html'>plot</a></span><span class='op'>(</span><span class='va'>ts_filled</span>, pheno <span class='op'>=</span> <span class='va'>dt_pheno_seas2</span><span class='op'>)</span>
+</div><div class='img'><img src='assign_season-3.png' alt='' width='700' height='433' /></div><div class='input'>
+<span class='co'># Assign season names: "winter" for winter crops, "summer" for summer crops</span>
+<span class='co'># (defining winter crops as crops seeded between October and March,</span>
+<span class='co'># summer crops as crops seeded between April and August)</span>
+<span class='va'>dt_pheno_seas3</span> <span class='op'>&lt;-</span> <span class='fu'>assign_season</span><span class='op'>(</span>
+  <span class='va'>dt_pheno</span>, 
+  seasons <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"winter"</span>, <span class='st'>"summer"</span><span class='op'>)</span>,
+  sos_win <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"10-01"</span>, <span class='st'>"03-31"</span><span class='op'>)</span>, <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"04-01"</span>, <span class='st'>"08-31"</span><span class='op'>)</span><span class='op'>)</span>,
+  sos_name <span class='op'>=</span> <span class='st'>"begin"</span>,
+  rm_unassigned <span class='op'>=</span> <span class='cn'>FALSE</span>
+<span class='op'>)</span>
+<span class='co'># notice the new column "season"</span>
+<span class='va'>dt_pheno_seas3</span>
+</div><div class='output co'>#&gt;    id year cycle season      begin        end     maxval   weight        sos
+#&gt; 1:  1 2020     1 summer 2020-04-27 2020-10-14 2020-07-13 88.71541 2020-05-30
+#&gt; 2:  2 2020     1 winter 2020-01-04 2020-07-15 2020-04-21 92.78070 2020-03-14
+#&gt; 3:  2 2020     2 summer 2020-07-16 2020-10-15 2020-08-08 13.91427 2020-07-29
+#&gt;           eos los        pop       mgs rsp rau      peak       msp       mau
+#&gt; 1: 2020-08-26  88 2020-07-01 0.8183139  NA  NA 0.8885069 0.4805396 0.4575946
+#&gt; 2: 2020-06-02  80 2020-05-01 0.7291655  NA  NA 0.8196339 0.5021371 0.5032177
+#&gt; 3: 2020-08-20  22 2020-08-09 0.4262500  NA  NA 0.4886998 0.3193936 0.2943121</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

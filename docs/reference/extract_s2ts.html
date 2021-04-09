@@ -237,6 +237,71 @@ layers of weights are combined and the lowest quality flag is considered.</p>
 
     <p>Luigi Ranghetti, PhD (2020) <a href='mailto:luigi@ranghetti.info'>luigi@ranghetti.info</a></p>
 
+    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <pre class="examples"><div class='input'><span class='co'># Load input data</span>
+<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='st'>"sampleroi"</span><span class='op'>)</span>
+<span class='va'>sen2r_ndvi_paths</span> <span class='op'>&lt;-</span> <span class='fu'><a href='sample_paths.html'>sample_paths</a></span><span class='op'>(</span><span class='st'>"NDVI"</span><span class='op'>)</span>
+<span class='va'>sen2r_scl_paths</span> <span class='op'>&lt;-</span> <span class='fu'><a href='sample_paths.html'>sample_paths</a></span><span class='op'>(</span><span class='st'>"SCL"</span><span class='op'>)</span>
+
+<span class='co'># \donttest{</span>
+<span class='co'># Simple TS extraction from polygons (without quality flags)</span>
+<span class='va'>ts_raw_0</span> <span class='op'>&lt;-</span> <span class='fu'>extract_s2ts</span><span class='op'>(</span><span class='va'>sen2r_ndvi_paths</span>, <span class='va'>sampleroi</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/base/print.html'>print</a></span><span class='op'>(</span><span class='va'>ts_raw_0</span>, topn <span class='op'>=</span> <span class='fl'>5</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; A raw s2ts time series with 60 dates and 2 IDs.
+#&gt;           Date Orbit Sensor          1            2  
+#&gt;  1: 2020-01-04   022     2B 1161.33333   1733.06250  
+#&gt;  2: 2020-01-09   022     2A  201.70833    223.52083  
+#&gt;  3: 2020-01-14   022     2B  -43.72917    150.77083  
+#&gt;  4: 2020-01-19   022     2A 1163.68750    967.04167  
+#&gt;  5: 2020-01-24   022     2B 1233.87500   1657.27083  
+#&gt; ---                                                  
+#&gt; 56: 2020-10-10   022     2B  572.33333   1018.64583  
+#&gt; 57: 2020-10-15   022     2A  -86.37500    -93.22917  
+#&gt; 58: 2020-10-20   022     2B  571.81250    983.20833  
+#&gt; 59: 2020-10-25   022     2A -385.56250   -677.97917  
+#&gt; 60: 2020-10-30   022     2B  676.35417    783.27083  </div><div class='input'><span class='co'># }</span>
+
+<span class='co'># TS extraction from polygons using a SCL archive for quality flags</span>
+<span class='co'># (example used to produce the sample dataset "ts_raw")</span>
+<span class='va'>ts_raw</span> <span class='op'>&lt;-</span> <span class='fu'>extract_s2ts</span><span class='op'>(</span>
+  <span class='va'>sen2r_ndvi_paths</span>, 
+  <span class='va'>sampleroi</span>,
+  scl_paths <span class='op'>=</span> <span class='va'>sen2r_scl_paths</span>
+<span class='op'>)</span>
+<span class='va'>ts_raw</span><span class='op'>$</span><span class='va'>value</span> <span class='op'>&lt;-</span> <span class='va'>ts_raw</span><span class='op'>$</span><span class='va'>value</span> <span class='op'>/</span> <span class='fl'>1E4</span> <span class='co'># reshape to standard NDVI range -1 to 1</span>
+<span class='fu'><a href='https://rdrr.io/r/base/print.html'>print</a></span><span class='op'>(</span><span class='va'>ts_raw</span>, topn <span class='op'>=</span> <span class='fl'>5</span><span class='op'>)</span> <span class='co'># standard print</span>
+</div><div class='output co'>#&gt; A raw s2ts time series with 60 dates and 2 IDs.
+#&gt;           Date Orbit Sensor            1               2   
+#&gt;  1: 2020-01-04   022     2B  0.116133333 ○   0.173306250 ○ 
+#&gt;  2: 2020-01-09   022     2A  0.020170833 ○   0.022352083 ○ 
+#&gt;  3: 2020-01-14   022     2B -0.004372917 ○   0.015077083 ○ 
+#&gt;  4: 2020-01-19   022     2A  0.116368750 ○   0.096704167 ○ 
+#&gt;  5: 2020-01-24   022     2B  0.123387500 ○   0.165727083 ○ 
+#&gt; ---                                                        
+#&gt; 56: 2020-10-10   022     2B  0.057233333 ○   0.104959233 ○ 
+#&gt; 57: 2020-10-15   022     2A -0.008637500 ○  -0.009322917 ○ 
+#&gt; 58: 2020-10-20   022     2B  0.057181250 ○   0.098320833 ○ 
+#&gt; 59: 2020-10-25   022     2A -0.038556250 ○  -0.067797917 ○ 
+#&gt; 60: 2020-10-30   022     2B  0.067635417 ○   0.078327083 ○ 
+#&gt; 
+#&gt; Quality flags:  ● [1]  ◕ [0.9,1)  ◑ [0.75,0.9)  ◔ [0.5,0.75)  ○ [0,0.5)</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/as.data.frame.html'>as.data.frame</a></span><span class='op'>(</span><span class='va'>ts_raw</span><span class='op'>)</span><span class='op'>)</span> <span class='co'># see content</span>
+</div><div class='output co'>#&gt;   id       date orbit sensor        value   qa
+#&gt; 1  1 2020-01-04   022     2B  0.116133333 0.33
+#&gt; 2  1 2020-01-09   022     2A  0.020170833 0.00
+#&gt; 3  1 2020-01-14   022     2B -0.004372917 0.00
+#&gt; 4  1 2020-01-19   022     2A  0.116368750 0.00
+#&gt; 5  1 2020-01-24   022     2B  0.123387500 0.33
+#&gt; 6  1 2020-01-29   022     2A  0.114379167 0.33</div><div class='input'><span class='fu'><a href='plot.html'>plot</a></span><span class='op'>(</span><span class='va'>ts_raw</span><span class='op'>)</span>
+</div><div class='img'><img src='extract_s2ts-1.png' alt='' width='700' height='433' /></div><div class='input'>
+<span class='co'># \donttest{</span>
+<span class='co'># TS extraction from polygons using a different aggregation function</span>
+<span class='va'>ts_raw_2</span> <span class='op'>&lt;-</span> <span class='fu'>extract_s2ts</span><span class='op'>(</span><span class='va'>sen2r_ndvi_paths</span>, <span class='va'>sampleroi</span>, fun <span class='op'>=</span> <span class='st'>"max"</span><span class='op'>)</span>
+
+<span class='co'># TS extraction from points</span>
+<span class='va'>samplepts</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/warning.html'>suppressWarnings</a></span><span class='op'>(</span><span class='fu'>sf</span><span class='fu'>::</span><span class='fu'><a href='https://r-spatial.github.io/sf/reference/geos_unary.html'>st_centroid</a></span><span class='op'>(</span><span class='va'>sampleroi</span><span class='op'>)</span><span class='op'>)</span>
+<span class='va'>ts_raw_3</span> <span class='op'>&lt;-</span> <span class='fu'>extract_s2ts</span><span class='op'>(</span><span class='va'>sen2r_ndvi_paths</span>, <span class='va'>samplepts</span><span class='op'>)</span>
+<span class='co'># }</span>
+</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

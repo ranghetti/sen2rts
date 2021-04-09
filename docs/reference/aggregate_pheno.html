@@ -212,6 +212,30 @@ provided in  argument <code>pheno</code> (default is FALSE)?</p></td>
 
     <p>Luigi Ranghetti, PhD (2021) <a href='mailto:luigi@ranghetti.info'>luigi@ranghetti.info</a></p>
 
+    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <pre class="examples"><div class='input'><span class='co'># Load input data</span>
+<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='st'>"ts_filled"</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='st'>"dt_cycles"</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='st'>"dt_pheno"</span><span class='op'>)</span>
+
+<span class='co'># Aggregate time series over detected cycles (computing the median, as default)</span>
+<span class='va'>dt_aggr_0</span> <span class='op'>&lt;-</span> <span class='fu'>aggregate_pheno</span><span class='op'>(</span><span class='va'>ts_filled</span>, <span class='va'>dt_cycles</span><span class='op'>)</span>
+<span class='va'>dt_aggr_0</span>
+</div><div class='output co'>#&gt;    id year cycle     value
+#&gt; 1:  1 2020     1 0.4956109
+#&gt; 2:  2 2020     1 0.3652678
+#&gt; 3:  2 2020     2 0.1298273</div><div class='input'>
+<span class='co'># Aggregate time series over phenological metrics using 95% percentile</span>
+<span class='va'>dt_aggr</span> <span class='op'>&lt;-</span> <span class='fu'>aggregate_pheno</span><span class='op'>(</span>
+  <span class='va'>ts_filled</span>, <span class='va'>dt_pheno</span>, 
+  metrics <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"sos"</span>, <span class='st'>"eos"</span><span class='op'>)</span>, 
+  fun <span class='op'>=</span> <span class='st'>"quantile"</span>, probs <span class='op'>=</span> <span class='fl'>0.95</span>, na.rm <span class='op'>=</span> <span class='cn'>TRUE</span>
+<span class='op'>)</span>
+<span class='va'>dt_aggr</span>
+</div><div class='output co'>#&gt;    id year cycle     value
+#&gt; 1:  1 2020     1 0.9102608
+#&gt; 2:  2 2020     1 0.8379835
+#&gt; 3:  2 2020     2 0.4919376</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

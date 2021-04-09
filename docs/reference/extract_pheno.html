@@ -148,7 +148,10 @@
     </tr>
     <tr>
       <th>trs</th>
-      <td><p>Argument passed to <code><a href='https://rdrr.io/pkg/phenopix/man/PhenoExtract.html'>phenopix::PhenoExtract()</a></code> if <code>method = "trs"</code>.</p></td>
+      <td><p>Argument passed to <code><a href='https://rdrr.io/pkg/phenopix/man/PhenoExtract.html'>phenopix::PhenoExtract()</a></code> if <code>method = "trs"</code>.
+It is valid also for <code>method = "derivatives"</code> thanks to a sen2rts
+implementation (it will be documented soon).
+Other methods do not make use of this argument.</p></td>
     </tr>
     <tr>
       <th>...</th>
@@ -179,6 +182,29 @@ the cycle as computed by <code><a href='cut_cycles.html'>cut_cycles()</a></code>
 
     <p>Luigi Ranghetti, PhD (2020) <a href='mailto:luigi@ranghetti.info'>luigi@ranghetti.info</a></p>
 
+    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <pre class="examples"><div class='input'><span class='co'># Load input data</span>
+<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='st'>"cf"</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='st'>"ts_filled"</span><span class='op'>)</span> <span class='co'># used for plots</span>
+
+<span class='co'># Default extraction ("trs" method with 50% threshold)</span>
+<span class='va'>dt_pheno</span> <span class='op'>&lt;-</span> <span class='fu'>extract_pheno</span><span class='op'>(</span><span class='va'>cf</span><span class='op'>)</span>
+<span class='fu'><a href='plot.html'>plot</a></span><span class='op'>(</span><span class='va'>ts_filled</span>, fitted <span class='op'>=</span> <span class='va'>cf</span>, pheno <span class='op'>=</span> <span class='va'>dt_pheno</span>, plot_dates <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>
+</div><div class='img'><img src='extract_pheno-1.png' alt='' width='700' height='433' /></div><div class='input'>
+<span class='co'># Customize parameters (e.g. "derivatives" method with 30% threshold)</span>
+<span class='va'>dt_pheno_2</span> <span class='op'>&lt;-</span> <span class='fu'>extract_pheno</span><span class='op'>(</span><span class='va'>cf</span>, method <span class='op'>=</span> <span class='st'>"derivatives"</span>, trs <span class='op'>=</span> <span class='fl'>0.3</span><span class='op'>)</span>
+<span class='fu'><a href='plot.html'>plot</a></span><span class='op'>(</span><span class='va'>ts_filled</span>, fitted <span class='op'>=</span> <span class='va'>cf</span>, pheno <span class='op'>=</span> <span class='va'>dt_pheno_2</span>, plot_dates <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>
+</div><div class='img'><img src='extract_pheno-2.png' alt='' width='700' height='433' /></div><div class='input'>
+<span class='co'># \donttest{</span>
+<span class='co'># Other methods: Klosterman</span>
+<span class='va'>dt_pheno_kl</span> <span class='op'>&lt;-</span> <span class='fu'>extract_pheno</span><span class='op'>(</span><span class='va'>cf</span>, method <span class='op'>=</span> <span class='st'>"klosterman"</span><span class='op'>)</span>
+<span class='fu'><a href='plot.html'>plot</a></span><span class='op'>(</span><span class='va'>ts_filled</span>, fitted <span class='op'>=</span> <span class='va'>cf</span>, pheno <span class='op'>=</span> <span class='va'>dt_pheno_kl</span>, plot_dates <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>
+</div><div class='img'><img src='extract_pheno-3.png' alt='' width='700' height='433' /></div><div class='input'>
+<span class='co'># Other methods: Gu</span>
+<span class='va'>dt_pheno_gu</span> <span class='op'>&lt;-</span> <span class='fu'>extract_pheno</span><span class='op'>(</span><span class='va'>cf</span>, method <span class='op'>=</span> <span class='st'>"gu"</span><span class='op'>)</span>
+<span class='fu'><a href='plot.html'>plot</a></span><span class='op'>(</span><span class='va'>ts_filled</span>, fitted <span class='op'>=</span> <span class='va'>cf</span>, pheno <span class='op'>=</span> <span class='va'>dt_pheno_gu</span>, plot_dates <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>
+</div><div class='img'><img src='extract_pheno-4.png' alt='' width='700' height='433' /></div><div class='input'><span class='co'># }</span>
+</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

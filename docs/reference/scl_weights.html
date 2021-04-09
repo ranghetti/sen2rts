@@ -155,6 +155,11 @@ are optional; default weights are used for each non-provided class).</p>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
+      <th>no_data</th>
+      <td><p>(optional) Relative weight (0-1) for SCL class
+<code>"no_data"</code>.</p></td>
+    </tr>
+    <tr>
       <th>saturated_or_defective</th>
       <td><p>(optional) Relative weight (0-1) for SCL class
 <code>"saturated_or_defective"</code>.</p></td>
@@ -209,11 +214,6 @@ are optional; default weights are used for each non-provided class).</p>
       <td><p>(optional) Relative weight (0-1) for SCL class
 <code>"snow"</code>.</p></td>
     </tr>
-    <tr>
-      <th>nodata</th>
-      <td><p>(optional) Relative weight (0-1) for SCL class
-<code>"nodata"</code>.</p></td>
-    </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
@@ -234,7 +234,8 @@ for each SCL class.</p>
 #&gt;                    water             unclassified cloud_medium_probability 
 #&gt;                     1.00                     0.33                     0.00 
 #&gt;   cloud_high_probability              thin_cirrus                     snow 
-#&gt;                     0.00                     0.33                     1.00 </div><div class='input'><span class='co'># Custom weights changing two classes</span>
+#&gt;                     0.00                     0.33                     1.00 </div><div class='input'>
+<span class='co'># Custom weights changing two classes</span>
 <span class='fu'>scl_weights</span><span class='op'>(</span>unclassified <span class='op'>=</span> <span class='fl'>0.25</span>, snow <span class='op'>=</span> <span class='fl'>0</span><span class='op'>)</span>
 </div><div class='output co'>#&gt;                  no_data   saturated_or_defective         dark_area_pixels 
 #&gt;                     0.00                     0.00                     0.33 

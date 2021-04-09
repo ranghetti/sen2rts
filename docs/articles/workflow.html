@@ -314,15 +314,15 @@
 <span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span><span class="op">(</span><span class="va">ts_smoothed2</span>, topn <span class="op">=</span> <span class="fl">5</span><span class="op">)</span></code></pre></div>
 <pre><code>## A smoothed s2ts time series with 141 dates and 4 IDs.
 ##            Date Orbit Sensor         01           02           03           04   
-##   1: 2019-01-04   022     2A 0.19912415 ○  0.2755278 ○  0.3490056 ○  0.3051683 ○ 
+##   1: 2019-01-04   022     2A 0.19853684 ○  0.2750062 ○  0.3480647 ○  0.3034821 ○ 
 ##   2: 2019-01-09   022     2B         NA ○         NA ○         NA ○         NA ○ 
-##   3: 2019-01-14   022     2A 0.12791164 ○  0.1797755 ○  0.2307691 ○  0.2113436 ○ 
+##   3: 2019-01-14   022     2A 0.12731438 ○  0.1815165 ○  0.2313612 ○  0.2246652 ○ 
 ##   4: 2019-01-19   022     2B         NA ○         NA ○         NA ○         NA ○ 
-##   5: 2019-01-24   022     2A 0.16685218 ○  0.1636484 ○  0.2450470 ○  0.2145895 ○ 
+##   5: 2019-01-24   022     2A 0.21829625 ○  0.1618919 ○  0.2899842 ○  0.2123145 ○ 
 ##  ---                                                                             
 ## 137: 2020-12-04   022     2A         NA ○         NA ○         NA ○         NA ○ 
 ## 138: 2020-12-09   022     2B         NA ○         NA ○         NA ○         NA ○ 
-## 139: 2020-12-19   022     2B 0.08268789 ○  0.2452739 ○  0.2178155 ○  0.5762684 ○ 
+## 139: 2020-12-19   022     2B 0.07806048 ○  0.2414399 ○  0.2187567 ○  0.5682294 ○ 
 ## 140: 2020-12-24   022     2A         NA ○         NA ○         NA ○         NA ○ 
 ## 141: 2020-12-29   022     2B         NA ○         NA ○         NA ○         NA ○ 
 ## 
@@ -340,11 +340,11 @@
 <code class="sourceCode R"><span class="op">(</span> <span class="va">ts_filled</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/fill_s2ts.html">fill_s2ts</a></span><span class="op">(</span><span class="va">ts_smoothed2</span><span class="op">)</span> <span class="op">)</span></code></pre></div>
 <pre><code>## An interpolated s2ts time series with 726 dates and 4 IDs.
 ##            Date Orbit Sensor        01           02           03           04   
-##   1: 2019-01-04   022     2A 0.1991242 ○  0.2755278 ○  0.3490056 ○  0.3051683 ○ 
-##   2: 2019-01-05  &lt;NA&gt;   &lt;NA&gt; 0.1891339 ~  0.2610153 ~  0.3308251 ~  0.2880212 ~ 
-##   3: 2019-01-06  &lt;NA&gt;   &lt;NA&gt; 0.1796874 ~  0.2477260 ~  0.3141654 ~  0.2728703 ~ 
-##   4: 2019-01-07  &lt;NA&gt;   &lt;NA&gt; 0.1708199 ~  0.2356125 ~  0.2989860 ~  0.2596140 ~ 
-##   5: 2019-01-08  &lt;NA&gt;   &lt;NA&gt; 0.1625664 ~  0.2246278 ~  0.2852462 ~  0.2481508 ~ 
+##   1: 2019-01-04   022     2A 0.1985368 ○  0.2750062 ○  0.3480647 ○  0.3034821 ○ 
+##   2: 2019-01-05  &lt;NA&gt;   &lt;NA&gt; 0.1762664 ~  0.2612186 ~  0.3193624 ~  0.2903388 ~ 
+##   3: 2019-01-06  &lt;NA&gt;   &lt;NA&gt; 0.1580937 ~  0.2485234 ~  0.2952760 ~  0.2785395 ~ 
+##   4: 2019-01-07  &lt;NA&gt;   &lt;NA&gt; 0.1437444 ~  0.2368810 ~  0.2754940 ~  0.2680186 ~ 
+##   5: 2019-01-08  &lt;NA&gt;   &lt;NA&gt; 0.1329442 ~  0.2262514 ~  0.2597046 ~  0.2587107 ~ 
 ##  ---                                                                            
 ## 722: 2020-12-25  &lt;NA&gt;   &lt;NA&gt;        NA ~         NA ~         NA ~         NA ~ 
 ## 723: 2020-12-26  &lt;NA&gt;   &lt;NA&gt;        NA ~         NA ~         NA ~         NA ~ 
@@ -353,7 +353,7 @@
 ## 726: 2020-12-29   022     2B        NA ~         NA ~         NA ~         NA ~ 
 ## 
 ## Quality flags:  ● [1]  ◕ [0.9,1)  ◑ [0.75,0.9)  ◔ [0.5,0.75)  ○ [0,0.5)
-## Interpolated values are marked with ‘~’.</code></pre>
+## Interpolated values are marked with "~".</code></pre>
 <p>Filled values can be discriminated by smoothed ones because of the <code><a href="https://rdrr.io/r/base/tilde.html">~</a></code> symbol used instead of the quality symbol.</p>
 <p>Plotting method (here not shown) is equivalent to the one used for smoothed <code>s2ts</code> objects.</p>
 </div>
@@ -367,12 +367,12 @@
 <code class="sourceCode R"><span class="va">dt_cycles</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/cut_cycles.html">cut_cycles</a></span><span class="op">(</span><span class="va">ts_filled</span>, min_win <span class="op">=</span> <span class="fl">30</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">dt_cycles</span><span class="op">)</span></code></pre></div>
 <pre><code>##    id year cycle      begin        end     maxval    weight
-## 1: 01 2019     1 2019-01-17 2019-09-03 2019-07-16  63.08849
-## 2: 01 2019     2 2019-09-03 2019-12-13 2019-10-26  21.23023
-## 3: 01 2020     1 2019-12-13 2020-04-09 2020-01-17  21.21940
-## 4: 01 2020     2 2020-04-09 2020-11-04 2020-08-02  89.31516
-## 5: 02 2019     1 2019-06-20 2019-11-15 2019-09-08  75.25696
-## 6: 02 2020     1 2019-11-15 2020-11-01 2020-04-27 133.52059</code></pre>
+## 1: 01 2019     1 2019-01-11 2019-09-07 2019-07-03  65.12355
+## 2: 01 2019     2 2019-09-07 2019-12-09 2019-10-27  20.61482
+## 3: 01 2020     1 2019-12-09 2020-11-05 2020-08-03 113.15489
+## 4: 02 2019     1 2019-06-21 2019-11-14 2019-08-17  77.66607
+## 5: 02 2020     1 2019-11-14 2020-11-02 2020-04-23 135.43469
+## 6: 03 2019     1 2019-02-11 2019-10-26 2019-04-03  74.24240</code></pre>
 </div>
 <div id="assign-cycles-to-specific-seasons" class="section level2">
 <h2 class="hasAnchor">
@@ -385,13 +385,14 @@
   pop_win <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"04-01"</span>, <span class="st">"08-31"</span><span class="op">)</span>, pop_name <span class="op">=</span> <span class="st">"maxval"</span>
 <span class="op">)</span> <span class="op">)</span></code></pre></div>
 <pre><code>##    id year cycle      begin        end     maxval    weight
-## 1: 01 2019     1 2019-01-17 2019-09-03 2019-07-16  63.08849
-## 2: 01 2020     2 2020-04-09 2020-11-04 2020-08-02  89.31516
-## 3: 02 2020     1 2019-11-15 2020-11-01 2020-04-27 133.52059
-## 4: 03 2019     1 2019-01-18 2019-07-05 2019-04-01  69.39004
-## 5: 03 2020     1 2019-07-05 2020-11-05 2020-07-14 117.63606
-## 6: 04 2019     1 2019-05-30 2019-09-13 2019-08-22  70.93603
-## 7: 04 2020     1 2019-12-13 2020-06-17 2020-04-21  88.54684</code></pre>
+## 1: 01 2019     1 2019-01-11 2019-09-07 2019-07-03  65.12355
+## 2: 01 2020     1 2019-12-09 2020-11-05 2020-08-03 113.15489
+## 3: 02 2019     1 2019-06-21 2019-11-14 2019-08-17  77.66607
+## 4: 02 2020     1 2019-11-14 2020-11-02 2020-04-23 135.43469
+## 5: 03 2019     1 2019-02-11 2019-10-26 2019-04-03  74.24240
+## 6: 03 2020     1 2019-10-26 2020-11-06 2020-07-14 112.19395
+## 7: 04 2019     1 2019-05-10 2019-09-14 2019-07-30  79.64547
+## 8: 04 2020     1 2019-12-14 2020-06-21 2020-04-22  89.06280</code></pre>
 <p>If the user had asked to keep more than one season (or to assign a name to the season), the output would have included an additional field with the season name (see the example below).</p>
 <div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">dt_cycles_seas2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/assign_season.html">assign_season</a></span><span class="op">(</span>
@@ -402,12 +403,12 @@
 <span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">dt_cycles_seas2</span><span class="op">)</span></code></pre></div>
 <pre><code>##    id year cycle season      begin        end     maxval    weight
-## 1: 01 2019     1 summer 2019-01-17 2019-09-03 2019-07-16  63.08849
-## 2: 01 2020     1 winter 2019-12-13 2020-04-09 2020-01-17  21.21940
-## 3: 01 2020     2 summer 2020-04-09 2020-11-04 2020-08-02  89.31516
-## 4: 02 2020     1 summer 2019-11-15 2020-11-01 2020-04-27 133.52059
-## 5: 03 2019     1 summer 2019-01-18 2019-07-05 2019-04-01  69.39004
-## 6: 03 2020     1 summer 2019-07-05 2020-11-05 2020-07-14 117.63606</code></pre>
+## 1: 01 2019     1 summer 2019-01-11 2019-09-07 2019-07-03  65.12355
+## 2: 01 2020     1 summer 2019-12-09 2020-11-05 2020-08-03 113.15489
+## 3: 02 2019     1 summer 2019-06-21 2019-11-14 2019-08-17  77.66607
+## 4: 02 2020     1 summer 2019-11-14 2020-11-02 2020-04-23 135.43469
+## 5: 03 2019     1 summer 2019-02-11 2019-10-26 2019-04-03  74.24240
+## 6: 03 2020     1 summer 2019-10-26 2020-11-06 2020-07-14 112.19395</code></pre>
 <p>The retrieved cycles can be plotted together with time series passing the data table of cycles with the argument <code>pheno</code>: in this case, vertical black lines are drawn to discriminate cycles, and yellow bars highlight existing cycles (unless <code>plot_cycles = FALSE</code>). Adding the argument <code>plot_dates = TRUE</code> allows printing dates of cuts.</p>
 <div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/plot.html">plot</a></span><span class="op">(</span><span class="va">ts_filled</span>, pheno <span class="op">=</span> <span class="va">dt_cycles_seas</span>, plot_dates <span class="op">=</span> <span class="cn">TRUE</span>, plot_points <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
@@ -432,21 +433,23 @@
 <div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="op">(</span> <span class="va">dt_pheno</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/extract_pheno.html">extract_pheno</a></span><span class="op">(</span><span class="va">cf</span>, method <span class="op">=</span> <span class="st">"trs"</span>, trs <span class="op">=</span> <span class="fl">0.25</span><span class="op">)</span> <span class="op">)</span></code></pre></div>
 <pre><code>##    id year cycle      begin        end     maxval    weight        sos        eos los        pop
-## 1: 01 2019     1 2019-01-17 2019-09-02 2019-07-16  63.08849 2019-06-09 2019-08-16  68 2019-07-09
-## 2: 01 2020     2 2020-04-09 2020-11-03 2020-08-02  89.31516 2020-05-23 2020-09-01 101 2020-07-30
-## 3: 02 2020     1 2019-11-15 2020-10-31 2020-04-27 133.52059 2019-12-06 2020-06-13 190 2020-04-21
-## 4: 03 2019     1 2019-01-18 2019-07-04 2019-04-01  69.39004 2019-02-08 2019-06-16 128 2019-05-15
-## 5: 03 2020     1 2019-07-05 2020-11-04 2020-07-14 117.63606 2020-05-17 2020-09-02 108 2020-08-07
-## 6: 04 2019     1 2019-05-30 2019-09-12 2019-08-22  70.93603 2019-06-06 2019-09-03  89 2019-08-22
-## 7: 04 2020     1 2019-12-13 2020-06-16 2020-04-21  88.54684 2020-02-26 2020-06-12 107 2020-05-12
+## 1: 01 2019     1 2019-01-11 2019-09-06 2019-07-03  65.12355 2019-06-08 2019-08-17  70 2019-07-06
+## 2: 01 2020     1 2019-12-09 2020-11-04 2020-08-03 113.15489 2020-05-26 2020-09-01  98 2020-07-31
+## 3: 02 2019     1 2019-06-21 2019-11-13 2019-08-17  77.66607 2019-07-05 2019-10-10  97 2019-08-30
+## 4: 02 2020     1 2019-11-14 2020-11-01 2020-04-23 135.43469 2019-12-09 2020-06-11 185 2020-04-25
+## 5: 03 2019     1 2019-02-11 2019-10-25 2019-04-03  74.24240 2019-02-20 2019-06-20 120 2019-04-01
+## 6: 03 2020     1 2019-10-26 2020-11-05 2020-07-14 112.19395 2020-05-16 2020-09-01 108 2020-07-10
+## 7: 04 2019     1 2019-05-10 2019-09-13 2019-07-30  79.64547 2019-06-02 2019-09-08  98 2019-08-16
+## 8: 04 2020     1 2019-12-14 2020-06-20 2020-04-22  89.06280 2020-02-29 2020-06-13 105 2020-05-14
 ##          mgs rsp rau      peak       msp       mau
-## 1: 0.5077014  NA  NA 0.6367043 0.3129352 0.2925724
-## 2: 0.6802940  NA  NA 0.8331201 0.2709686 0.3472140
-## 3: 0.5452269  NA  NA 0.7906493 0.2814190 0.2720405
-## 4: 0.4421995  NA  NA 0.5697074 0.2470547 0.2545760
-## 5: 0.7388295  NA  NA 0.8749581 0.2818850 0.3053163
-## 6: 0.6567631  NA  NA 0.7291803 0.3183101 0.3862757
-## 7: 0.6245804  NA  NA 0.7761725 0.3050936 0.3559318</code></pre>
+## 1: 0.5178087  NA  NA 0.6819474 0.3038547 0.2911552
+## 2: 0.6958731  NA  NA 0.8352794 0.2872942 0.3340552
+## 3: 0.6339311  NA  NA 0.8128552 0.2798831 0.2586290
+## 4: 0.5612177  NA  NA 0.8008670 0.2873259 0.2851042
+## 5: 0.4963180  NA  NA 0.6046013 0.2568400 0.2596538
+## 6: 0.7432981  NA  NA 0.8748065 0.2807365 0.3247617
+## 7: 0.6655049  NA  NA 0.7709691 0.3008656 0.3854622
+## 8: 0.6383717  NA  NA 0.7806031 0.3327639 0.3463545</code></pre>
 <div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/plot.html">plot</a></span><span class="op">(</span><span class="va">ts_filled</span>, fitted <span class="op">=</span> <span class="va">cf</span>, pheno <span class="op">=</span> <span class="va">dt_pheno</span><span class="op">)</span></code></pre></div>
 <p><img src="workflow_files/figure-html/extract_pheno-1.png" width="100%" style="display: block; margin: auto;"></p>
@@ -462,15 +465,15 @@
   sos_win <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"05-01"</span>, <span class="st">"06-15"</span><span class="op">)</span>,
 <span class="op">)</span> <span class="op">)</span></code></pre></div>
 <pre><code>##    id year cycle      begin        end     maxval    weight        sos        eos los        pop
-## 1: 01 2019     1 2019-01-17 2019-09-02 2019-07-16  63.08849 2019-06-09 2019-08-16  68 2019-07-09
-## 2: 01 2020     2 2020-04-09 2020-11-03 2020-08-02  89.31516 2020-05-23 2020-09-01 101 2020-07-30
-## 3: 03 2020     1 2019-07-05 2020-11-04 2020-07-14 117.63606 2020-05-17 2020-09-02 108 2020-08-07
-## 4: 04 2019     1 2019-05-30 2019-09-12 2019-08-22  70.93603 2019-06-06 2019-09-03  89 2019-08-22
+## 1: 01 2019     1 2019-01-11 2019-09-06 2019-07-03  65.12355 2019-06-08 2019-08-17  70 2019-07-06
+## 2: 01 2020     1 2019-12-09 2020-11-04 2020-08-03 113.15489 2020-05-26 2020-09-01  98 2020-07-31
+## 3: 03 2020     1 2019-10-26 2020-11-05 2020-07-14 112.19395 2020-05-16 2020-09-01 108 2020-07-10
+## 4: 04 2019     1 2019-05-10 2019-09-13 2019-07-30  79.64547 2019-06-02 2019-09-08  98 2019-08-16
 ##          mgs rsp rau      peak       msp       mau
-## 1: 0.5077014  NA  NA 0.6367043 0.3129352 0.2925724
-## 2: 0.6802940  NA  NA 0.8331201 0.2709686 0.3472140
-## 3: 0.7388295  NA  NA 0.8749581 0.2818850 0.3053163
-## 4: 0.6567631  NA  NA 0.7291803 0.3183101 0.3862757</code></pre>
+## 1: 0.5178087  NA  NA 0.6819474 0.3038547 0.2911552
+## 2: 0.6958731  NA  NA 0.8352794 0.2872942 0.3340552
+## 3: 0.7432981  NA  NA 0.8748065 0.2807365 0.3247617
+## 4: 0.6655049  NA  NA 0.7709691 0.3008656 0.3854622</code></pre>
 </div>
 <div id="aggregate-time-series-over-seasons" class="section level2">
 <h2 class="hasAnchor">
@@ -484,10 +487,10 @@
   metrics <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"sos"</span>, <span class="st">"eos"</span><span class="op">)</span>, fun <span class="op">=</span> <span class="st">"quantile"</span>, probs <span class="op">=</span> <span class="fl">0.95</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span>
 <span class="op">)</span> <span class="op">)</span></code></pre></div>
 <pre><code>##    id year cycle     value
-## 1: 01 2019     1 0.6545405
-## 2: 01 2020     2 0.8441093
-## 3: 03 2020     1 0.8869722
-## 4: 04 2019     1 0.7949877</code></pre>
+## 1: 01 2019     1 0.6810734
+## 2: 01 2020     1 0.8401771
+## 3: 03 2020     1 0.8863815
+## 4: 04 2019     1 0.7802313</code></pre>
 </div>
   </div>
 
