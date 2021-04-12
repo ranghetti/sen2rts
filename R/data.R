@@ -64,7 +64,7 @@ sample_paths <- function(prod = "NDVI") {
       "Argument 'prod' can only be equal to \"NDVI\" or \"SCL\"."
     )
   }
-  read_s2cube(archive_dir, prod_type = prod, file_ext = "tif")
+  load_s2paths(archive_dir, prod_type = prod, file_ext = "tif")
 }
 
 #' @title Sample raw time series

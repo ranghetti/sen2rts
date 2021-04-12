@@ -32,15 +32,15 @@
 #' archive_dir <- system.file("extdata/sen2r/sampleroi", package = "sen2rts")
 #' 
 #' # Default function behaviour
-#' sen2r_ndvi_paths <- read_s2cube(file.path(archive_dir, "NDVI"))
+#' sen2r_ndvi_paths <- load_s2paths(file.path(archive_dir, "NDVI"))
 #' gsub(archive_dir, "", head(sen2r_ndvi_paths))
 #' 
 #' # Specifying argument prod_type, the parent directory can also be provided:
-#' sen2r_scl_paths <- read_s2cube(archive_dir, prod_type = "SCL")
+#' sen2r_scl_paths <- load_s2paths(archive_dir, prod_type = "SCL")
 #' gsub(archive_dir, "", head(sen2r_scl_paths))
 #' 
 #' # Filter on dates and return a stars raster cube
-#' sen2r_ndvi_cube <- read_s2cube(
+#' sen2r_ndvi_cube <- load_s2paths(
 #'   archive_dir, prod_type = "NDVI", 
 #'   time_window = c("2020-05-20", "2020-06-05"), 
 #'   out_format = "stars"
@@ -48,7 +48,7 @@
 #' plot(sen2r_ndvi_cube)
 
 
-read_s2cube <- function(
+load_s2paths <- function(
   inpath,
   out_format = "path",
   prod_type,

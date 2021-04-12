@@ -136,11 +136,11 @@ Required inputs are:
 2. a spatial file of class `sf` or `sfc` containing the features over which
     extracting the time series.
     
-The function `read_s2cube()` can be used to easily obtain the required paths
+The function `load_s2paths()` can be used to easily obtain the required paths
 passing it the main path of the {sen2r} archive, the product type to read 
 and some other additional parameters which can be used to filter the existing 
 rasters (time window, Sentinel-2 orbits or a specific sensor).
-See [the documentation](../reference/read_s2cube.md) for additional details.
+See [the documentation](../reference/load_s2paths.md) for additional details.
 
 The spatial file can contain point or polygon features.
 In the first case, raster values overlayed by points are used;
@@ -161,12 +161,12 @@ are more often errors of classification; so, value "0" is used).
 ```{r extract_s2ts}
 library(sen2rts)
 ## Read image paths
-sen2r_ndvi_paths <- read_s2cube(
+sen2r_ndvi_paths <- load_s2paths(
   samplecrops_dir, 
   prod_type = "NDVI",
   time_window = c("2019-01-01", "2020-12-31") 
 )
-sen2r_scl_paths <- read_s2cube(
+sen2r_scl_paths <- load_s2paths(
   samplecrops_dir, 
   prod_type = "SCL",
   time_window = c("2019-01-01", "2020-12-31")

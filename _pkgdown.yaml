@@ -6,7 +6,7 @@ reference:
   - title: Time series processing
     desc: ~
     contents:
-      - read_s2cube
+      - load_s2paths
       - extract_s2ts
       - smooth_s2ts
       - fill_s2ts

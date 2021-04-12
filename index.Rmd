@@ -59,7 +59,7 @@ library(sen2rts)
 
 ## Create a Sentinel-2 derived archive using {sen2r}
 #  (see {sen2r} documentation at https://sen2r.ranghetti.info/ )
-#  and read the paths of the raster using function read_s2cube()
+#  and read the paths of the raster using function load_s2paths()
 #
 #  (in this examples, sample data are used)
 sen2r_ndvi_paths <- sample_paths("NDVI") # NDVI images (target product)
