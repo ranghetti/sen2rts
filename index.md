@@ -7,7 +7,7 @@
 [![License: GPL
 v3](https://img.shields.io/badge/License-GPL%20v3-blue.svg)](http://www.gnu.org/licenses/gpl-3.0)
 [![Contributor
-Covenant](https://img.shields.io/badge/Contributor%20Covenant-v1.4%20adopted-ff69b4.svg)](http://sen2rts.ranghetti.info/.github/CODE-OF-CONDUCT.html)
+Covenant](https://img.shields.io/badge/Contributor%20Covenant-v1.4%20adopted-ff69b4.svg)](.github/CODE-OF-CONDUCT.md)
 
 # Build and Analyse Sentinel-2 Time Series
 
@@ -19,12 +19,11 @@ This package is currently under development (beta version).
 
 Functionalities currently implemented in the package are summarised
 below. A wider overview is presented in the vignette [“The {sen2rts}
-workflows”](http://sen2rts.ranghetti.info/articles/workflow.html), which
-shows a simple, reproducible use case to obtain a smoothed
-equally-weighted time series, isolate cycles and extract metrics,
-explaining how the currently implemented functions can be used to
-perform a common workflow. For documentation about specific functions,
-see the [Reference](./reference) page.
+workflows”](articles/workflow.md), which shows a simple, reproducible
+use case to obtain a smoothed equally-weighted time series, isolate
+cycles and extract metrics, explaining how the currently implemented
+functions can be used to perform a common workflow. For documentation
+about specific functions, see the [Reference](./reference) page.
 
 ## Installation
 
@@ -43,8 +42,7 @@ page](https://sen2r.ranghetti.info/articles/installation.html).
 
 The following minimal example syntetically shows how to perform the main
 steps provided by the package; refer to [this
-vignette](http://sen2rts.ranghetti.info/articles/workflow.html) for a
-wider explanation.
+vignette](articles/workflow.md) for a wider explanation.
 
 ``` r
 library(sen2rts)
@@ -82,8 +80,7 @@ plot(ts_filled, pheno = dt_pheno, plot_points = TRUE)
 General Public License version
 3](https://www.gnu.org/licenses/gpl-3.0.html) (GPL‑3).
 
-To cite this library, please use the entry reported
-[here](http://sen2rts.ranghetti.info/authors.html).
+To cite this library, please use the entry reported [here](authors.md).
 
 L. Ranghetti (2021). **"sen2rts: Build and Analyse Sentinel-2 Time
 Series**. R package version 0.3.2. doi:
@@ -105,5 +102,5 @@ URL:
 ## Contributing
 
 This project is released with a [Contributor Code of
-Conduct](http://sen2rts.ranghetti.info/.github/CODE-OF-CONDUCT.html). By
-participating in this project you agree to abide by its terms.
+Conduct](.github/CODE-OF-CONDUCT.md). By participating in this project
+you agree to abide by its terms.

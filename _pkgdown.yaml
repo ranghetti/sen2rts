@@ -1,0 +1,63 @@
+title: "sen2rts"
+template:
+  params:
+    bootswatch: yeti
+reference:
+  - title: Time series processing
+    desc: ~
+    contents:
+      - read_s2cube
+      - extract_s2ts
+      - smooth_s2ts
+      - fill_s2ts
+  - title: Phenological fitting and extraction
+    desc: ~
+    contents:
+      - fit_curve
+      - extract_pheno
+      - cut_cycles
+      - assign_season
+      - aggregate_pheno
+  - title: Accessory functions
+    desc: ~
+    contents:
+      - scl_weights
+  - title: Classes and methods
+    desc: ~
+    contents:
+      - s2ts
+      - plot
+  - title: Sample data
+    desc: ~
+    contents:
+      - samplecrops
+      - sampleroi
+      - sample_paths
+      - ts_raw
+      - ts_smoothed
+      - ts_filled
+      - cf
+      - dt_cycles
+      - dt_pheno
+navbar:
+  type: inverse
+  left: []
+  right:
+    - icon: fa-home fa-lg
+      href: index.html
+    - text: "\u2000Reference"
+      icon: fa-file-code
+      href: reference/index.html
+    - text: "\u2000The {sen2rts} workflow"
+      icon: fa-book
+      href: articles/workflow.html
+    - text: "\u2000Changelog"
+      icon: fa-newspaper
+      href: news/index.html
+    - icon: fa-user
+      href: http://luigi.ranghetti.info
+    - icon: fa-github fa-lg
+      href: https://github.com/ranghetti/sen2rts/
+figures:
+  fig.width: 9
+  fig.asp: 0.5

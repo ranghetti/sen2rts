@@ -2,7 +2,7 @@
 % Please edit documentation in R/read_s2cube.R
 \name{read_s2cube}
 \alias{read_s2cube}
-\title{Read raster cubes from sen2r archives}
+\title{Load raster paths or data cube from a sen2r archive}
 \usage{
 read_s2cube(
   inpath,
@@ -17,7 +17,7 @@ read_s2cube(
 )
 }
 \arguments{
-\item{inpath}{Path of the directory in which sen2r files are.}
+\item{inpath}{Path of the directory in which {sen2r} files are stored.}
 
 \item{out_format}{(optional) Output format, being one among
 \code{"path"} (default), \code{"stars"} and \code{"stars_proxy"}).}
@@ -46,7 +46,10 @@ a subset of the original raster extent.}
 The output raster cube in the selected format.
 }
 \description{
-TODO
+Load the paths of rasters included in a Sentinel-2 archive
+generated with {sen2r}, filtering relevant files and ordering them.
+Output can also be returned in format \code{stars} or \code{stars_proxy}
+(see argument \code{out_format}).
 }
 \examples{
 # Path of a sample archive created with {sen2r} (see ?sample_paths)
@@ -54,18 +57,19 @@ archive_dir <- system.file("extdata/sen2r/sampleroi", package = "sen2rts")
 
 # Default function behaviour
 sen2r_ndvi_paths <- read_s2cube(file.path(archive_dir, "NDVI"))
-head(sen2r_ndvi_paths)
+gsub(archive_dir, "", head(sen2r_ndvi_paths))
 
 # Specifying argument prod_type, the parent directory can also be provided:
 sen2r_scl_paths <- read_s2cube(archive_dir, prod_type = "SCL")
-head(sen2r_scl_paths)
+gsub(archive_dir, "", head(sen2r_scl_paths))
 
-# Using some filters
-read_s2cube(
+# Filter on dates and return a stars raster cube
+sen2r_ndvi_cube <- read_s2cube(
   archive_dir, prod_type = "NDVI", 
-  time_window = c("2020-06-01", "2020-06-30"), 
-  s2_sensors = "2A"
+  time_window = c("2020-05-20", "2020-06-05"), 
+  out_format = "stars"
 )
+plot(sen2r_ndvi_cube)
 }
 \author{
 Luigi Ranghetti, PhD (2020) \email{luigi@ranghetti.info}

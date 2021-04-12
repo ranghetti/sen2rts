@@ -1,4 +1,4 @@
-#' @title Simplified `sen2r::s2_dop()` for internal usage
+#' @title Simplified `sen2r::s2_dop()` for internal use
 #' @description This is a simplified version of `s2_dop()` which returns
 #'  Sentinel-2 passages over certain orbits during a defined time interval.
 #'  Checks over inputs are skipped to save time, and S2B dates before

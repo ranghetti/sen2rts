@@ -1,0 +1,22 @@
+
+citHeader(paste(
+  "sen2r is being developed by Luigi Ranghetti (IREA-CNR)",
+  "and is released under the GNU General Public License version 3 (GPL‑3).",
+  "To cite package 'sen2rts' in publications use:"
+))
+
+citEntry(
+  entry        = "Manual",
+  author       = "Luigi Ranghetti",
+  title        = "sen2rts: Build and Analyse Sentinel-2 Time Series",
+  year         = "2021",
+  doi          = "xxx/zenodo.xxx",
+  url          = "http://sen2rts.ranghetti.info",
+  note         = paste("R package version", packageVersion("sen2rts")),
+  textVersion  = paste0(
+    "L. Ranghetti (2021). ",
+    "sen2rts: Build and Analyse Sentinel-2 Time Series. ",
+    "R package version ", packageVersion("sen2rts"),". ",
+    "doi: xxx/zenodo.xxx, URL: http://sen2rts.ranghetti.info/."
+  )
+)
