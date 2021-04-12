@@ -57,7 +57,10 @@ in case of polygonal \code{in_sf} features. Default is \code{mean}.}
 The output time series in \code{s2ts} format.
 }
 \description{
-TODO
+Extract time series from a Sentinel-2 data archive
+(created with the package \code{\link{sen2r}}) over spatial features (points or
+polygons). Quality flags can be added exploiting an additional
+extracted archive (see arguments \code{scl_paths} and \code{cld_paths}).
 }
 \details{
 To generate pixel weights, SCL and/or CLD layers can be used.

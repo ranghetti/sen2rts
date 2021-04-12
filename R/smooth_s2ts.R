@@ -1,5 +1,9 @@
 #' @title Filter and smooth time series from sen2r archives
-#' @description TODO
+#' @description Smooth time series extracted with function [`extract_s2ts()`]
+#'  using a Savitzky-Golay filter.
+#'  Quality flags associated to the time series are used to obtain better
+#'  results.
+#'  Argument values should be manually set to obtain a correct smoothing.
 #' @param ts Time series in `s2ts` format (generated using `extract_s2ts()`).
 #' @param min_qa (optional) minimum 0-1 quality value
 #'  (points with `qa < min_qa` are not used, while `qa` values

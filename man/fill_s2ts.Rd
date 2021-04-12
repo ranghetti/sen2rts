@@ -39,7 +39,9 @@ Default is 0.1 (+10\%). Set to Inf in order not to set any constraint.}
 The output time series in tabular format (see \code{extract_ts()}).
 }
 \description{
-TODO
+Fill temporal gaps in a time series smoothed with function
+\code{\link[=smooth_s2ts]{smooth_s2ts()}} to obtain homogeneous values (daily or with a regular
+time step).
 }
 \examples{
 #' # Load input data

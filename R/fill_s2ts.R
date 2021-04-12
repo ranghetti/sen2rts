@@ -1,5 +1,7 @@
 #' @title Fill not equally-spaced time series
-#' @description TODO
+#' @description Fill temporal gaps in a time series smoothed with function
+#'  [`smooth_s2ts()`] to obtain homogeneous values (daily or with a regular 
+#'  time step).
 #' @param ts Time series in `s2ts` format (generated using `smooth_s2ts()`).
 #' @param frequency (optional) One of the followings:
 #'  - `daily`: daily frequency (default);

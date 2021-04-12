@@ -2,7 +2,7 @@
 ## Class definition ----
 
 #' @title Class `s2ts`
-#' @description TODO
+#' @description Class used for {sen2rts} time series.
 #' @param value (mandatory) Vector with the values ("y") of the time series.
 #' @param date (mandatory) Vector (of the same length of `value`) with the dates
 #'  of each value.

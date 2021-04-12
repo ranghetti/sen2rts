@@ -54,7 +54,7 @@ The optional attribute \code{gen_by} provides information about the function
 which generated the object (if provided).
 }
 \description{
-TODO
+Class used for {sen2rts} time series.
 }
 \details{
 Some specific methods for this class are defined.

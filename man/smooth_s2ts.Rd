@@ -57,7 +57,11 @@ Default is 0.1 (+10\%). Set to Inf in order not to set any constraint.}
 The output time series in \code{s2ts} format.
 }
 \description{
-TODO
+Smooth time series extracted with function \code{\link[=extract_s2ts]{extract_s2ts()}}
+using a Savitzky-Golay filter.
+Quality flags associated to the time series are used to obtain better
+results.
+Argument values should be manually set to obtain a correct smoothing.
 }
 \examples{
 # Load input data
