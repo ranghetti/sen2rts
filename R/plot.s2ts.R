@@ -36,6 +36,7 @@
 #'  scale_fill_viridis_c scale_x_date scale_y_continuous theme_light
 #' @export
 #' @examples 
+#' \donttest{
 #' # Plot raw time series
 #' data(ts_raw) # sample raw time series
 #' plot(ts_raw)
@@ -63,6 +64,7 @@
 #' plot(ts_filled, pheno = dt_pheno, plot_dates = TRUE) # print all dates
 #' plot(ts_filled, pheno = dt_pheno, plot_dates = "cycles") # print only cut dates
 #' plot(ts_filled, pheno = dt_pheno, plot_dates = "pheno") # print only phenological dates
+#' }
 
 
 plot.s2ts <- function(

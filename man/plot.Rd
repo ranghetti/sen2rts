@@ -65,6 +65,7 @@ are plotted.}
 Plot a \code{s2ts} time series, using \code{{ggplot2}} routines.
 }
 \examples{
+\donttest{
 # Plot raw time series
 data(ts_raw) # sample raw time series
 plot(ts_raw)
@@ -92,6 +93,7 @@ plot(ts_filled, fitted = cf, pheno = dt_pheno) # plot curves and metrics
 plot(ts_filled, pheno = dt_pheno, plot_dates = TRUE) # print all dates
 plot(ts_filled, pheno = dt_pheno, plot_dates = "cycles") # print only cut dates
 plot(ts_filled, pheno = dt_pheno, plot_dates = "pheno") # print only phenological dates
+}
 }
 \author{
 Luigi Ranghetti, PhD (2020) \email{luigi@ranghetti.info}
