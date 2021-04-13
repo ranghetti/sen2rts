@@ -10,12 +10,13 @@ citEntry(
   author       = "Luigi Ranghetti",
   title        = "sen2rts: Build and Analyse Sentinel-2 Time Series",
   year         = "2021",
+  doi          = "10.5281/zenodo.4682829",
   url          = "http://sen2rts.ranghetti.info",
   note         = "R package version 0.4.0",
   textVersion  = paste(
     "L. Ranghetti (2021).",
     "sen2rts: Build and Analyse Sentinel-2 Time Series.",
     "R package version 0.4.0.",
-    "URL: http://sen2rts.ranghetti.info/."
+    "doi: 10.5281/zenodo.4682829, URL: http://sen2rts.ranghetti.info/."
   )
 )
