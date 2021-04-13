@@ -18,7 +18,7 @@
 #'  \url{https://dsp.stackexchange.com/questions/1676/savitzky-golay-smoothing-filter-for-not-equally-spaced-data},
 #'  with the addition of weights following 
 #'  \url{https://en.wikipedia.org/wiki/Savitzky-Golay_filter}.
-#' @export
+
 
 w_savgol <- function(y, x, q, window = 7, polynom = 3) {
   

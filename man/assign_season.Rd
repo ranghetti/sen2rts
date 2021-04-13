@@ -24,6 +24,26 @@ or \code{cut_cycles()}).}
 
 \item{seasons}{Character vector with the season names to be used.}
 
+\item{pop}{Vector with the expected dates of cycle peaks (one per season,
+it must be of the same length of \code{seasons}), in the form \code{"mm-dd"}
+(month-day). If provided, it is used to filter cycles among seasons
+(see argument \code{max_n_cycles}).}
+
+\item{pop_win}{List with the allowed ranges for the dates of
+cycle peaks (one per season): each element is a two-length character vector
+with two elements, in the form \code{"mm-dd"} (month-day), representing the range
+of the temporal window (see default value as example) within the
+corresponding season. The list must be of the same length of \code{seasons}.
+If \code{season} is one-length, \code{pop_seasons} can be also a two-length vector.
+Each element of the list can be left to NA in order not to specify any
+filtering condition.}
+
+\item{sos_win}{List with the allowed ranges for the dates of
+start of cycle (see \code{pop_seasons} for details about the format).}
+
+\item{eos_win}{Named list with the allowed ranges for the dates of
+end of cycle (see \code{pop_seasons} for details about the format).}
+
 \item{pop_name}{Character name of the field in \code{pheno} to be used as metric
 for the date of peak (associated with \code{pop_seasons}).}
 
@@ -36,27 +56,15 @@ for the date of end of cycle (associated with \code{pop_seasons}).
 Set to NULL in order not to apply.}
 
 \item{max_n_cycles}{(optional) Maximum number of cycles to be detected in one
-season (default: Inf, meaning that all the identified cycles are kept).}
+season (default: Inf, meaning that all the identified cycles are kept).
+If \code{pop} is provided, the cycles with the corresponding dates of peak closer
+to the dates set in argument \code{pop} (for each seasons) are selected;
+otherwise, the field \code{weight} of the input \code{pheno} dataset is considered
+(cycles with the higher values are selected).}
 
 \item{rm_unassigned}{(optional) Logical: should cycles which do not match with
 any season (basing on the settings) be dropped from the output?
 (Default: TRUE)}
-
-\item{pop_seasons}{List with the allowed ranges for the dates of
-cycle peaks (one per season): each element is a character vector with two
-elements, in the form \code{"mm-dd"} (month-day), representing the range of the
-temporal window (see default value as example) within the corresponding
-season. The list must be of the same length of \code{seasons}.
-If \code{season} is one-length, \code{pop_seasons} can be both a 1-length list or
-a vector.
-Each element of the list can be left to NA in order not to specify any
-filtering condition.}
-
-\item{sos_seasons}{List with the allowed ranges for the dates of
-start of cycle (see \code{pop_seasons} for details about the format).}
-
-\item{eos_seasons}{Named list with the allowed ranges for the dates of
-end of cycle (see \code{pop_seasons} for details about the format).}
 }
 \value{
 The input data table, filtered basing on arguments and with the
@@ -68,6 +76,42 @@ If \code{seasons = NA} this field is not returned.
 \description{
 Filter detected cycles basing on dates of begin / end / peak,
 or limit the number of cycles allowed for any specified season.
+}
+\examples{
+# Load input data
+data("dt_cycles")
+data("dt_pheno")
+data("ts_filled") # used for plots
+
+# Filter one cycle per year, standard parameters (keep the most relevant cycle)
+dt_cycles
+dt_cycles_seas <- assign_season(dt_cycles, max_n_cycles = 1)
+dt_cycles_seas
+plot(ts_filled, pheno = dt_cycles_seas)
+
+# Filter one cycle per year, keep the one with the peak clostest to 1st August
+dt_pheno_seas1 <- assign_season(dt_pheno, max_n_cycles = 1, pop = "08-01")
+plot(ts_filled, pheno = dt_pheno_seas1)
+
+# Filter cycles with start of season between 1st February and 30th April
+dt_pheno_seas2 <- assign_season(
+  dt_pheno, 
+  sos_win = c("02-01", "04-30"),
+)
+plot(ts_filled, pheno = dt_pheno_seas2)
+
+# Assign season names: "winter" for winter crops, "summer" for summer crops
+# (defining winter crops as crops seeded between October and March,
+# summer crops as crops seeded between April and August)
+dt_pheno_seas3 <- assign_season(
+  dt_pheno, 
+  seasons = c("winter", "summer"),
+  sos_win = list(c("10-01", "03-31"), c("04-01", "08-31")),
+  sos_name = "begin",
+  rm_unassigned = FALSE
+)
+# notice the new column "season"
+dt_pheno_seas3
 }
 \author{
 Luigi Ranghetti, PhD (2020) \email{luigi@ranghetti.info}

@@ -2,8 +2,8 @@
 #' @description Build a vector with relative weights for each SCL class.
 #'  Class weights can be defined using function arguments  (all of them 
 #'  are optional; default weights are used for each non-provided class).
-#' @param nodata (optional) Relative weight (0-1) for SCL class
-#'  `"nodata"`.
+#' @param no_data (optional) Relative weight (0-1) for SCL class
+#'  `"no_data"`.
 #' @param saturated_or_defective (optional) Relative weight (0-1) for SCL class
 #'  `"saturated_or_defective"`.
 #' @param dark_area_pixels (optional) Relative weight (0-1) for SCL class
@@ -33,6 +33,7 @@
 #' @examples 
 #' # Default weights
 #' scl_weights()
+#' 
 #' # Custom weights changing two classes
 #' scl_weights(unclassified = 0.25, snow = 0)
 

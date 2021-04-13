@@ -1,4 +1,4 @@
-#' @title Simplified `sen2r::s2_dop()` for internal usage
+#' @title Simplified `sen2r::s2_dop()` for internal use
 #' @description This is a simplified version of `s2_dop()` which returns
 #'  Sentinel-2 passages over certain orbits during a defined time interval.
 #'  Checks over inputs are skipped to save time, and S2B dates before
@@ -16,13 +16,12 @@
 #' @note License: GPL 3.0
 #' @import data.table
 #' @importFrom jsonlite fromJSON
-#' @importFrom methods is
 
 
 s2_dop_simpl <- function(s2_orbits, timewindow, mission) {
   
-  # to avoid NOTE on check
-  type <- orbit <- doybase <- orbit <- NULL
+  # Avoid check notes for data.table related variables
+  type <- orbit <- doybase <- orbit <- json_path <- NULL
   
   # generate doybase.json if missing
   eval(parse(text = "json_path <- sen2r:::create_s2_dop()"))

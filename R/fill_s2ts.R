@@ -1,5 +1,7 @@
 #' @title Fill not equally-spaced time series
-#' @description TODO
+#' @description Fill temporal gaps in a time series smoothed with function
+#'  [`smooth_s2ts()`] to obtain homogeneous values (daily or with a regular 
+#'  time step).
 #' @param ts Time series in `s2ts` format (generated using `smooth_s2ts()`).
 #' @param frequency (optional) One of the followings:
 #'  - `daily`: daily frequency (default);
@@ -9,25 +11,47 @@
 #' @param max_na_days (optional) maximum number of consecutive days with missing
 #'  values which can be filled (in case of longer time windows with missing data,
 #'  NA are returned).
+#'  Default is to fit everything (unless this could lead to errors in case of
+#'  long NT time windows, currently it is the only way to get subsequent functions 
+#'  working).
 #' @param max_extrapolation (optional) Numeric: maximum allowed extrapolation
 #'  out of original range (relative value).
 #'  Default is 0.1 (+10%). Set to Inf in order not to set any constraint.
 #' @return The output time series in tabular format (see `extract_ts()`).
+#' @importFrom stats spline
+#' @importFrom methods as
 #' @author Luigi Ranghetti, PhD (2020) \email{luigi@@ranghetti.info}
 #' @export
+#' @examples
+#' #' # Load input data
+#' data("ts_smoothed")
+#' 
+#' # Gap filling using default parameters (daily)
+#' ts_filled <- fill_s2ts(ts_smoothed)
+#' ts_filled # standard print
+#' head(as.data.frame(ts_filled)) # see content
+#' plot(ts_filled)
+#' 
+#' # Generate a regular time series using the minimum number of required records
+#' ts_filled_2 <- fill_s2ts(ts_smoothed, frequency = "dop")
+#' print(ts_filled_2, topn = 5) # standard print
+
 
 fill_s2ts <- function(
   ts,
   frequency = "daily",
   method = "fmm",
-  max_na_days = 30,
+  max_na_days = Inf,
   max_extrapolation = 0.1
 ) {
   
+  # Avoid check notes for data.table related variables
+  id <- orbit <- sensor <- interpolated <- value <- NULL
+
   ## Define Greater Common Divisor
   gcd <- function(x) {
     if (length(x) == 2) {
-      ifelse(x[2]==0, x[1], gcd2(x[2], x[1] %% x[2]))
+      ifelse(x[2]==0, x[1], gcd(x[2], x[1] %% x[2]))
     } else {
       gcd(c(x[1], gcd(x[2:length(x)])))
     }
@@ -99,7 +123,7 @@ fill_s2ts <- function(
       xout = ts_dt_out2[date %in% valid_xrange, date],
       method = method
     )
-    sel_spline$x <- as.Date(sel_spline$x, origin = "1970-01-01")
+    # sel_spline$x <- as.Date(sel_spline$x, origin = "1970-01-01")
     ts_dt_out2[date %in% valid_xrange, value := sel_spline$y]
     
     # Coerce to original min/max ranges

@@ -2,7 +2,7 @@
 % Please edit documentation in R/s2_dop_simpl.R
 \name{s2_dop_simpl}
 \alias{s2_dop_simpl}
-\title{Simplified \code{sen2r::s2_dop()} for internal usage}
+\title{Simplified \code{sen2r::s2_dop()} for internal use}
 \usage{
 s2_dop_simpl(s2_orbits, timewindow, mission)
 }

@@ -1,6 +1,9 @@
 #' @title Extract time series from sen2r archives
-#' @description TODO
-#' @param in_paths Paths of the sen2r files (eventually obtained using 
+#' @description Extract time series from a Sentinel-2 data archive
+#'  (created with the package `sen2r`) over spatial features (points or
+#'  polygons). Quality flags can be added exploiting an additional 
+#'  extracted archive (see arguments `scl_paths` and `cld_paths`).
+#' @param in_paths Paths of the `sen2r` files (eventually obtained using 
 #'  `read_in_cube(..., out_format = "path")`).
 #' @param in_sf Object with polygonal or point geometries
 #' @param fun (optional) aggregation function (or function name) 
@@ -21,7 +24,7 @@
 #' @param cld_paths (optional) Paths of the CLD files (they must correspond
 #'  to `in_paths`); see `scl_paths`.
 #'  See details for the conversion between SCL and weights.
-#' @param scl_weights (optional) weights to be used for each SCL class,
+#' @param scl_w (optional) weights to be used for each SCL class,
 #'  which can be created using function `scl_weights()`.
 #'  If missing, the default outputs of `scl_weights()` are used.
 #'  See details for the conversion between SCL and weights.
@@ -62,11 +65,48 @@
 #'  
 #' @author Luigi Ranghetti, PhD (2020) \email{luigi@@ranghetti.info}
 #' @import data.table
+#' @importFrom methods as
 #' @importFrom sen2r raster_metadata sen2r_getElements
-#' @importFrom sf gdal_utils st_bbox st_buffer st_crs st_sf st_transform 
+#' @importFrom sf gdal_utils st_as_sfc st_bbox st_buffer st_crs st_intersection
+#'  st_sf st_transform 
 #' @importFrom stars read_stars st_get_dimension_values st_set_dimensions st_warp
+#' @importFrom stats weighted.mean
 #' @importFrom dplyr group_by summarise
+#' @importFrom methods as
 #' @export
+#' @examples
+#' # Load input data
+#' data("sampleroi")
+#' sen2r_ndvi_paths <- sample_paths("NDVI")
+#' sen2r_scl_paths <- sample_paths("SCL")
+#' 
+#' \donttest{
+#' # Simple TS extraction from polygons (without quality flags)
+#' ts_raw_0 <- extract_s2ts(sen2r_ndvi_paths, sampleroi)
+#' print(ts_raw_0, topn = 5)
+#' }
+#' 
+#' # TS extraction from polygons using a SCL archive for quality flags
+#' # (example used to produce the sample dataset "ts_raw")
+#' ts_raw <- extract_s2ts(
+#'   sen2r_ndvi_paths, 
+#'   sampleroi,
+#'   scl_paths = sen2r_scl_paths
+#' )
+#' ts_raw$value <- ts_raw$value / 1E4 # reshape to standard NDVI range -1 to 1
+#' print(ts_raw, topn = 5) # standard print
+#' head(as.data.frame(ts_raw)) # see content
+#' plot(ts_raw)
+#' 
+#' \donttest{
+#' # TS extraction from polygons using a different aggregation function
+#' ts_raw_2 <- extract_s2ts(sen2r_ndvi_paths, sampleroi, fun = "max")
+#' 
+#' # TS extraction from points
+#' samplepts <- suppressWarnings(sf::st_centroid(sampleroi))
+#' ts_raw_3 <- extract_s2ts(sen2r_ndvi_paths, samplepts)
+#' }
+
 
 extract_s2ts <- function(
   in_paths,
@@ -75,10 +115,13 @@ extract_s2ts <- function(
   in_sf_id,
   scl_paths,
   cld_paths,
-  scl_weights,
+  scl_w,
   fun_w = "mean"
 ) {
   
+  # Avoid check notes for data.table related variables
+  sensing_date <- value <- NULL
+
   ## Check arguments ----
   #TODO
   if (all(
@@ -128,13 +171,16 @@ extract_s2ts <- function(
     in_sf <- st_transform(in_sf, inraster_meta$proj)
   }
   # check bbox format
-  in_bbox <- st_bbox(st_buffer(in_sf,inraster_meta$res))
+  in_bbox <- st_bbox(suppressWarnings(st_intersection(
+    st_buffer(in_sf,inraster_meta$res),
+    st_as_sfc(inraster_meta$bbox)
+  )))
   in_RasterIO <- list(
-    nXOff = ceiling((in_bbox$xmin - inraster_meta$bbox$xmin) / inraster_meta$res["x"]),
-    nYOff = ceiling((inraster_meta$bbox$ymax - in_bbox$ymax) / inraster_meta$res["y"])
+    nXOff = ceiling((in_bbox$xmin - inraster_meta$bbox$xmin) / inraster_meta$res["x"]) + 1,
+    nYOff = ceiling((inraster_meta$bbox$ymax - in_bbox$ymax) / inraster_meta$res["y"]) + 1
   )
-  in_RasterIO$nXSize = ceiling((in_bbox$xmax - inraster_meta$bbox$xmin) / inraster_meta$res["x"]) - in_RasterIO$nXOff
-  in_RasterIO$nYSize = ceiling((inraster_meta$bbox$ymax - in_bbox$ymin) / inraster_meta$res["y"]) - in_RasterIO$nYOff
+  in_RasterIO$nXSize = ceiling((in_bbox$xmax - inraster_meta$bbox$xmin) / inraster_meta$res["x"]) - in_RasterIO$nXOff + 1
+  in_RasterIO$nYSize = ceiling((inraster_meta$bbox$ymax - in_bbox$ymin) / inraster_meta$res["y"]) - in_RasterIO$nYOff + 1
   
   
   ## Pass through a VRT
@@ -177,13 +223,16 @@ extract_s2ts <- function(
     sclraster_meta <- sen2r::raster_metadata(scl_paths[1], format = "list")[[1]]
     
     # check bbox format
-    scl_bbox <- st_bbox(st_buffer(in_sf,sclraster_meta$res))
+    scl_bbox <- st_bbox(suppressWarnings(st_intersection(
+      st_buffer(in_sf,sclraster_meta$res),
+      st_as_sfc(inraster_meta$bbox)
+    )))
     scl_RasterIO <- list(
-      nXOff = ceiling((scl_bbox$xmin - sclraster_meta$bbox$xmin) / sclraster_meta$res["x"]),
-      nYOff = ceiling((sclraster_meta$bbox$ymax - scl_bbox$ymax) / sclraster_meta$res["y"])
+      nXOff = ceiling((scl_bbox$xmin - sclraster_meta$bbox$xmin) / sclraster_meta$res["x"]) + 1,
+      nYOff = ceiling((sclraster_meta$bbox$ymax - scl_bbox$ymax) / sclraster_meta$res["y"]) + 1
     )
-    scl_RasterIO$nXSize = ceiling((scl_bbox$xmax - sclraster_meta$bbox$xmin) / sclraster_meta$res["x"]) - scl_RasterIO$nXOff
-    scl_RasterIO$nYSize = ceiling((sclraster_meta$bbox$ymax - scl_bbox$ymin) / sclraster_meta$res["y"]) - scl_RasterIO$nYOff
+    scl_RasterIO$nXSize = ceiling((scl_bbox$xmax - sclraster_meta$bbox$xmin) / sclraster_meta$res["x"]) - scl_RasterIO$nXOff + 1
+    scl_RasterIO$nYSize = ceiling((sclraster_meta$bbox$ymax - scl_bbox$ymin) / sclraster_meta$res["y"]) - scl_RasterIO$nYOff + 1
     
     ## Pass through a VRT
     # (to avoid error "")
@@ -204,22 +253,22 @@ extract_s2ts <- function(
     # Check consistency between in_cube and scl_cube
     # TODO
     
-    # Check scl_weights
-    if (missing(scl_weights)) {
-      scl_weights <- scl_weights()
-    } else if (!setequal(names(scl_weights), names(scl_weights()))) {
+    # Check scl_w
+    if (missing(scl_w)) {
+      scl_w <- scl_weights()
+    } else if (!setequal(names(scl_w), names(scl_weights()))) {
       print_message(
         type = "error",
-        "\"scl_weights\" must be a named numeric vector ",
+        "\"scl_w\" must be a named numeric vector ",
         "created with function scl_weights()."
       )
     }
     
     # Convert SCL to weights
     w_cube_scl_raw <- scl_cube
-    for (i in seq_along(scl_weights)) {
+    for (i in seq_along(scl_w)) {
       sel_scl <- i - 1 # 0:11 in a 12-length vector
-      w_cube_scl_raw[scl_cube == sel_scl] <- scl_weights[i]
+      w_cube_scl_raw[scl_cube == sel_scl] <- scl_w[i]
     }
     
     # Reshape it
@@ -249,13 +298,16 @@ extract_s2ts <- function(
     cldraster_meta <- sen2r::raster_metadata(cld_paths[1], format = "list")[[1]]
     
     # check bbox format
-    cld_bbox <- st_bbox(st_buffer(in_sf,cldraster_meta$res))
+    cld_bbox <- st_bbox(suppressWarnings(st_intersection(
+      st_buffer(in_sf,cldraster_meta$res),
+      st_as_sfc(inraster_meta$bbox)
+    )))
     cld_RasterIO <- list(
-      nXOff = ceiling((cld_bbox$xmin - cldraster_meta$bbox$xmin) / cldraster_meta$res["x"]),
-      nYOff = ceiling((cldraster_meta$bbox$ymax - cld_bbox$ymax) / cldraster_meta$res["y"])
+      nXOff = ceiling((cld_bbox$xmin - cldraster_meta$bbox$xmin) / cldraster_meta$res["x"]) + 1,
+      nYOff = ceiling((cldraster_meta$bbox$ymax - cld_bbox$ymax) / cldraster_meta$res["y"]) + 1
     )
-    cld_RasterIO$nXSize = ceiling((cld_bbox$xmax - cldraster_meta$bbox$xmin) / cldraster_meta$res["x"]) - cld_RasterIO$nXOff
-    cld_RasterIO$nYSize = ceiling((cldraster_meta$bbox$ymax - cld_bbox$ymin) / cldraster_meta$res["y"]) - cld_RasterIO$nYOff
+    cld_RasterIO$nXSize = ceiling((cld_bbox$xmax - cldraster_meta$bbox$xmin) / cldraster_meta$res["x"]) - cld_RasterIO$nXOff + 1
+    cld_RasterIO$nYSize = ceiling((cldraster_meta$bbox$ymax - cld_bbox$ymin) / cldraster_meta$res["y"]) - cld_RasterIO$nYOff + 1
     
     ## Pass through a VRT
     # (to avoid error "")
@@ -280,7 +332,7 @@ extract_s2ts <- function(
     w_cube_cld_raw_0 <- 1 - cld_cube/100
     scl_cld_val <- scl_weights()[c("cloud_high_probability", "cloud_medium_probability", "unclassified")]
     if (any(diff(scl_cld_val) < 0)) {
-      print_error(
+      print_message(
         type = "error",
         "SCL weight for class \"cloud_high_probability\" must be higher than for ",
         "\"cloud_medium_probability\", as well as \"cloud_medium_probability\" ",
@@ -312,8 +364,6 @@ extract_s2ts <- function(
     
     ts_list <- list()
     for (id in in_sf[[in_sf_id]]) {
-      print(id) # FIXME remove
-      sel_id <<- id # FIXME remove
       in_cube_array <- in_cube[in_sf[in_sf[[in_sf_id]] == id,]][[1]]
       if (all(missing(scl_paths), missing(cld_paths))) {
         ts_list[[id]] <- data.table(
@@ -349,7 +399,7 @@ extract_s2ts <- function(
               function(x,y,...) {mean(x[y == max(c(1E-19,y),na.rm=TRUE)], ...)}
             },
             lapply(seq_len(dim(in_cube_array)[3]), function(k) in_cube_array[,,k]),
-            lapply(seq_len(dim(w_cube_array)[3]), function(k) w_cube_array[,,k]),
+            lapply(seq_len(dim(w_cube_array)[3]), function(k) w_cube_array[,,k] + 1e-9),
             MoreArgs = list(na.rm = TRUE)
           ),
           "qa" = apply(w_cube_array, 3, fun_w, na.rm=TRUE)

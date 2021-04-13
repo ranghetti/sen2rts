@@ -2,7 +2,8 @@
 # do not come from fitting procedures (or which are not monotonic).
 
 #' @importFrom zoo index
-#' @importFrom phenopix PhenoDeriv PhenoGu PhenoKl
+#' @importFrom phenopix PhenoGu PhenoKl PhenoPlot
+#' @importFrom stats median na.omit
 
 patch_PhenoTrs <- function() {
   
@@ -46,4 +47,4 @@ patch_PhenoTrs <- function() {
 }
 
 PhenoTrs <- patch_PhenoTrs()
-PhenoExtract  <- eval(parse(text = deparse(phenopix::PhenoExtract)))
+PhenoExtract <- eval(parse(text = deparse(phenopix::PhenoExtract)))

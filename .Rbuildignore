@@ -1,2 +1,11 @@
 ^.*\.Rproj$
 ^\.Rproj\.user$
+^README\.R?md$
+^\.github$
+^docs$
+^index\.R?md$
+^utils$
+^LICENSE\.md$
+^cran\-comments\.md$
+^CRAN-RELEASE$
+^_pkgdown\.yaml$

@@ -12,7 +12,10 @@ extract_pheno(data, method = "trs", trs = 0.5, ...)
 \item{method}{Thresholding method among \code{"trs"}, \code{"derivatives"},
 \code{"klosterman"} and \code{"gu"} (see \code{phenopix::PhenoExtract()}).}
 
-\item{trs}{Argument passed to \code{phenopix::PhenoExtract()} if \code{method = "trs"}.}
+\item{trs}{Argument passed to \code{phenopix::PhenoExtract()} if \code{method = "trs"}.
+It is valid also for \code{method = "derivatives"} thanks to a \code{{sen2rts}}
+implementation (it will be documented soon).
+Other methods do not make use of this argument.}
 
 \item{...}{Additional arguments passed to \code{phenopix::PhenoExtract()}.}
 }
@@ -38,6 +41,29 @@ the cycle as computed by \code{cut_cycles()};
 }
 \description{
 Extract phenological metrics from a fitted time series.
+}
+\examples{
+# Load input data
+data("cf")
+data("ts_filled") # used for plots
+
+# Default extraction ("trs" method with 50\% threshold)
+dt_pheno <- extract_pheno(cf)
+plot(ts_filled, fitted = cf, pheno = dt_pheno, plot_dates = TRUE)
+
+\donttest{
+# Customize parameters (e.g. "derivatives" method with 30\% threshold)
+dt_pheno_2 <- extract_pheno(cf, method = "derivatives", trs = 0.3)
+plot(ts_filled, fitted = cf, pheno = dt_pheno_2, plot_dates = TRUE)
+
+# Other methods: Klosterman
+dt_pheno_kl <- extract_pheno(cf, method = "klosterman")
+plot(ts_filled, fitted = cf, pheno = dt_pheno_kl, plot_dates = TRUE)
+
+# Other methods: Gu
+dt_pheno_gu <- extract_pheno(cf, method = "gu")
+plot(ts_filled, fitted = cf, pheno = dt_pheno_gu, plot_dates = TRUE)
+}
 }
 \author{
 Luigi Ranghetti, PhD (2020) \email{luigi@ranghetti.info}

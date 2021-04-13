@@ -9,9 +9,12 @@ cut_cycles(
   n_cycles = Inf,
   min_win = 60,
   min_peakvalue = 0.1,
-  max_dropvalue = 0.3,
+  max_dropvalue = 0.6,
+  max_groundvalue = 0.2,
+  ground_buffer = 10,
   value_type = "relative",
-  min_rel_thresh = 0.15,
+  min_relh = 0.15,
+  relevance = 0,
   newyearday = "01-01",
   weight_metric = "integral"
 )
@@ -32,14 +35,27 @@ maxima / minima to consider a separate cycle.}
 \item{max_dropvalue}{(optional) Maximum value to consider a cycle drop
 (breakpoint).}
 
+\item{max_groundvalue}{(optional) Maximum value to identify a ground plain
+(window without cycles).}
+
+\item{ground_buffer}{(optional) n. of days of beginning / ending of grounds
+to be included in previous / next seasons.}
+
 \item{value_type}{(optional) Character: if \code{"relative"} (default), values
 set with arguments \code{min_peakval} and \code{max_dropval} are relative
 values (normalised to 0-1 range among IDs);
 if \code{"absolute"}, absolute values are considered.}
 
-\item{min_rel_thresh}{(optional) Numeric: threshold used to consider
+\item{min_relh}{(optional) Numeric: minimum relative difference between the
+maximum and each of the two minima to consider a separate cycle.
+Default is 0.15.}
+
+\item{relevance}{(optional) Numeric: threshold used to consider
 local minima as relevant, according to Meroni et al. (2021)
-(see for reference). Default is 0.15 as in this reference.}
+(see for reference).
+This is an alternative criterion with respect to \code{min_relh}
+(nevertheless they can be used together, too).
+Default is 0, meaning that this criterion is not used by default.}
 
 \item{newyearday}{(optional) day to be considered as new year's day, used
 to assign cycles to the proper year.
@@ -71,12 +87,32 @@ A data table with the following fields:
 }
 \description{
 Cut Sentinel-2 time series into separate cycles,
-detecting dates of cuts and of peaks.
+detecting dates of cuts and peaks.
 }
 \note{
 The steps used to discriminate seasons are partially based on the method
 exposed in Meroni et al. (2021) (\doi{10.1016/j.rse.2020.112232}).
 The methodology will be documented in future.
+}
+\examples{
+# Load input data
+data("ts_filled")
+
+# Cut seasons with standard parameters
+dt_cycles <- cut_cycles(ts_filled)
+dt_cycles
+# Plot the TS highlighting the extracted cycles
+plot(ts_filled, pheno = dt_cycles, plot_dates = TRUE)
+
+# Cut cycles considering separate cycles only if the maximum NDVI is > 0.7
+dt_cycles_2 <- cut_cycles(
+  ts_filled,
+  min_win = 120, # exclude cycles shorter than 4 months
+  min_peakvalue = 0.7, # exclude cycles with NDVI of peak < 0.7
+  value_type = "absolute", # 0.7 is the absolute NDVI value, not relative
+  newyearday = "10-01" # consider a year from 1st October to 30th September
+)
+plot(ts_filled, pheno = dt_cycles_2)
 }
 \author{
 Luigi Ranghetti, PhD (2021) \email{luigi@ranghetti.info}

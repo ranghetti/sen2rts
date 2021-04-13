@@ -20,6 +20,9 @@ scl_weights(
 )
 }
 \arguments{
+\item{no_data}{(optional) Relative weight (0-1) for SCL class
+\code{"no_data"}.}
+
 \item{saturated_or_defective}{(optional) Relative weight (0-1) for SCL class
 \code{"saturated_or_defective"}.}
 
@@ -52,9 +55,6 @@ scl_weights(
 
 \item{snow}{(optional) Relative weight (0-1) for SCL class
 \code{"snow"}.}
-
-\item{nodata}{(optional) Relative weight (0-1) for SCL class
-\code{"nodata"}.}
 }
 \value{
 A named vector of length 12, containing 0-1 relative weights
@@ -68,6 +68,7 @@ are optional; default weights are used for each non-provided class).
 \examples{
 # Default weights
 scl_weights()
+
 # Custom weights changing two classes
 scl_weights(unclassified = 0.25, snow = 0)
 }
