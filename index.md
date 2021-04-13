@@ -11,6 +11,8 @@ Covenant](https://img.shields.io/badge/Contributor%20Covenant-v1.4%20adopted-ff6
 
 # Build and Analyse Sentinel-2 Time Series
 
+<img src="man/figures/sen2rts_logo_250px.png" width="250" height="250" align="right"/>
+
 `{sen2rts}` is an R library which helps to extract and manage time
 series from Sentinel-2 archives created with the package `{sen2r}`.
 
@@ -74,10 +76,19 @@ plot(ts_filled, pheno = dt_pheno, plot_points = TRUE)
 
 ## Credits
 
+<a href="http://www.irea.cnr.it" target="_blank"><img src="man/figures/irea_logo_200px.png" width="129" height="100" align="left"/></a>
+
 `{sen2rts}` is being developed by Luigi Ranghetti
 ([IREA-CNR](http://www.irea.cnr.it)), and it is released under the [GNU
 General Public License version
 3](https://www.gnu.org/licenses/gpl-3.0.html) (GPL‑3).
+
+The [sen2rts
+logo](https://github.com/ranghetti/sen2rts/raw/master/man/figures/sen2rts_logo_200px.png),
+partially derived from the [R logo](https://www.r-project.org/logo), is
+released under the [Creative Commons Attribution-ShareAlike 4.0
+International license](https://creativecommons.org/licenses/by-sa/4.0)
+(CC-BY-SA 4.0).
 
 To cite this library, please use the entry reported below.
 
