@@ -41,8 +41,8 @@ page](https://sen2r.ranghetti.info/articles/installation.html).
 
 ## Usage
 
-The following minimal example syntetically shows how to perform the main
-steps provided by the package; refer to [this
+The following minimal example synthetically shows how to perform the
+main steps provided by the package; refer to [this
 vignette](http://sen2rts.ranghetti.info/articles/workflow.html) for a
 wider explanation.
 
@@ -86,10 +86,10 @@ To cite this library, please use the entry reported
 [here](http://sen2rts.ranghetti.info/authors.html).
 
 L. Ranghetti (2021). **"sen2rts: Build and Analyse Sentinel-2 Time
-Series**. R package version 0.3.2. doi:
-<a href="https://doi.org/xxx/zenodo.xxx" target="_blank">xxx/zenodo.xxx</a>,
+Series**. R package version 0.4.0. doi:
+<a href="https://doi.org/xxx/zenodo.xxx" target="_blank">`xxx/zenodo.xxx`</a>,
 URL:
-<a href="http://sen2rts.ranghetti.info" target="_blank">http://sen2rts.ranghetti.info</a>.
+<a href="http://sen2rts.ranghetti.info" target="_blank">`http://sen2rts.ranghetti.info`</a>.
 
 ``` bibtex
 @Manual{sen2rts_manual,
@@ -98,7 +98,7 @@ URL:
   year = {2021},
   doi = {xxx/zenodo.xxx},
   url = {http://sen2rts.ranghetti.info},
-  note = {R package version 0.3.2},
+  note = {R package version 0.4.0},
 }
 ```
 

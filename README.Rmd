@@ -51,7 +51,7 @@ In case of troubles related to the installation of {sen2r}, whose
 
 ## Usage
 
-The following minimal example syntetically shows how to perform the main steps
+The following minimal example synthetically shows how to perform the main steps
 provided by the package; refer to [this vignette](http://sen2rts.ranghetti.info/articles/workflow.html) for a wider explanation.
 
 ```{r sample, eval=FALSE}
@@ -100,8 +100,8 @@ To cite this library, please use the entry reported
 L.\ Ranghetti (2021).
 **"sen2rts: Build and Analyse Sentinel-2 Time Series**.
 R package version `r packageVersion("sen2rts")`.
-doi: <a href="https://doi.org/xxx/zenodo.xxx" target="_blank">xxx/zenodo.xxx</a>,
-URL: <a href="http://sen2rts.ranghetti.info" target="_blank">http://sen2rts.ranghetti.info</a>.
+doi: <a href="https://doi.org/xxx/zenodo.xxx" target="_blank">`xxx/zenodo.xxx`</a>,
+URL: <a href="http://sen2rts.ranghetti.info" target="_blank">`http://sen2rts.ranghetti.info`</a>.
 
 ```bibtex
 @Manual{sen2rts_manual,
