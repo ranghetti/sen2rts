@@ -3,6 +3,7 @@
 
 <!-- and generate README.Rmd using utils/code/create_README.sh  -->
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.4682829.svg)](https://doi.org/10.5281/zenodo.4682829)
 [![License: GPL
 v3](https://img.shields.io/badge/License-GPL%20v3-blue.svg)](http://www.gnu.org/licenses/gpl-3.0)
 [![Contributor
@@ -81,7 +82,9 @@ General Public License version
 To cite this library, please use the entry reported below.
 
 L. Ranghetti (2021). **"sen2rts: Build and Analyse Sentinel-2 Time
-Series**. R package version 0.4.0. URL:
+Series**. R package version 0.4.0. doi:
+<a href="https://doi.org/10.5281/zenodo.4682829" target="_blank">`10.5281/zenodo.4682829`</a>,
+URL:
 <a href="http://sen2rts.ranghetti.info" target="_blank">`http://sen2rts.ranghetti.info`</a>.
 
 ``` bibtex
@@ -89,6 +92,7 @@ Series**. R package version 0.4.0. URL:
   author = {Luigi Ranghetti},
   title = {sen2rts: Build and Analyse Sentinel-2 Time Series},
   year = {2021},
+  doi = {10.5281/zenodo.4682829},
   url = {http://sen2rts.ranghetti.info},
   note = {R package version 0.4.0},
 }
