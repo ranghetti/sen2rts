@@ -12,8 +12,8 @@
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
 <!-- Bootstrap -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.4.0/yeti/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous" />
 
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha256-bZLfwXAP04zRMK2BjiO8iu9pf4FbLqX6zitd+tIvLhE=" crossorigin="anonymous" />
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script>
 
@@ -60,7 +60,7 @@
   <body data-spy="scroll" data-target="#toc">
     <div class="container template-news">
       <header>
-      <div class="navbar navbar-default navbar-fixed-top" role="navigation">
+      <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
   <div class="container">
     <div class="navbar-header">
       <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false">
@@ -71,12 +71,15 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">sen2rts</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.4.0</span>
       </span>
     </div>
 
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
+        
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
         <li>
   <a href="../index.html">
     <span class="fas fa-home fa-lg"></span>
@@ -84,28 +87,35 @@
   </a>
 </li>
 <li>
-  <a href="../reference/index.html">Reference</a>
-</li>
-<li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
-    Articles
+  <a href="../reference/index.html">
+    <span class="fas fa-file-code"></span>
      
-    <span class="caret"></span>
+     Reference
   </a>
-  <ul class="dropdown-menu" role="menu">
-    <li>
-      <a href="../articles/workflow.html">The {sen2rts} workflow</a>
-    </li>
-  </ul>
 </li>
 <li>
-  <a href="../news/index.html">Changelog</a>
+  <a href="../articles/workflow.html">
+    <span class="fas fa-book"></span>
+     
+     The sen2rts workflow
+  </a>
 </li>
-      </ul>
-      <ul class="nav navbar-nav navbar-right">
-        <li>
+<li>
+  <a href="../news/index.html">
+    <span class="fas fa-newspaper"></span>
+     
+     Changelog
+  </a>
+</li>
+<li>
+  <a href="http://luigi.ranghetti.info">
+    <span class="fas fa-user"></span>
+     
+  </a>
+</li>
+<li>
   <a href="https://github.com/ranghetti/sen2rts/">
-    <span class="fab fa-github fa-lg"></span>
+    <span class="fas fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -126,12 +136,69 @@
       <small>Source: <a href='https://github.com/ranghetti/sen2rts/blob/master/NEWS.md'><code>NEWS.md</code></a></small>
     </div>
 
-    <div id="version-031" class="section level1">
-<h1 class="page-header" data-toc-text="0.3.1">
-<a href="#version-031" class="anchor"></a>Version 0.3.1</h1>
+    <div id="version-040" class="section level1">
+<h1 class="page-header" data-toc-text="0.4.0">
+<a href="#version-040" class="anchor"></a>Version 0.4.0</h1>
+<p>First <a href="https://sen2rts.ranghetti.info">sen2rts</a> beta version.</p>
 <div id="implementations" class="section level2">
 <h2 class="hasAnchor">
 <a href="#implementations" class="anchor"></a>Implementations</h2>
+<ul>
+<li>Complete function <code><a href="../reference/assign_season.html">assign_season()</a></code>.</li>
+<li>Patch <code>PhenoDeriv()</code> (function imported from package <code>phenopix</code>) to support the definition of relative slopes (this feature will be better documented in future).</li>
+<li>In <code><a href="../reference/cut_cycles.html">cut_cycles()</a></code>, bot methods based on argument <code>min_h</code> and on Meroni et al.
+(2021) can now be used.</li>
+<li>Edits to Savitzky-Golay filter:
+<ol>
+<li>spikes are removed only if the quality of the vertex is lower than the averaged quality of other points;</li>
+<li>points corresponding to missing dates are interpolated with approx() instead than put to 0;</li>
+<li>points with <code>qa &lt; min_qa</code> are removed and not yet interpolated (no more necessary). Problem still present: in Savitzky-Golay filter, left and right borders are interpolated without considering the point quality.</li>
+</ol>
+</li>
+<li>In <code><a href="../reference/smooth_s2ts.html">smooth_s2ts()</a></code>, add the possibility to skip spike removal.</li>
+<li>In <code><a href="../reference/smooth_s2ts.html">smooth_s2ts()</a></code>, exclude low values before removing spikes (to avoid errors).</li>
+</ul>
+</div>
+<div id="documentation" class="section level2">
+<h2 class="hasAnchor">
+<a href="#documentation" class="anchor"></a>Documentation</h2>
+<ul>
+<li>Write the vignette “The sen2rts workflow” describing a complete use case.</li>
+<li>Complete reference documentation adding examples.</li>
+<li>Add a small data set in the package to support documentation.</li>
+</ul>
+</div>
+<div id="dependencies" class="section level2">
+<h2 class="hasAnchor">
+<a href="#dependencies" class="anchor"></a>Dependencies</h2>
+<ul>
+<li>Move <a href="https://ggplot2.tidyverse.org">ggplot2</a> from suggested to imported dependencies (so to facilitate tests and examples).</li>
+</ul>
+</div>
+<div id="changes-in-default-values" class="section level2">
+<h2 class="hasAnchor">
+<a href="#changes-in-default-values" class="anchor"></a>Changes in default values</h2>
+<ul>
+<li>
+<code>read_s2cube()</code> is now <code><a href="../reference/load_s2paths.html">load_s2paths()</a></code>.</li>
+<li>In <code><a href="../reference/smooth_s2ts.html">smooth_s2ts()</a></code>, <code>sg_daywindow = 15</code> instead than 9.</li>
+</ul>
+</div>
+<div id="bug-fixes" class="section level2">
+<h2 class="hasAnchor">
+<a href="#bug-fixes" class="anchor"></a>Bug fixes</h2>
+<ul>
+<li>Fix problems in plot colour ramps.</li>
+<li>Fix package checks.</li>
+</ul>
+</div>
+</div>
+    <div id="version-031" class="section level1">
+<h1 class="page-header" data-toc-text="0.3.1">
+<a href="#version-031" class="anchor"></a>Version 0.3.1</h1>
+<div id="implementations-1" class="section level2">
+<h2 class="hasAnchor">
+<a href="#implementations-1" class="anchor"></a>Implementations</h2>
 <ul>
 <li>
 <code><a href="../reference/fit_curve.html">fit_curve()</a></code>: add value <code>"no"</code> for argument <code>fit</code> (useful to skip interpolation to extract phenological metrics with TRS).</li>
@@ -204,7 +271,7 @@
 <p>First package release (still in alpha version) including functions planned for <a href="https://github.com/ranghetti/sen2rts/milestone/1">first milestone</a>:</p>
 <ul>
 <li>
-<code><a href="../reference/read_s2cube.html">read_s2cube()</a></code> to build data cubes from Sentinel-2 archives;</li>
+<code>read_s2cube()</code> to build data cubes from Sentinel-2 archives;</li>
 <li>
 <code><a href="../reference/extract_s2ts.html">extract_s2ts()</a></code> to build raw time series in <code>s2ts</code> format;</li>
 <li>

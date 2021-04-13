@@ -1,12 +1,12 @@
 #' @title Load raster paths or data cube from a sen2r archive
 #' @description Load the paths of rasters included in a Sentinel-2 archive
-#'  generated with {sen2r}, filtering relevant files and ordering them.
+#'  generated with `{sen2r}`, filtering relevant files and ordering them.
 #'  Output can also be returned in format `stars` or `stars_proxy`
 #'   (see argument `out_format`).
-#' @param inpath Path of the directory in which {sen2r} files are stored.
+#' @param inpath Path of the directory in which `{sen2r}` files are stored.
 #' @param out_format (optional) Output format, being one among
 #'  `"path"` (default), `"stars"` and `"stars_proxy"`).
-#' @param prod_type (optional) sen2r product type to import
+#' @param prod_type (optional) `sen2r` product type to import
 #'  (used for filtering among `inpath` content).
 #' @param time_window (optional) time window to import
 #'  (used for filtering among `inpath` content).
@@ -28,7 +28,7 @@
 #' @importFrom stars read_stars st_redimension st_set_dimensions
 #'
 #' @examples
-#' # Path of a sample archive created with {sen2r} (see ?sample_paths)
+#' # Path of a sample archive created with sen2r (see ?sample_paths)
 #' archive_dir <- system.file("extdata/sen2r/sampleroi", package = "sen2rts")
 #' 
 #' # Default function behaviour

@@ -4,7 +4,7 @@
 #' @param method Thresholding method among `"trs"`, `"derivatives"`, 
 #'  `"klosterman"` and `"gu"` (see `phenopix::PhenoExtract()`).
 #' @param trs Argument passed to `phenopix::PhenoExtract()` if `method = "trs"`.
-#'  It is valid also for `method = "derivatives"` thanks to a {sen2rts}
+#'  It is valid also for `method = "derivatives"` thanks to a `{sen2rts}`
 #'  implementation (it will be documented soon).
 #'  Other methods do not make use of this argument.
 #' @param ... Additional arguments passed to `phenopix::PhenoExtract()`.

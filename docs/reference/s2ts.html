@@ -12,8 +12,8 @@
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
 <!-- Bootstrap -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.4.0/yeti/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous" />
 
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha256-bZLfwXAP04zRMK2BjiO8iu9pf4FbLqX6zitd+tIvLhE=" crossorigin="anonymous" />
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script>
 
@@ -40,7 +40,7 @@
 
 
 <meta property="og:title" content="Class s2ts — s2ts" />
-<meta property="og:description" content="TODO" />
+<meta property="og:description" content="Class used for {sen2rts} time series." />
 
 
 
@@ -61,7 +61,7 @@
   <body data-spy="scroll" data-target="#toc">
     <div class="container template-reference-topic">
       <header>
-      <div class="navbar navbar-default navbar-fixed-top" role="navigation">
+      <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
   <div class="container">
     <div class="navbar-header">
       <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false">
@@ -72,12 +72,15 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">sen2rts</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.4.0</span>
       </span>
     </div>
 
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
+        
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
         <li>
   <a href="../index.html">
     <span class="fas fa-home fa-lg"></span>
@@ -85,28 +88,35 @@
   </a>
 </li>
 <li>
-  <a href="../reference/index.html">Reference</a>
-</li>
-<li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
-    Articles
+  <a href="../reference/index.html">
+    <span class="fas fa-file-code"></span>
      
-    <span class="caret"></span>
+     Reference
   </a>
-  <ul class="dropdown-menu" role="menu">
-    <li>
-      <a href="../articles/workflow.html">The {sen2rts} workflow</a>
-    </li>
-  </ul>
 </li>
 <li>
-  <a href="../news/index.html">Changelog</a>
+  <a href="../articles/workflow.html">
+    <span class="fas fa-book"></span>
+     
+     The sen2rts workflow
+  </a>
 </li>
-      </ul>
-      <ul class="nav navbar-nav navbar-right">
-        <li>
+<li>
+  <a href="../news/index.html">
+    <span class="fas fa-newspaper"></span>
+     
+     Changelog
+  </a>
+</li>
+<li>
+  <a href="http://luigi.ranghetti.info">
+    <span class="fas fa-user"></span>
+     
+  </a>
+</li>
+<li>
   <a href="https://github.com/ranghetti/sen2rts/">
-    <span class="fab fa-github fa-lg"></span>
+    <span class="fas fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -129,7 +139,7 @@
     </div>
 
     <div class="ref-description">
-    <p>TODO</p>
+    <p>Class used for <code>{sen2rts}</code> time series.</p>
     </div>
 
     <pre class="usage"><span class='fu'>s2ts</span><span class='op'>(</span><span class='va'>value</span>, <span class='va'>date</span>, id <span class='op'>=</span> <span class='cn'>NA</span>, <span class='va'>qa</span>, <span class='va'>orbit</span>, <span class='va'>sensor</span>, <span class='va'>rawval</span>, <span class='va'>...</span><span class='op'>)</span>
@@ -222,6 +232,155 @@ can not be used (use instead <code>&lt;s2ts_obj&gt;[,&lt;fieldname&gt;]</code>).
 
     <p>Luigi Ranghetti, PhD (2020) <a href='mailto:luigi@ranghetti.info'>luigi@ranghetti.info</a></p>
 
+    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <pre class="examples"><div class='input'><span class='co'>## Create a s2ts object from raw</span>
+<span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='http://sen2r.ranghetti.info'>sen2r</a></span><span class='op'>)</span>
+</div><div class='output co'>#&gt; <span class='message'>Welcome to sen2r. To use the package from a GUI, launch</span>
+#&gt; <span class='message'> &gt; sen2r()</span>
+#&gt; <span class='message'>Documentation: http://sen2r.ranghetti.info</span>
+#&gt; <span class='message'>Help and bug report: https://github.com/ranghetti/sen2r/issues</span></div><div class='input'><span class='va'>sample_dt</span> <span class='op'>&lt;-</span> <span class='fu'>sen2r</span><span class='fu'>::</span><span class='fu'><a href='http://sen2r.ranghetti.info/reference/s2_dop.html'>s2_dop</a></span><span class='op'>(</span>
+  timewindow <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"2020-01-01"</span>, <span class='st'>"2020-01-31"</span><span class='op'>)</span>, 
+  s2_orbit <span class='op'>=</span> <span class='fl'>22</span>
+<span class='op'>)</span>
+<span class='va'>sample_dt</span><span class='op'>$</span><span class='va'>ndvi</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/Uniform.html'>runif</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>nrow</a></span><span class='op'>(</span><span class='va'>sample_dt</span><span class='op'>)</span>, <span class='fl'>0</span>, <span class='fl'>1</span><span class='op'>)</span>
+<span class='va'>sample_dt</span><span class='op'>$</span><span class='va'>qa</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/MathFun.html'>sqrt</a></span><span class='op'>(</span><span class='va'>sample_dt</span><span class='op'>$</span><span class='va'>ndvi</span><span class='op'>)</span>
+
+<span class='co'># Minimum example (including dates and values)</span>
+<span class='fu'>s2ts</span><span class='op'>(</span>value <span class='op'>=</span> <span class='va'>sample_dt</span><span class='op'>$</span><span class='va'>ndvi</span>, date <span class='op'>=</span> <span class='va'>sample_dt</span><span class='op'>$</span><span class='va'>date</span>, id <span class='op'>=</span> <span class='st'>"1"</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; A s2ts time series with 6 dates and 1 IDs.
+#&gt;          Date           1  
+#&gt; 1: 2020-01-04 0.080750138  
+#&gt; 2: 2020-01-09 0.834333037  
+#&gt; 3: 2020-01-14 0.600760886  
+#&gt; 4: 2020-01-19 0.157208442  
+#&gt; 5: 2020-01-24 0.007399441  
+#&gt; 6: 2020-01-29 0.466393497  </div><div class='input'>
+<span class='co'># Example with additional information (including quality flags)</span>
+<span class='va'>sample_ts</span> <span class='op'>&lt;-</span> <span class='fu'>s2ts</span><span class='op'>(</span>
+  value <span class='op'>=</span> <span class='va'>sample_dt</span><span class='op'>$</span><span class='va'>ndvi</span>, 
+  date <span class='op'>=</span> <span class='va'>sample_dt</span><span class='op'>$</span><span class='va'>date</span>, 
+  id <span class='op'>=</span> <span class='st'>"1"</span>,
+  qa <span class='op'>=</span> <span class='va'>sample_dt</span><span class='op'>$</span><span class='va'>qa</span>, 
+  sensor <span class='op'>=</span> <span class='va'>sample_dt</span><span class='op'>$</span><span class='va'>mission</span>
+<span class='op'>)</span>
+<span class='va'>sample_ts</span>
+</div><div class='output co'>#&gt; A s2ts time series with 6 dates and 1 IDs.
+#&gt;          Date Sensor           1   
+#&gt; 1: 2020-01-04     2B 0.080750138 ○ 
+#&gt; 2: 2020-01-09     2A 0.834333037 ◕ 
+#&gt; 3: 2020-01-14     2B 0.600760886 ◑ 
+#&gt; 4: 2020-01-19     2A 0.157208442 ○ 
+#&gt; 5: 2020-01-24     2B 0.007399441 ○ 
+#&gt; 6: 2020-01-29     2A 0.466393497 ◔ 
+#&gt; 
+#&gt; Quality flags:  ● [1]  ◕ [0.9,1)  ◑ [0.75,0.9)  ◔ [0.5,0.75)  ○ [0,0.5)</div><div class='input'>
+<span class='co'># Extract s2ts content</span>
+<span class='fu'><a href='https://rdrr.io/r/base/list.html'>as.list</a></span><span class='op'>(</span><span class='va'>sample_dt</span><span class='op'>)</span> <span class='co'># convert in list (unclass)</span>
+</div><div class='output co'>#&gt; $date
+#&gt; [1] "2020-01-04" "2020-01-09" "2020-01-14" "2020-01-19" "2020-01-24"
+#&gt; [6] "2020-01-29"
+#&gt; 
+#&gt; $mission
+#&gt; [1] "2B" "2A" "2B" "2A" "2B" "2A"
+#&gt; 
+#&gt; $orbit
+#&gt; [1] "022" "022" "022" "022" "022" "022"
+#&gt; 
+#&gt; $ndvi
+#&gt; [1] 0.080750138 0.834333037 0.600760886 0.157208442 0.007399441 0.466393497
+#&gt; 
+#&gt; $qa
+#&gt; [1] 0.2841657 0.9134183 0.7750877 0.3964952 0.0860200 0.6829301
+#&gt; </div><div class='input'><span class='va'>sample_ts</span><span class='op'>$</span><span class='va'>date</span> <span class='co'># extract dates</span>
+</div><div class='output co'>#&gt; [1] "2020-01-04" "2020-01-09" "2020-01-14" "2020-01-19" "2020-01-24"
+#&gt; [6] "2020-01-29"</div><div class='input'><span class='va'>sample_ts</span><span class='op'>$</span><span class='va'>id</span> <span class='co'># extract IDs</span>
+</div><div class='output co'>#&gt; [1] "1" "1" "1" "1" "1" "1"</div><div class='input'><span class='va'>sample_ts</span><span class='op'>$</span><span class='va'>value</span> <span class='co'># extract values</span>
+</div><div class='output co'>#&gt; [1] 0.080750138 0.834333037 0.600760886 0.157208442 0.007399441 0.466393497</div><div class='input'><span class='va'>sample_ts</span><span class='op'>$</span><span class='va'>qa</span> <span class='co'># extract quality values</span>
+</div><div class='output co'>#&gt; [1] 0.2841657 0.9134183 0.7750877 0.3964952 0.0860200 0.6829301</div><div class='input'><span class='va'>sample_ts</span><span class='op'>$</span><span class='va'>rawval</span> <span class='co'># extract raw values (for smooth_s2ts() and fill_s2ts() outputs)</span>
+</div><div class='output co'>#&gt; NULL</div><div class='input'>
+<span class='co'># Load sample data generated by sen2rts functions</span>
+<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>ts_raw</span><span class='op'>)</span>      <span class='co'># generated by extract_s2ts()</span>
+<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>ts_smoothed</span><span class='op'>)</span> <span class='co'># generated by smooth_s2ts()</span>
+<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>ts_filled</span><span class='op'>)</span>   <span class='co'># generated by fill_s2ts()</span>
+
+<span class='co'># Visualise data</span>
+<span class='fu'><a href='https://rdrr.io/r/base/print.html'>print</a></span><span class='op'>(</span><span class='va'>ts_raw</span>, topn <span class='op'>=</span> <span class='fl'>5</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; A raw s2ts time series with 60 dates and 2 IDs.
+#&gt;           Date Orbit Sensor            1               2   
+#&gt;  1: 2020-01-04   022     2B  0.116133333 ○   0.173306250 ○ 
+#&gt;  2: 2020-01-09   022     2A  0.020170833 ○   0.022352083 ○ 
+#&gt;  3: 2020-01-14   022     2B -0.004372917 ○   0.015077083 ○ 
+#&gt;  4: 2020-01-19   022     2A  0.116368750 ○   0.096704167 ○ 
+#&gt;  5: 2020-01-24   022     2B  0.123387500 ○   0.165727083 ○ 
+#&gt; ---                                                        
+#&gt; 56: 2020-10-10   022     2B  0.057233333 ○   0.104959233 ○ 
+#&gt; 57: 2020-10-15   022     2A -0.008637500 ○  -0.009322917 ○ 
+#&gt; 58: 2020-10-20   022     2B  0.057181250 ○   0.098320833 ○ 
+#&gt; 59: 2020-10-25   022     2A -0.038556250 ○  -0.067797917 ○ 
+#&gt; 60: 2020-10-30   022     2B  0.067635417 ○   0.078327083 ○ 
+#&gt; 
+#&gt; Quality flags:  ● [1]  ◕ [0.9,1)  ◑ [0.75,0.9)  ◔ [0.5,0.75)  ○ [0,0.5)</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/print.html'>print</a></span><span class='op'>(</span><span class='va'>ts_smoothed</span>, topn <span class='op'>=</span> <span class='fl'>5</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; A smoothed s2ts time series with 60 dates and 2 IDs.
+#&gt;           Date Orbit Sensor          1            2   
+#&gt;  1: 2020-01-04   022     2B 0.11606015 ○  0.1740709 ○ 
+#&gt;  2: 2020-01-09   022     2A         NA ○         NA ○ 
+#&gt;  3: 2020-01-14   022     2B         NA ○         NA ○ 
+#&gt;  4: 2020-01-19   022     2A         NA ○         NA ○ 
+#&gt;  5: 2020-01-24   022     2B 0.12343408 ○  0.2060596 ○ 
+#&gt; ---                                                   
+#&gt; 56: 2020-10-10   022     2B 0.05760022 ○  0.1021135 ○ 
+#&gt; 57: 2020-10-15   022     2A         NA ○         NA ○ 
+#&gt; 58: 2020-10-20   022     2B 0.05767390 ○  0.1016156 ○ 
+#&gt; 59: 2020-10-25   022     2A         NA ○         NA ○ 
+#&gt; 60: 2020-10-30   022     2B         NA ○         NA ○ 
+#&gt; 
+#&gt; Quality flags:  ● [1]  ◕ [0.9,1)  ◑ [0.75,0.9)  ◔ [0.5,0.75)  ○ [0,0.5)</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/print.html'>print</a></span><span class='op'>(</span><span class='va'>ts_raw</span>, topn <span class='op'>=</span> <span class='fl'>5</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; A raw s2ts time series with 60 dates and 2 IDs.
+#&gt;           Date Orbit Sensor            1               2   
+#&gt;  1: 2020-01-04   022     2B  0.116133333 ○   0.173306250 ○ 
+#&gt;  2: 2020-01-09   022     2A  0.020170833 ○   0.022352083 ○ 
+#&gt;  3: 2020-01-14   022     2B -0.004372917 ○   0.015077083 ○ 
+#&gt;  4: 2020-01-19   022     2A  0.116368750 ○   0.096704167 ○ 
+#&gt;  5: 2020-01-24   022     2B  0.123387500 ○   0.165727083 ○ 
+#&gt; ---                                                        
+#&gt; 56: 2020-10-10   022     2B  0.057233333 ○   0.104959233 ○ 
+#&gt; 57: 2020-10-15   022     2A -0.008637500 ○  -0.009322917 ○ 
+#&gt; 58: 2020-10-20   022     2B  0.057181250 ○   0.098320833 ○ 
+#&gt; 59: 2020-10-25   022     2A -0.038556250 ○  -0.067797917 ○ 
+#&gt; 60: 2020-10-30   022     2B  0.067635417 ○   0.078327083 ○ 
+#&gt; 
+#&gt; Quality flags:  ● [1]  ◕ [0.9,1)  ◑ [0.75,0.9)  ◔ [0.5,0.75)  ○ [0,0.5)</div><div class='input'>
+<span class='co'># See which function generated a s2ts object</span>
+<span class='fu'><a href='https://rdrr.io/r/base/attr.html'>attr</a></span><span class='op'>(</span><span class='va'>ts_raw</span>, <span class='st'>"gen_by"</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; [1] "extract_s2ts"</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/attr.html'>attr</a></span><span class='op'>(</span><span class='va'>ts_smoothed</span>, <span class='st'>"gen_by"</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; [1] "smooth_s2ts"</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/attr.html'>attr</a></span><span class='op'>(</span><span class='va'>ts_filled</span>, <span class='st'>"gen_by"</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; [1] "fill_s2ts"</div><div class='input'>
+<span class='co'># Convert in data frames or data tables</span>
+<span class='va'>df_raw</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/as.data.frame.html'>as.data.frame</a></span><span class='op'>(</span><span class='va'>ts_raw</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span><span class='op'>(</span><span class='va'>df_raw</span><span class='op'>)</span>
+</div><div class='output co'>#&gt;   id       date orbit sensor        value   qa
+#&gt; 1  1 2020-01-04   022     2B  0.116133333 0.33
+#&gt; 2  1 2020-01-09   022     2A  0.020170833 0.00
+#&gt; 3  1 2020-01-14   022     2B -0.004372917 0.00
+#&gt; 4  1 2020-01-19   022     2A  0.116368750 0.00
+#&gt; 5  1 2020-01-24   022     2B  0.123387500 0.33
+#&gt; 6  1 2020-01-29   022     2A  0.114379167 0.33</div><div class='input'><span class='va'>df_smoothed</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/as.data.frame.html'>as.data.frame</a></span><span class='op'>(</span><span class='va'>ts_smoothed</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span><span class='op'>(</span><span class='va'>df_smoothed</span><span class='op'>)</span>
+</div><div class='output co'>#&gt;   id       date orbit sensor     value   qa       rawval
+#&gt; 1  1 2020-01-04   022     2B 0.1160602 0.33  0.116133333
+#&gt; 2  1 2020-01-09   022     2A        NA 0.00  0.020170833
+#&gt; 3  1 2020-01-14   022     2B        NA 0.00 -0.004372917
+#&gt; 4  1 2020-01-19   022     2A        NA 0.00  0.116368750
+#&gt; 5  1 2020-01-24   022     2B 0.1234341 0.33  0.123387500
+#&gt; 6  1 2020-01-29   022     2A 0.1137065 0.33  0.114379167</div><div class='input'><span class='va'>df_filled</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/as.data.frame.html'>as.data.frame</a></span><span class='op'>(</span><span class='va'>ts_filled</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span><span class='op'>(</span><span class='va'>df_filled</span><span class='op'>)</span>
+</div><div class='output co'>#&gt;   id       date orbit sensor     value   qa     rawval interpolated
+#&gt; 1  1 2020-01-04   022     2B 0.1160602 0.33 0.11613333        FALSE
+#&gt; 2  1 2020-01-05  &lt;NA&gt;   &lt;NA&gt; 0.1207222   NA         NA         TRUE
+#&gt; 3  1 2020-01-06  &lt;NA&gt;   &lt;NA&gt; 0.1247380   NA         NA         TRUE
+#&gt; 4  1 2020-01-07  &lt;NA&gt;   &lt;NA&gt; 0.1281397   NA         NA         TRUE
+#&gt; 5  1 2020-01-08  &lt;NA&gt;   &lt;NA&gt; 0.1309599   NA         NA         TRUE
+#&gt; 6  1 2020-01-09   022     2A 0.1332310 0.00 0.02017083         TRUE</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

@@ -6,13 +6,13 @@
 \format{
 Each sample archive include 60 images acquired between 2020-01-01 and
 2020-09-30 covering the \code{\link{sampleroi}} extent, provided in the
-\href{https://sen2r.ranghetti.info/articles/outstructure.html}{{sen2r} output format}.
+\href{https://sen2r.ranghetti.info/articles/outstructure.html}{sen2r output format}.
 NDVI images are saved in integer format (values are scaled using a 10^4
 factor).
 
 Data size is very small (13x4 pixels per each image) in order not to be heavy
 in terms of data size and to ensure examples to be rapidly runnable.
-The vignette \href{../articles/workflow.html}{"The {sen2rts} workflow"} makes use
+The vignette \href{../articles/workflow.html}{"The sen2rts workflow"} makes use
 of a larger dataset in order to show a more plausible use case.
 }
 \usage{

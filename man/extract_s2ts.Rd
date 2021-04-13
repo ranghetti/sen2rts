@@ -16,7 +16,7 @@ extract_s2ts(
 )
 }
 \arguments{
-\item{in_paths}{Paths of the sen2r files (eventually obtained using
+\item{in_paths}{Paths of the \code{sen2r} files (eventually obtained using
 \code{read_in_cube(..., out_format = "path")}).}
 
 \item{in_sf}{Object with polygonal or point geometries}
@@ -58,7 +58,7 @@ The output time series in \code{s2ts} format.
 }
 \description{
 Extract time series from a Sentinel-2 data archive
-(created with the package \code{\link{sen2r}}) over spatial features (points or
+(created with the package \code{sen2r}) over spatial features (points or
 polygons). Quality flags can be added exploiting an additional
 extracted archive (see arguments \code{scl_paths} and \code{cld_paths}).
 }

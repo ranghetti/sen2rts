@@ -15,10 +15,10 @@ data(samplecrops)
 }
 \description{
 Dataset containing boundaries of some field crops of
-the farm \href{https://bonificheferraresi.it}{\emph{Bonifiche Ferraresi}}
+the farm \href{https://bonificheferraresi.it/it/home}{\emph{Bonifiche Ferraresi}}
 located in the estate of Jolanda di Savoia (FE, Italy),
 which are used in the vignette
-\href{../articles/workflow.html}{"The {sen2rts} workflow"}.
+\href{../articles/workflow.html}{"The sen2rts workflow"}.
 }
 \examples{
 data(samplecrops)

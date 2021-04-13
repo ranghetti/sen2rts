@@ -3,7 +3,6 @@
 
 <!-- and generate README.Rmd using utils/code/create_README.sh  -->
 
-[![DOI](https://zenodo.org/badge/DOI/xxx/zenodo.xxx.svg)](https://doi.org/xxx/zenodo.xxx)
 [![License: GPL
 v3](https://img.shields.io/badge/License-GPL%20v3-blue.svg)](http://www.gnu.org/licenses/gpl-3.0)
 [![Contributor
@@ -11,14 +10,13 @@ Covenant](https://img.shields.io/badge/Contributor%20Covenant-v1.4%20adopted-ff6
 
 # Build and Analyse Sentinel-2 Time Series
 
-**{sen2rts}** is an R library which helps to extract and manage time
-series from Sentinel-2 archives created with the package
-[{sen2r}](https://sen2r.ranghetti.info/).
+`{sen2rts}` is an R library which helps to extract and manage time
+series from Sentinel-2 archives created with the package `{sen2r}`.
 
 This package is currently under development (beta version).
 
 Functionalities currently implemented in the package are summarised
-below. A wider overview is presented in the vignette [“The {sen2rts}
+below. A wider overview is presented in the vignette [“The sen2rts
 workflows”](articles/workflow.md), which shows a simple, reproducible
 use case to obtain a smoothed equally-weighted time series, isolate
 cycles and extract metrics, explaining how the currently implemented
@@ -27,15 +25,15 @@ about specific functions, see the [Reference](./reference) page.
 
 ## Installation
 
-Currently {sen2rts} is not on CRAN; it can be installed from GitHub:
+Currently `{sen2rts}` is not on CRAN; it can be installed from GitHub:
 
 ``` r
 install.packages("remotes")
 remotes::install_github("ranghetti/sen2rts")
 ```
 
-In case of troubles related to the installation of {sen2r}, whose
-{sen2rts} depends, refer to [{sen2r} installation
+In case of troubles related to the installation of `{sen2r}`, whose
+`{sen2rts}` depends, refer to [sen2r installation
 page](https://sen2r.ranghetti.info/articles/installation.html).
 
 ## Usage
@@ -47,8 +45,8 @@ vignette](articles/workflow.md) for a wider explanation.
 ``` r
 library(sen2rts)
 
-## Create a Sentinel-2 derived archive using {sen2r}
-#  (see {sen2r} documentation at https://sen2r.ranghetti.info/ )
+## Create a Sentinel-2 derived archive using sen2r
+#  (see sen2r documentation at https://sen2r.ranghetti.info/ )
 #  and read the paths of the raster using function load_s2paths()
 #
 #  (in this examples, sample data are used)
@@ -75,17 +73,15 @@ plot(ts_filled, pheno = dt_pheno, plot_points = TRUE)
 
 ## Credits
 
-{sen2rts} is being developed by Luigi Ranghetti
+`{sen2rts}` is being developed by Luigi Ranghetti
 ([IREA-CNR](http://www.irea.cnr.it)), and it is released under the [GNU
 General Public License version
 3](https://www.gnu.org/licenses/gpl-3.0.html) (GPL‑3).
 
-To cite this library, please use the entry reported [here](authors.md).
+To cite this library, please use the entry reported below.
 
 L. Ranghetti (2021). **"sen2rts: Build and Analyse Sentinel-2 Time
-Series**. R package version 0.4.0. doi:
-<a href="https://doi.org/xxx/zenodo.xxx" target="_blank">`xxx/zenodo.xxx`</a>,
-URL:
+Series**. R package version 0.4.0. URL:
 <a href="http://sen2rts.ranghetti.info" target="_blank">`http://sen2rts.ranghetti.info`</a>.
 
 ``` bibtex
@@ -93,7 +89,6 @@ URL:
   author = {Luigi Ranghetti},
   title = {sen2rts: Build and Analyse Sentinel-2 Time Series},
   year = {2021},
-  doi = {xxx/zenodo.xxx},
   url = {http://sen2rts.ranghetti.info},
   note = {R package version 0.4.0},
 }

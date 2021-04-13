@@ -8,11 +8,11 @@ Authors@R: c(person("Luigi", "Ranghetti",
                     role = c("aut", "cre"),
                     comment = c(ORCID = "0000-0001-6207-5188")))
 Description: Provides functions to build and smooth Sentinel-2 time series
-  from images downloaded and preprocessed using package sen2r
+  from images downloaded and pre-processed using package sen2r
   and to perform a phenological analysis.
 License: GPL-3
 Encoding: UTF-8
-URL: https://sen2rts.ranghetti.info, https://doi.org/xxx/zenodo.xxx
+URL: https://sen2rts.ranghetti.info
 BugReports: https://github.com/ranghetti/sen2rts/issues
 Depends: R (>= 4.0.0)
 Imports:
@@ -20,7 +20,7 @@ Imports:
   stats,
   sen2r,
   data.table,
-  sf,
+  sf (>= 0.9.2),
   stars,
   jsonlite,
   dplyr,
@@ -32,6 +32,7 @@ Suggests:
   spelling,
   httptest,
   knitr,
+  markdown,
   rmarkdown,
   testthat (>= 2.1.0)
 VignetteBuilder: knitr

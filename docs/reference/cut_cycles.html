@@ -12,8 +12,8 @@
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
 <!-- Bootstrap -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.4.0/yeti/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous" />
 
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha256-bZLfwXAP04zRMK2BjiO8iu9pf4FbLqX6zitd+tIvLhE=" crossorigin="anonymous" />
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script>
 
@@ -62,7 +62,7 @@ detecting dates of cuts and peaks." />
   <body data-spy="scroll" data-target="#toc">
     <div class="container template-reference-topic">
       <header>
-      <div class="navbar navbar-default navbar-fixed-top" role="navigation">
+      <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
   <div class="container">
     <div class="navbar-header">
       <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false">
@@ -73,12 +73,15 @@ detecting dates of cuts and peaks." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">sen2rts</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.4.0</span>
       </span>
     </div>
 
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
+        
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
         <li>
   <a href="../index.html">
     <span class="fas fa-home fa-lg"></span>
@@ -86,28 +89,35 @@ detecting dates of cuts and peaks." />
   </a>
 </li>
 <li>
-  <a href="../reference/index.html">Reference</a>
-</li>
-<li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
-    Articles
+  <a href="../reference/index.html">
+    <span class="fas fa-file-code"></span>
      
-    <span class="caret"></span>
+     Reference
   </a>
-  <ul class="dropdown-menu" role="menu">
-    <li>
-      <a href="../articles/workflow.html">The {sen2rts} workflow</a>
-    </li>
-  </ul>
 </li>
 <li>
-  <a href="../news/index.html">Changelog</a>
+  <a href="../articles/workflow.html">
+    <span class="fas fa-book"></span>
+     
+     The sen2rts workflow
+  </a>
 </li>
-      </ul>
-      <ul class="nav navbar-nav navbar-right">
-        <li>
+<li>
+  <a href="../news/index.html">
+    <span class="fas fa-newspaper"></span>
+     
+     Changelog
+  </a>
+</li>
+<li>
+  <a href="http://luigi.ranghetti.info">
+    <span class="fas fa-user"></span>
+     
+  </a>
+</li>
+<li>
   <a href="https://github.com/ranghetti/sen2rts/">
-    <span class="fab fa-github fa-lg"></span>
+    <span class="fas fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -265,7 +275,7 @@ The methodology will be documented in future.</p>
 #&gt; 2:  2 2020     1 2020-01-04 2020-07-16 2020-04-21 92.78070
 #&gt; 3:  2 2020     2 2020-07-16 2020-10-16 2020-08-08 13.91427</div><div class='input'><span class='co'># Plot the TS highlighting the extracted cycles</span>
 <span class='fu'><a href='plot.html'>plot</a></span><span class='op'>(</span><span class='va'>ts_filled</span>, pheno <span class='op'>=</span> <span class='va'>dt_cycles</span>, plot_dates <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>
-</div><div class='img'><img src='cut_cycles-1.png' alt='' width='700' height='433' /></div><div class='input'>
+</div><div class='img'><img src='cut_cycles-1.png' alt='' width='864' height='432' /></div><div class='input'>
 <span class='co'># Cut cycles considering separate cycles only if the maximum NDVI is &gt; 0.7</span>
 <span class='va'>dt_cycles_2</span> <span class='op'>&lt;-</span> <span class='fu'>cut_cycles</span><span class='op'>(</span>
   <span class='va'>ts_filled</span>,
@@ -275,7 +285,7 @@ The methodology will be documented in future.</p>
   newyearday <span class='op'>=</span> <span class='st'>"10-01"</span> <span class='co'># consider a year from 1st October to 30th September</span>
 <span class='op'>)</span>
 <span class='fu'><a href='plot.html'>plot</a></span><span class='op'>(</span><span class='va'>ts_filled</span>, pheno <span class='op'>=</span> <span class='va'>dt_cycles_2</span><span class='op'>)</span>
-</div><div class='img'><img src='cut_cycles-2.png' alt='' width='700' height='433' /></div></pre>
+</div><div class='img'><img src='cut_cycles-2.png' alt='' width='864' height='432' /></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

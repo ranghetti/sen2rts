@@ -1,5 +1,7 @@
 # Version 0.4.0
 
+First `{sen2rts}` beta version.
+
 ## Implementations 
 - Complete function `assign_season()`.
 - Patch `PhenoDeriv()` (function imported from package `phenopix`) to support
@@ -20,7 +22,7 @@
 - In `smooth_s2ts()`, exclude low values before removing spikes (to avoid errors).
 
 ## Documentation
-- Write the vignette "The {sen2rts} workflow" describing a complete use case.
+- Write the vignette "The sen2rts workflow" describing a complete use case.
 - Complete reference documentation adding examples.
 - Add a small data set in the package to support documentation.
 

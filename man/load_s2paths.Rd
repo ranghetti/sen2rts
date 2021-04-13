@@ -17,12 +17,12 @@ load_s2paths(
 )
 }
 \arguments{
-\item{inpath}{Path of the directory in which {sen2r} files are stored.}
+\item{inpath}{Path of the directory in which \code{{sen2r}} files are stored.}
 
 \item{out_format}{(optional) Output format, being one among
 \code{"path"} (default), \code{"stars"} and \code{"stars_proxy"}).}
 
-\item{prod_type}{(optional) sen2r product type to import
+\item{prod_type}{(optional) \code{sen2r} product type to import
 (used for filtering among \code{inpath} content).}
 
 \item{time_window}{(optional) time window to import
@@ -47,12 +47,12 @@ The output raster cube in the selected format.
 }
 \description{
 Load the paths of rasters included in a Sentinel-2 archive
-generated with {sen2r}, filtering relevant files and ordering them.
+generated with \code{{sen2r}}, filtering relevant files and ordering them.
 Output can also be returned in format \code{stars} or \code{stars_proxy}
 (see argument \code{out_format}).
 }
 \examples{
-# Path of a sample archive created with {sen2r} (see ?sample_paths)
+# Path of a sample archive created with sen2r (see ?sample_paths)
 archive_dir <- system.file("extdata/sen2r/sampleroi", package = "sen2rts")
 
 # Default function behaviour

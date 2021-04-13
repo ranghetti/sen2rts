@@ -13,7 +13,7 @@ extract_pheno(data, method = "trs", trs = 0.5, ...)
 \code{"klosterman"} and \code{"gu"} (see \code{phenopix::PhenoExtract()}).}
 
 \item{trs}{Argument passed to \code{phenopix::PhenoExtract()} if \code{method = "trs"}.
-It is valid also for \code{method = "derivatives"} thanks to a {sen2rts}
+It is valid also for \code{method = "derivatives"} thanks to a \code{{sen2rts}}
 implementation (it will be documented soon).
 Other methods do not make use of this argument.}
 

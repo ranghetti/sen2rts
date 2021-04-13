@@ -1,9 +1,9 @@
 #' @title Extract time series from sen2r archives
 #' @description Extract time series from a Sentinel-2 data archive
-#'  (created with the package [`sen2r`]) over spatial features (points or
+#'  (created with the package `sen2r`) over spatial features (points or
 #'  polygons). Quality flags can be added exploiting an additional 
 #'  extracted archive (see arguments `scl_paths` and `cld_paths`).
-#' @param in_paths Paths of the sen2r files (eventually obtained using 
+#' @param in_paths Paths of the `sen2r` files (eventually obtained using 
 #'  `read_in_cube(..., out_format = "path")`).
 #' @param in_sf Object with polygonal or point geometries
 #' @param fun (optional) aggregation function (or function name) 

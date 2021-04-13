@@ -48,7 +48,7 @@ navbar:
     - text: "\u2000Reference"
       icon: fa-file-code
       href: reference/index.html
-    - text: "\u2000The {sen2rts} workflow"
+    - text: "\u2000The sen2rts workflow"
       icon: fa-book
       href: articles/workflow.html
     - text: "\u2000Changelog"

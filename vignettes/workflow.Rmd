@@ -1,8 +1,8 @@
 ---
-title: "The {sen2rts} workflow"
+title: "The sen2rts workflow"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{The {sen2rts} workflow}
+  %\VignetteIndexEntry{The sen2rts workflow}
   %\VignetteEngine{knitr::knitr}
   %\usepackage[UTF-8]{inputenc}
 ---
@@ -22,10 +22,10 @@ data(samplecrops)
 This vignette describes a use case to process a sample Sentinel-2 time series 
 and extract information about seasonality.
 
-Functions developed in the package {sen2rts} are run sequentially, following 
+Functions developed in the package `{sen2rts}` are run sequentially, following 
 this workflow:
 
-1. [produce raster archive with {sen2r}](#produce-raster-archive-with-sen2r);
+1. [produce raster archive with sen2r](#produce-raster-archive-with-sen2r);
 2. [extract time series over spatial features](#extract-time-series-over-spatial-features);
 3. [smooth raw time series](#smooth-raw-time-series);
 4. [fill temporal gaps](#fill-temporal-gaps);
@@ -36,14 +36,14 @@ this workflow:
 9. [aggregate time series over seasons](#aggregate-time-series-over-seasons).
 
 
-## Produce raster archive with {sen2r}
+## Produce raster archive with `{sen2r}`
 
-Package {sen2r} must be used to generate the local raster data over the area of 
-interest, since {sen2rts} is built to read a Sentinel-2 image archive in the 
-[{sen2r} output structure](https://sen2r.ranghetti.info/articles/outstructure.html). 
+Package `{sen2r}` must be used to generate the local raster data over the area of 
+interest, since `{sen2rts}` is built to read a Sentinel-2 image archive in the 
+[sen2r output structure](https://sen2r.ranghetti.info/articles/outstructure.html). 
 In this tutorial the following sample archive is being used:
 
-- **extent**: some field crops of the farm [_Bonifiche Ferraresi_](https://bonificheferraresi.it) 
+- **extent**: some field crops of the farm [_Bonifiche Ferraresi_](https://bonificheferraresi.it/it/home) 
 located in the estate of Jolanda di Savoia (FE, Italy);
 - **time window**: 2-years time window (2019 to 2020),
     which can be extended up to 5 years by the user;
@@ -105,23 +105,25 @@ In order to speed-up this step, the archive can be downloaded from
 this [Zenodo repository](https://doi.org/10.5281/zenodo.4620934)
 using the following code instead than the previous chunk:
 
-```{r retrieve_data, eval = FALSE}
+```{r retrieve_data}
 ## Define the directory to store outputs
 samplecrops_dir <- file.path(dirname(attr(load_binpaths(), "path")), "samplecrops")
 # you can replace the previous line with the paths of any desired folder
 # (in an existing parent directory)
-dir.create(samplecrops_dir, showWarnings = FALSE)
 
 ## Download and extract the sample archives
-samplecrops_url <- "https://zenodo.org/record/4620934/files"
-for (sel_y in 2019:2020) { # can be extended up to 2015:2020
-  for (sel_p in c("SCL", "NDVI")) {
-    download.file(
-      file.path(samplecrops_url, paste0("S2X2A_",sel_y,"_022_samplecrops_",sel_p,"_10.zip")),
-      temp_zip_path <- tempfile(fileext = ".zip")
-    )
-    unzip(temp_zip_path, exdir = file.path(samplecrops_dir, sel_p))
-    file.remove(temp_zip_path)
+if (!dir.exists(samplecrops_dir)) {
+  dir.create(samplecrops_dir, showWarnings = FALSE)
+  samplecrops_url <- "https://zenodo.org/record/4620934/files"
+  for (sel_y in 2019:2020) { # can be extended up to 2015:2020
+    for (sel_p in c("SCL", "NDVI")) {
+      download.file(
+        file.path(samplecrops_url, paste0("S2X2A_",sel_y,"_022_samplecrops_",sel_p,"_10.zip")),
+        temp_zip_path <- tempfile(fileext = ".zip")
+      )
+      unzip(temp_zip_path, exdir = file.path(samplecrops_dir, sel_p))
+      file.remove(temp_zip_path)
+    }
   }
 }
 ```
@@ -137,7 +139,7 @@ Required inputs are:
     extracting the time series.
     
 The function `load_s2paths()` can be used to easily obtain the required paths
-passing it the main path of the {sen2r} archive, the product type to read 
+passing it the main path of the `{sen2r}` archive, the product type to read 
 and some other additional parameters which can be used to filter the existing 
 rasters (time window, Sentinel-2 orbits or a specific sensor).
 See [the documentation](../reference/load_s2paths.md) for additional details.
@@ -384,8 +386,8 @@ to plot them.
 In order to retrieve phenological metrics, time series have to be interpolated
 using a known function.
 
-To perform this step, {sen2rts} makes use of double logistic functions 
-implemented in package {phenopix}: `phenopix::PhenoTrs()`, `phenopix::PhenoDeriv()`,
+To perform this step, `{sen2rts}` makes use of double logistic functions 
+implemented in package `{phenopix}`: `phenopix::PhenoTrs()`, `phenopix::PhenoDeriv()`,
 `phenopix::PhenoKlosterman()` and `phenopix::PhenoGu()` (see documentations
 for details).
 Required inputs are a `s2ts` object generated with `fill_s2ts()` and a data

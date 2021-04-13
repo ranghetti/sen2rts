@@ -1,10 +1,10 @@
 #' @title Boundaries of the sample crops used in the vignette 
 #'  "The sen2rts workflow"
 #' @description Dataset containing boundaries of some field crops of
-#'  the farm [_Bonifiche Ferraresi_](https://bonificheferraresi.it) 
+#'  the farm [_Bonifiche Ferraresi_](https://bonificheferraresi.it/it/home) 
 #'  located in the estate of Jolanda di Savoia (FE, Italy),
 #'  which are used in the vignette
-#'  ["The {sen2rts} workflow"](../articles/workflow.html).
+#'  ["The sen2rts workflow"](../articles/workflow.html).
 #' @docType data
 #' @usage data(samplecrops)
 #' @rdname samplecrops
@@ -40,13 +40,13 @@
 #' @param prod `"NDVI"` or `"SCL"`.
 #' @format Each sample archive include 60 images acquired between 2020-01-01 and
 #'  2020-09-30 covering the [`sampleroi`] extent, provided in the 
-#'  [{sen2r} output format](https://sen2r.ranghetti.info/articles/outstructure.html).
+#'  [sen2r output format](https://sen2r.ranghetti.info/articles/outstructure.html).
 #'  NDVI images are saved in integer format (values are scaled using a 10^4
 #'  factor).
 #'  
 #'  Data size is very small (13x4 pixels per each image) in order not to be heavy
 #'  in terms of data size and to ensure examples to be rapidly runnable.
-#'  The vignette ["The {sen2rts} workflow"](../articles/workflow.html) makes use
+#'  The vignette ["The sen2rts workflow"](../articles/workflow.html) makes use
 #'  of a larger dataset in order to show a more plausible use case.
 #' @return `sample_paths()` returns the paths of the sample archive
 #'  (NDVI or SCL, depending on argument `prod`).

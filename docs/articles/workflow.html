@@ -5,13 +5,13 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>The {sen2rts} workflow • sen2rts</title>
-<!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script><!-- Bootstrap --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha256-bZLfwXAP04zRMK2BjiO8iu9pf4FbLqX6zitd+tIvLhE=" crossorigin="anonymous">
+<title>The sen2rts workflow • sen2rts</title>
+<!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script><!-- Bootstrap --><link href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.4.0/yeti/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script><!-- bootstrap-toc --><link rel="stylesheet" href="../bootstrap-toc.css">
 <script src="../bootstrap-toc.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
 <!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="../pkgdown.css" rel="stylesheet">
-<script src="../pkgdown.js"></script><meta property="og:title" content="The {sen2rts} workflow">
+<script src="../pkgdown.js"></script><meta property="og:title" content="The sen2rts workflow">
 <meta property="og:description" content="sen2rts">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
@@ -20,7 +20,7 @@
 </head>
 <body data-spy="scroll" data-target="#toc">
     <div class="container template-article">
-      <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
+      <header><div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
   <div class="container">
     <div class="navbar-header">
       <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false">
@@ -31,12 +31,13 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">sen2rts</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.4.0</span>
       </span>
     </div>
 
     <div id="navbar" class="navbar-collapse collapse">
-      <ul class="nav navbar-nav">
+      <ul class="nav navbar-nav"></ul>
+<ul class="nav navbar-nav navbar-right">
 <li>
   <a href="../index.html">
     <span class="fas fa-home fa-lg"></span>
@@ -44,28 +45,35 @@
   </a>
 </li>
 <li>
-  <a href="../reference/index.html">Reference</a>
-</li>
-<li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
-    Articles
+  <a href="../reference/index.html">
+    <span class="fas fa-file-code"></span>
      
-    <span class="caret"></span>
+     Reference
   </a>
-  <ul class="dropdown-menu" role="menu">
-<li>
-      <a href="../articles/workflow.html">The {sen2rts} workflow</a>
-    </li>
-  </ul>
 </li>
 <li>
-  <a href="../news/index.html">Changelog</a>
+  <a href="../articles/workflow.html">
+    <span class="fas fa-book"></span>
+     
+     The sen2rts workflow
+  </a>
 </li>
-      </ul>
-<ul class="nav navbar-nav navbar-right">
+<li>
+  <a href="../news/index.html">
+    <span class="fas fa-newspaper"></span>
+     
+     Changelog
+  </a>
+</li>
+<li>
+  <a href="http://luigi.ranghetti.info">
+    <span class="fas fa-user"></span>
+     
+  </a>
+</li>
 <li>
   <a href="https://github.com/ranghetti/sen2rts/">
-    <span class="fab fa-github fa-lg"></span>
+    <span class="fas fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -82,7 +90,7 @@
       </header><script src="workflow_files/accessible-code-block-0.0.1/empty-anchor.js"></script><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
-      <h1 data-toc-skip>The {sen2rts} workflow</h1>
+      <h1 data-toc-skip>The sen2rts workflow</h1>
             
       
       <small class="dont-index">Source: <a href="https://github.com/ranghetti/sen2rts/blob/master/vignettes/workflow.Rmd"><code>vignettes/workflow.Rmd</code></a></small>
@@ -93,10 +101,10 @@
     
     
 <p>This vignette describes a use case to process a sample Sentinel-2 time series and extract information about seasonality.</p>
-<p>Functions developed in the package {sen2rts} are run sequentially, following this workflow:</p>
+<p>Functions developed in the package <a href="https://sen2rts.ranghetti.info">sen2rts</a> are run sequentially, following this workflow:</p>
 <ol style="list-style-type: decimal">
 <li>
-<a href="#produce-raster-archive-with-sen2r">produce raster archive with {sen2r}</a>;</li>
+<a href="#produce-raster-archive-with-sen2r">produce raster archive with sen2r</a>;</li>
 <li>
 <a href="#extract-time-series-over-spatial-features">extract time series over spatial features</a>;</li>
 <li>
@@ -116,11 +124,12 @@
 </ol>
 <div id="produce-raster-archive-with-sen2r" class="section level2">
 <h2 class="hasAnchor">
-<a href="#produce-raster-archive-with-sen2r" class="anchor"></a>Produce raster archive with {sen2r}</h2>
-<p>Package {sen2r} must be used to generate the local raster data over the area of interest, since {sen2rts} is built to read a Sentinel-2 image archive in the <a href="https://sen2r.ranghetti.info/articles/outstructure.html">{sen2r} output structure</a>. In this tutorial the following sample archive is being used:</p>
+<a href="#produce-raster-archive-with-sen2r" class="anchor"></a>Produce raster archive with <code>{sen2r}</code>
+</h2>
+<p>Package <a href="http://sen2r.ranghetti.info">sen2r</a> must be used to generate the local raster data over the area of interest, since <a href="https://sen2rts.ranghetti.info">sen2rts</a> is built to read a Sentinel-2 image archive in the <a href="https://sen2r.ranghetti.info/articles/outstructure.html">sen2r output structure</a>. In this tutorial the following sample archive is being used:</p>
 <ul>
 <li>
-<strong>extent</strong>: some field crops of the farm <a href="https://bonificheferraresi.it"><em>Bonifiche Ferraresi</em></a> located in the estate of Jolanda di Savoia (FE, Italy);</li>
+<strong>extent</strong>: some field crops of the farm <a href="https://bonificheferraresi.it/it/home"><em>Bonifiche Ferraresi</em></a> located in the estate of Jolanda di Savoia (FE, Italy);</li>
 <li>
 <strong>time window</strong>: 2-years time window (2019 to 2020), which can be extended up to 5 years by the user;</li>
 <li>
@@ -173,18 +182,20 @@
 <span class="va">samplecrops_dir</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html">file.path</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/basename.html">dirname</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/attr.html">attr</a></span><span class="op">(</span><span class="fu"><a href="http://sen2r.ranghetti.info/reference/load_binpaths.html">load_binpaths</a></span><span class="op">(</span><span class="op">)</span>, <span class="st">"path"</span><span class="op">)</span><span class="op">)</span>, <span class="st">"samplecrops"</span><span class="op">)</span>
 <span class="co"># you can replace the previous line with the paths of any desired folder</span>
 <span class="co"># (in an existing parent directory)</span>
-<span class="fu"><a href="https://rdrr.io/r/base/files2.html">dir.create</a></span><span class="op">(</span><span class="va">samplecrops_dir</span>, showWarnings <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>
 
 <span class="co">## Download and extract the sample archives</span>
-<span class="va">samplecrops_url</span> <span class="op">&lt;-</span> <span class="st">"https://zenodo.org/record/4620934/files"</span>
-<span class="kw">for</span> <span class="op">(</span><span class="va">sel_y</span> <span class="kw">in</span> <span class="fl">2019</span><span class="op">:</span><span class="fl">2020</span><span class="op">)</span> <span class="op">{</span> <span class="co"># can be extended up to 2015:2020</span>
-  <span class="kw">for</span> <span class="op">(</span><span class="va">sel_p</span> <span class="kw">in</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"SCL"</span>, <span class="st">"NDVI"</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span>
-    <span class="fu"><a href="https://rdrr.io/r/utils/download.file.html">download.file</a></span><span class="op">(</span>
-      <span class="fu"><a href="https://rdrr.io/r/base/file.path.html">file.path</a></span><span class="op">(</span><span class="va">samplecrops_url</span>, <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span><span class="op">(</span><span class="st">"S2X2A_"</span>,<span class="va">sel_y</span>,<span class="st">"_022_samplecrops_"</span>,<span class="va">sel_p</span>,<span class="st">"_10.zip"</span><span class="op">)</span><span class="op">)</span>,
-      <span class="va">temp_zip_path</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html">tempfile</a></span><span class="op">(</span>fileext <span class="op">=</span> <span class="st">".zip"</span><span class="op">)</span>
-    <span class="op">)</span>
-    <span class="fu"><a href="https://rdrr.io/r/utils/unzip.html">unzip</a></span><span class="op">(</span><span class="va">temp_zip_path</span>, exdir <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html">file.path</a></span><span class="op">(</span><span class="va">samplecrops_dir</span>, <span class="va">sel_p</span><span class="op">)</span><span class="op">)</span>
-    <span class="fu"><a href="https://rdrr.io/r/base/files.html">file.remove</a></span><span class="op">(</span><span class="va">temp_zip_path</span><span class="op">)</span>
+<span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/files2.html">dir.exists</a></span><span class="op">(</span><span class="va">samplecrops_dir</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span>
+  <span class="fu"><a href="https://rdrr.io/r/base/files2.html">dir.create</a></span><span class="op">(</span><span class="va">samplecrops_dir</span>, showWarnings <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>
+  <span class="va">samplecrops_url</span> <span class="op">&lt;-</span> <span class="st">"https://zenodo.org/record/4620934/files"</span>
+  <span class="kw">for</span> <span class="op">(</span><span class="va">sel_y</span> <span class="kw">in</span> <span class="fl">2019</span><span class="op">:</span><span class="fl">2020</span><span class="op">)</span> <span class="op">{</span> <span class="co"># can be extended up to 2015:2020</span>
+    <span class="kw">for</span> <span class="op">(</span><span class="va">sel_p</span> <span class="kw">in</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"SCL"</span>, <span class="st">"NDVI"</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span>
+      <span class="fu"><a href="https://rdrr.io/r/utils/download.file.html">download.file</a></span><span class="op">(</span>
+        <span class="fu"><a href="https://rdrr.io/r/base/file.path.html">file.path</a></span><span class="op">(</span><span class="va">samplecrops_url</span>, <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span><span class="op">(</span><span class="st">"S2X2A_"</span>,<span class="va">sel_y</span>,<span class="st">"_022_samplecrops_"</span>,<span class="va">sel_p</span>,<span class="st">"_10.zip"</span><span class="op">)</span><span class="op">)</span>,
+        <span class="va">temp_zip_path</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html">tempfile</a></span><span class="op">(</span>fileext <span class="op">=</span> <span class="st">".zip"</span><span class="op">)</span>
+      <span class="op">)</span>
+      <span class="fu"><a href="https://rdrr.io/r/utils/unzip.html">unzip</a></span><span class="op">(</span><span class="va">temp_zip_path</span>, exdir <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html">file.path</a></span><span class="op">(</span><span class="va">samplecrops_dir</span>, <span class="va">sel_p</span><span class="op">)</span><span class="op">)</span>
+      <span class="fu"><a href="https://rdrr.io/r/base/files.html">file.remove</a></span><span class="op">(</span><span class="va">temp_zip_path</span><span class="op">)</span>
+    <span class="op">}</span>
   <span class="op">}</span>
 <span class="op">}</span></code></pre></div>
 </div>
@@ -196,18 +207,18 @@
 <li>the paths of the rasters to be used;</li>
 <li>a spatial file of class <code>sf</code> or <code>sfc</code> containing the features over which extracting the time series.</li>
 </ol>
-<p>The function <code><a href="../reference/read_s2cube.html">read_s2cube()</a></code> can be used to easily obtain the required paths passing it the main path of the {sen2r} archive, the product type to read and some other additional parameters which can be used to filter the existing rasters (time window, Sentinel-2 orbits or a specific sensor). See <a href="../reference/read_s2cube.html">the documentation</a> for additional details.</p>
+<p>The function <code><a href="../reference/load_s2paths.html">load_s2paths()</a></code> can be used to easily obtain the required paths passing it the main path of the <a href="http://sen2r.ranghetti.info">sen2r</a> archive, the product type to read and some other additional parameters which can be used to filter the existing rasters (time window, Sentinel-2 orbits or a specific sensor). See <a href="../reference/load_s2paths.html">the documentation</a> for additional details.</p>
 <p>The spatial file can contain point or polygon features. In the first case, raster values overlayed by points are used; in the second case, cells covered by each polygon are averaged, additionally using a quality data (SCL and/or CLD) to compute a weighted average. Moreover, in both the cases the additional quality layers can be used to assign a quality flag to each time series value (see <a href="../reference/extract_sen2rts.html">the function documentation</a> for details). In the case of SCL, each surface class can be assigned to a weight value using the function <code><a href="../reference/scl_weights.html">scl_weights()</a></code>.</p>
 <p>In this example, SCL archive is used both to weight averages over polygons and to assign quality flags to time series. The default SCL weights are used, with the exception of class “snow” (since snow is a rare event in the area of interest, pixels classified as snow are more often errors of classification; so, value “0” is used).</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/ranghetti/sen2rts">sen2rts</a></span><span class="op">)</span>
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://sen2rts.ranghetti.info">sen2rts</a></span><span class="op">)</span>
 <span class="co">## Read image paths</span>
-<span class="va">sen2r_ndvi_paths</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/read_s2cube.html">read_s2cube</a></span><span class="op">(</span>
+<span class="va">sen2r_ndvi_paths</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/load_s2paths.html">load_s2paths</a></span><span class="op">(</span>
   <span class="va">samplecrops_dir</span>, 
   prod_type <span class="op">=</span> <span class="st">"NDVI"</span>,
   time_window <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"2019-01-01"</span>, <span class="st">"2020-12-31"</span><span class="op">)</span> 
 <span class="op">)</span>
-<span class="va">sen2r_scl_paths</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/read_s2cube.html">read_s2cube</a></span><span class="op">(</span>
+<span class="va">sen2r_scl_paths</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/load_s2paths.html">load_s2paths</a></span><span class="op">(</span>
   <span class="va">samplecrops_dir</span>, 
   prod_type <span class="op">=</span> <span class="st">"SCL"</span>,
   time_window <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"2019-01-01"</span>, <span class="st">"2020-12-31"</span><span class="op">)</span>
@@ -266,7 +277,7 @@
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/plot.html">plot</a></span><span class="op">(</span><span class="va">ts_raw</span><span class="op">)</span></code></pre></div>
 <p><img src="workflow_files/figure-html/print_extract-1.png" width="100%" style="display: block; margin: auto;"></p>
-<p>The <code>plot</code> method for class <code>s2ts</code> calls <code><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot2::ggplot()</a></code> (<a href="https://ggplot2.tidyverse.org">ggplot2</a>, which is a suggested dependency, must be installed). Raw values are shown using a colour scale which depends on the quality flag associated to each value. In this case, it was determined from SCL values, using the following correspondence between SCL classes and 0-1 values:</p>
+<p>The <code>plot</code> method for class <code>s2ts</code> calls <code><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot2::ggplot()</a></code>. Raw values are shown using a colour scale which depends on the quality flag associated to each value. In this case, it was determined from SCL values, using the following correspondence between SCL classes and 0-1 values:</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/scl_weights.html">scl_weights</a></span><span class="op">(</span>snow <span class="op">=</span> <span class="fl">0</span><span class="op">)</span></code></pre></div>
 <pre><code>##                  no_data   saturated_or_defective         dark_area_pixels            cloud_shadows 
@@ -419,7 +430,7 @@
 <h2 class="hasAnchor">
 <a href="#interpolate-cycles" class="anchor"></a>Interpolate cycles</h2>
 <p>In order to retrieve phenological metrics, time series have to be interpolated using a known function.</p>
-<p>To perform this step, {sen2rts} makes use of double logistic functions implemented in package {phenopix}: <code><a href="https://rdrr.io/pkg/phenopix/man/PhenoTrs.html">phenopix::PhenoTrs()</a></code>, <code><a href="https://rdrr.io/pkg/phenopix/man/PhenoDeriv.html">phenopix::PhenoDeriv()</a></code>, <code>phenopix::PhenoKlosterman()</code> and <code><a href="https://rdrr.io/pkg/phenopix/man/PhenoGu.html">phenopix::PhenoGu()</a></code> (see documentations for details). Required inputs are a <code>s2ts</code> object generated with <code><a href="../reference/fill_s2ts.html">fill_s2ts()</a></code> and a data table of cycles generated with <code><a href="../reference/cut_cycles.html">cut_cycles()</a></code>. Argument <code>fit</code> allows choosing the fitting method (multiple methods can be passed: in case of failure of the first one, the second is used). Output is a list containing the interpolations. since this output is not intended to be visualised by the user but to be passed to <code><a href="../reference/extract_pheno.html">extract_pheno()</a></code>, it can not be easily explored by the user (there are not printing methods); instead, a plotting method exist, so interpolations can be plotted passing this object to the argument <code>fitted</code> (the example below shows it). Interpolations are shown with red curves.</p>
+<p>To perform this step, <a href="https://sen2rts.ranghetti.info">sen2rts</a> makes use of double logistic functions implemented in package <code>{phenopix}</code>: <code><a href="https://rdrr.io/pkg/phenopix/man/PhenoTrs.html">phenopix::PhenoTrs()</a></code>, <code><a href="https://rdrr.io/pkg/phenopix/man/PhenoDeriv.html">phenopix::PhenoDeriv()</a></code>, <code>phenopix::PhenoKlosterman()</code> and <code><a href="https://rdrr.io/pkg/phenopix/man/PhenoGu.html">phenopix::PhenoGu()</a></code> (see documentations for details). Required inputs are a <code>s2ts</code> object generated with <code><a href="../reference/fill_s2ts.html">fill_s2ts()</a></code> and a data table of cycles generated with <code><a href="../reference/cut_cycles.html">cut_cycles()</a></code>. Argument <code>fit</code> allows choosing the fitting method (multiple methods can be passed: in case of failure of the first one, the second is used). Output is a list containing the interpolations. since this output is not intended to be visualised by the user but to be passed to <code><a href="../reference/extract_pheno.html">extract_pheno()</a></code>, it can not be easily explored by the user (there are not printing methods); instead, a plotting method exist, so interpolations can be plotted passing this object to the argument <code>fitted</code> (the example below shows it). Interpolations are shown with red curves.</p>
 <div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">cf</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/fit_curve.html">fit_curve</a></span><span class="op">(</span><span class="va">ts_filled</span>, <span class="va">dt_cycles_seas</span>, fit <span class="op">=</span> <span class="st">"gu"</span><span class="op">)</span>
 <span class="fu"><a href="../reference/plot.html">plot</a></span><span class="op">(</span><span class="va">ts_filled</span>, fitted <span class="op">=</span> <span class="va">cf</span><span class="op">)</span></code></pre></div>
