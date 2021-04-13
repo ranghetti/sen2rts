@@ -85,7 +85,7 @@ L. Ranghetti (2021). **"sen2rts: Build and Analyse Sentinel-2 Time
 Series**. R package version 0.4.0. doi:
 <a href="https://doi.org/10.5281/zenodo.4682829" target="_blank">`10.5281/zenodo.4682829`</a>,
 URL:
-<a href="http://sen2rts.ranghetti.info" target="_blank">`http://sen2rts.ranghetti.info`</a>.
+<a href="https://sen2rts.ranghetti.info" target="_blank">`https://sen2rts.ranghetti.info`</a>.
 
 ``` bibtex
 @Manual{sen2rts_manual,
@@ -93,7 +93,7 @@ URL:
   title = {sen2rts: Build and Analyse Sentinel-2 Time Series},
   year = {2021},
   doi = {10.5281/zenodo.4682829},
-  url = {http://sen2rts.ranghetti.info},
+  url = {https://sen2rts.ranghetti.info},
   note = {R package version 0.4.0},
 }
 ```

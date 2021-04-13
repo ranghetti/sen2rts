@@ -126,7 +126,7 @@
 <h2 class="hasAnchor">
 <a href="#produce-raster-archive-with-sen2r" class="anchor"></a>Produce raster archive with <code>{sen2r}</code>
 </h2>
-<p>Package <a href="http://sen2r.ranghetti.info">sen2r</a> must be used to generate the local raster data over the area of interest, since <a href="https://sen2rts.ranghetti.info">sen2rts</a> is built to read a Sentinel-2 image archive in the <a href="https://sen2r.ranghetti.info/articles/outstructure.html">sen2r output structure</a>. In this tutorial the following sample archive is being used:</p>
+<p>Package <a href="https://sen2r.ranghetti.info">sen2r</a> must be used to generate the local raster data over the area of interest, since <a href="https://sen2rts.ranghetti.info">sen2rts</a> is built to read a Sentinel-2 image archive in the <a href="https://sen2r.ranghetti.info/articles/outstructure.html">sen2r output structure</a>. In this tutorial the following sample archive is being used:</p>
 <ul>
 <li>
 <strong>extent</strong>: some field crops of the farm <a href="https://bonificheferraresi.it/it/home"><em>Bonifiche Ferraresi</em></a> located in the estate of Jolanda di Savoia (FE, Italy);</li>
@@ -137,11 +137,11 @@
 </ul>
 <p>The following code <em>could</em> be used to produce it (but see the note below the code before launching it):</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="http://sen2r.ranghetti.info">sen2r</a></span><span class="op">)</span>
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://sen2r.ranghetti.info">sen2r</a></span><span class="op">)</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://r-spatial.github.io/sf/">sf</a></span><span class="op">)</span>
 <span class="co">## Define the directories to store SAFE archives and outputs</span>
-<span class="va">samplecrops_dir</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html">file.path</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/basename.html">dirname</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/attr.html">attr</a></span><span class="op">(</span><span class="fu"><a href="http://sen2r.ranghetti.info/reference/load_binpaths.html">load_binpaths</a></span><span class="op">(</span><span class="op">)</span>, <span class="st">"path"</span><span class="op">)</span><span class="op">)</span>, <span class="st">"samplecrops"</span><span class="op">)</span>
-<span class="va">safe_dir</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html">file.path</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/basename.html">dirname</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/attr.html">attr</a></span><span class="op">(</span><span class="fu"><a href="http://sen2r.ranghetti.info/reference/load_binpaths.html">load_binpaths</a></span><span class="op">(</span><span class="op">)</span>, <span class="st">"path"</span><span class="op">)</span><span class="op">)</span>, <span class="st">"safe"</span><span class="op">)</span>
+<span class="va">samplecrops_dir</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html">file.path</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/basename.html">dirname</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/attr.html">attr</a></span><span class="op">(</span><span class="fu"><a href="https://sen2r.ranghetti.info/reference/load_binpaths.html">load_binpaths</a></span><span class="op">(</span><span class="op">)</span>, <span class="st">"path"</span><span class="op">)</span><span class="op">)</span>, <span class="st">"samplecrops"</span><span class="op">)</span>
+<span class="va">safe_dir</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html">file.path</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/basename.html">dirname</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/attr.html">attr</a></span><span class="op">(</span><span class="fu"><a href="https://sen2r.ranghetti.info/reference/load_binpaths.html">load_binpaths</a></span><span class="op">(</span><span class="op">)</span>, <span class="st">"path"</span><span class="op">)</span><span class="op">)</span>, <span class="st">"safe"</span><span class="op">)</span>
 <span class="co"># you can replace the previous lines with the paths of any desired folder</span>
 <span class="co"># (in an existing parent directory)</span>
 <span class="fu"><a href="https://rdrr.io/r/base/files2.html">dir.create</a></span><span class="op">(</span><span class="va">samplecrops_dir</span>, showWarnings <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>
@@ -160,10 +160,10 @@
   <span class="op">)</span><span class="op">)</span>, crs <span class="op">=</span> <span class="fl">32632</span><span class="op">)</span>
 
 <span class="co">## Install Sen2Cor (used to process SAFE L1C archives)</span>
-<span class="fu"><a href="http://sen2r.ranghetti.info/reference/install_sen2cor.html">install_sen2cor</a></span><span class="op">(</span><span class="op">)</span>
+<span class="fu"><a href="https://sen2r.ranghetti.info/reference/install_sen2cor.html">install_sen2cor</a></span><span class="op">(</span><span class="op">)</span>
 
 <span class="co">## Launch sen2r() to download Sentinel-2 data and produce the archive</span>
-<span class="fu"><a href="http://sen2r.ranghetti.info/reference/sen2r.html">sen2r</a></span><span class="op">(</span>
+<span class="fu"><a href="https://sen2r.ranghetti.info/reference/sen2r.html">sen2r</a></span><span class="op">(</span>
   gui <span class="op">=</span> <span class="cn">FALSE</span>,
   extent <span class="op">=</span> <span class="va">samplecrops_poly</span>,
   extent_name <span class="op">=</span> <span class="st">"samplecrops"</span>,
@@ -179,7 +179,7 @@
 <p>In order to speed-up this step, the archive can be downloaded from this <a href="https://doi.org/10.5281/zenodo.4620934">Zenodo repository</a> using the following code instead than the previous chunk:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co">## Define the directory to store outputs</span>
-<span class="va">samplecrops_dir</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html">file.path</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/basename.html">dirname</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/attr.html">attr</a></span><span class="op">(</span><span class="fu"><a href="http://sen2r.ranghetti.info/reference/load_binpaths.html">load_binpaths</a></span><span class="op">(</span><span class="op">)</span>, <span class="st">"path"</span><span class="op">)</span><span class="op">)</span>, <span class="st">"samplecrops"</span><span class="op">)</span>
+<span class="va">samplecrops_dir</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html">file.path</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/basename.html">dirname</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/attr.html">attr</a></span><span class="op">(</span><span class="fu"><a href="https://sen2r.ranghetti.info/reference/load_binpaths.html">load_binpaths</a></span><span class="op">(</span><span class="op">)</span>, <span class="st">"path"</span><span class="op">)</span><span class="op">)</span>, <span class="st">"samplecrops"</span><span class="op">)</span>
 <span class="co"># you can replace the previous line with the paths of any desired folder</span>
 <span class="co"># (in an existing parent directory)</span>
 
@@ -207,7 +207,7 @@
 <li>the paths of the rasters to be used;</li>
 <li>a spatial file of class <code>sf</code> or <code>sfc</code> containing the features over which extracting the time series.</li>
 </ol>
-<p>The function <code><a href="../reference/load_s2paths.html">load_s2paths()</a></code> can be used to easily obtain the required paths passing it the main path of the <a href="http://sen2r.ranghetti.info">sen2r</a> archive, the product type to read and some other additional parameters which can be used to filter the existing rasters (time window, Sentinel-2 orbits or a specific sensor). See <a href="../reference/load_s2paths.html">the documentation</a> for additional details.</p>
+<p>The function <code><a href="../reference/load_s2paths.html">load_s2paths()</a></code> can be used to easily obtain the required paths passing it the main path of the <a href="https://sen2r.ranghetti.info">sen2r</a> archive, the product type to read and some other additional parameters which can be used to filter the existing rasters (time window, Sentinel-2 orbits or a specific sensor). See <a href="../reference/load_s2paths.html">the documentation</a> for additional details.</p>
 <p>The spatial file can contain point or polygon features. In the first case, raster values overlayed by points are used; in the second case, cells covered by each polygon are averaged, additionally using a quality data (SCL and/or CLD) to compute a weighted average. Moreover, in both the cases the additional quality layers can be used to assign a quality flag to each time series value (see <a href="../reference/extract_sen2rts.html">the function documentation</a> for details). In the case of SCL, each surface class can be assigned to a weight value using the function <code><a href="../reference/scl_weights.html">scl_weights()</a></code>.</p>
 <p>In this example, SCL archive is used both to weight averages over polygons and to assign quality flags to time series. The default SCL weights are used, with the exception of class “snow” (since snow is a rare event in the area of interest, pixels classified as snow are more often errors of classification; so, value “0” is used).</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">

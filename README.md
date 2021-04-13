@@ -7,7 +7,7 @@
 [![License: GPL
 v3](https://img.shields.io/badge/License-GPL%20v3-blue.svg)](http://www.gnu.org/licenses/gpl-3.0)
 [![Contributor
-Covenant](https://img.shields.io/badge/Contributor%20Covenant-v1.4%20adopted-ff69b4.svg)](http://sen2rts.ranghetti.info/.github/CODE-OF-CONDUCT.html)
+Covenant](https://img.shields.io/badge/Contributor%20Covenant-v1.4%20adopted-ff69b4.svg)](blob/master/.github/CODE-OF-CONDUCT.md)
 
 # Build and Analyse Sentinel-2 Time Series
 
@@ -18,8 +18,8 @@ This package is currently under development (beta version).
 
 Functionalities currently implemented in the package are summarised
 below. A wider overview is presented in the vignette [“The sen2rts
-workflows”](http://sen2rts.ranghetti.info/articles/workflow.html), which
-shows a simple, reproducible use case to obtain a smoothed
+workflows”](https://sen2rts.ranghetti.info/articles/workflow.html),
+which shows a simple, reproducible use case to obtain a smoothed
 equally-weighted time series, isolate cycles and extract metrics,
 explaining how the currently implemented functions can be used to
 perform a common workflow. For documentation about specific functions,
@@ -42,7 +42,7 @@ page](https://sen2r.ranghetti.info/articles/installation.html).
 
 The following minimal example synthetically shows how to perform the
 main steps provided by the package; refer to [this
-vignette](http://sen2rts.ranghetti.info/articles/workflow.html) for a
+vignette](https://sen2rts.ranghetti.info/articles/workflow.html) for a
 wider explanation.
 
 ``` r
@@ -87,7 +87,7 @@ L. Ranghetti (2021). **"sen2rts: Build and Analyse Sentinel-2 Time
 Series**. R package version 0.4.0. doi:
 <a href="https://doi.org/10.5281/zenodo.4682829" target="_blank">`10.5281/zenodo.4682829`</a>,
 URL:
-<a href="http://sen2rts.ranghetti.info" target="_blank">`http://sen2rts.ranghetti.info`</a>.
+<a href="https://sen2rts.ranghetti.info" target="_blank">`https://sen2rts.ranghetti.info`</a>.
 
 ``` bibtex
 @Manual{sen2rts_manual,
@@ -95,7 +95,7 @@ URL:
   title = {sen2rts: Build and Analyse Sentinel-2 Time Series},
   year = {2021},
   doi = {10.5281/zenodo.4682829},
-  url = {http://sen2rts.ranghetti.info},
+  url = {https://sen2rts.ranghetti.info},
   note = {R package version 0.4.0},
 }
 ```
@@ -103,5 +103,5 @@ URL:
 ## Contributing
 
 This project is released with a [Contributor Code of
-Conduct](http://sen2rts.ranghetti.info/.github/CODE-OF-CONDUCT.html). By
-participating in this project you agree to abide by its terms.
+Conduct](blob/master/.github/CODE-OF-CONDUCT.md). By participating in
+this project you agree to abide by its terms.

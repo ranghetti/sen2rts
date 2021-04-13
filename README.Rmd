@@ -19,7 +19,7 @@ knitr::opts_chunk$set(
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.4682829.svg)](https://doi.org/10.5281/zenodo.4682829)
 [![License: GPL v3](https://img.shields.io/badge/License-GPL%20v3-blue.svg)](http://www.gnu.org/licenses/gpl-3.0)
-[![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-v1.4%20adopted-ff69b4.svg)](https://sen2rts.ranghetti.info/CODE-OF-CONDUCT.html)
+[![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-v1.4%20adopted-ff69b4.svg)](blob/master/.github/CODE-OF-CONDUCT.md)
 
 # Build and Analyse Sentinel-2 Time Series
 
@@ -115,6 +115,5 @@ URL: <a href="https://sen2rts.ranghetti.info" target="_blank">`https://sen2rts.r
 
 ## Contributing
 
-This project is released with a 
-[Contributor Code of Conduct](https://sen2rts.ranghetti.info/CODE-OF-CONDUCT.html).
+This project is released with a [Contributor Code of Conduct](blob/master/.github/CODE-OF-CONDUCT.md).
 By participating in this project you agree to abide by its terms.
