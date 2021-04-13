@@ -25,10 +25,10 @@ Imports:
   jsonlite,
   dplyr,
   phenopix,
+  ggplot2,
   zoo
 Suggests:
   MASS,
-  ggplot2,
   spelling,
   httptest,
   knitr,

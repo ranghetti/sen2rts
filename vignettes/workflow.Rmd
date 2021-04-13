@@ -204,8 +204,7 @@ data.table::as.data.table(ts_raw) # conversion in data.table allows showing all 
 plot(ts_raw)
 ```
 
-The `plot` method for class `s2ts` calls `ggplot2::ggplot()` (`{ggplot2}`,
-which is a suggested dependency, must be installed).
+The `plot` method for class `s2ts` calls `ggplot2::ggplot()`.
 Raw values are shown using a colour scale which depends on the quality flag 
 associated to each value.
 In this case, it was determined from SCL values, using the following

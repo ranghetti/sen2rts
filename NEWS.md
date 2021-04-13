@@ -24,6 +24,10 @@
 - Complete reference documentation adding examples.
 - Add a small data set in the package to support documentation.
 
+## Dependencies
+- Move `{ggplot2}` from suggested to imported dependencies (so to facilitate 
+    tests and examples).
+
 ## Changes in default values
 - `read_s2cube()` is now `load_s2paths()`.
 - In `smooth_s2ts()`, `sg_daywindow = 15` instead than 9.

@@ -31,6 +31,9 @@
 #' @param ... Not currently used.
 #' @author Luigi Ranghetti, PhD (2020) \email{luigi@@ranghetti.info}
 #' @import data.table
+#' @importFrom ggplot2 aes facet_wrap geom_line geom_point geom_rect
+#'  geom_segment geom_text geom_vline ggplot scale_colour_brewer 
+#'  scale_fill_viridis_c scale_x_date scale_y_continuous theme_light
 #' @export
 #' @examples 
 #' # Plot raw time series
@@ -72,14 +75,6 @@ plot.s2ts <- function(
   # Avoid check notes for data.table related variables
   value <- rawval <- id <- begin <- end <- 
     Value <- Phenology <- cycle <- QA <- NULL
-  
-  # Check optional suggested ggplot2 to be present
-  if (!requireNamespace("ggplot2", quietly = TRUE)) {
-    print_message(
-      type = "error",
-      "Package 'ggplot2' is required to plot a 's2ts' object."
-    )
-  }
   
   # Determine plot mode
   plot_mode <- if (any(!missing(pheno), !missing(fitted))) {
@@ -198,14 +193,14 @@ plot.s2ts <- function(
   }
   
   # Base plot
-  out <- ggplot2::ggplot(x_dt, ggplot2::aes(x = date, y = value))
+  out <- ggplot(x_dt, aes(x = date, y = value))
   
   # Add background bands
   if (exists("pheno_dt") & plot_elements$cuts == TRUE & plot_cycles == TRUE) {
     out <- out +
-      ggplot2::geom_rect(
+      geom_rect(
         data = pheno_dt,
-        ggplot2::aes(xmin = begin, xmax = end), 
+        aes(xmin = begin, xmax = end), 
         ymin = -Inf, 
         ymax = min(x_dt$value, na.rm=TRUE) - diff(range(x_dt$value, na.rm=TRUE))*.025,
         fill = "yellow", alpha = 0.5
@@ -214,7 +209,7 @@ plot.s2ts <- function(
   
   # Add raw line
   if (plot_elements$rawline == TRUE) {
-    out <- out + ggplot2::geom_line(
+    out <- out + geom_line(
       data = x_dt_raw, 
       alpha = if (plot_elements$smoothedline == TRUE) {0.1} else {0.35}
     )
@@ -223,10 +218,10 @@ plot.s2ts <- function(
   # Add cycle cuts / peaks
   if (exists("pheno_dt_y")) {
     # for (sel_cycle in pheno[, unique(cycle)]) {
-    out <- out + ggplot2::geom_segment(
+    out <- out + geom_segment(
       # data = pheno_dt_y[cycle==sel_cycle,], 
       data = pheno_dt_y, 
-      ggplot2::aes(
+      aes(
         x = begin, xend = end,
         y = value, yend = value,
         colour = Value
@@ -237,39 +232,39 @@ plot.s2ts <- function(
   }
   if (exists("pheno_dt_x")) {
     out <- out + 
-      ggplot2::geom_vline(
+      geom_vline(
         data = pheno_dt_x,
-        ggplot2::aes(xintercept = as.numeric(date), colour = Phenology)
+        aes(xintercept = as.numeric(date), colour = Phenology)
       )
     if ("pheno" %in% plot_dates) {
       out <- out + 
-        ggplot2::geom_text(
+        geom_text(
           data = pheno_dt_x,
-          ggplot2::aes(x = date, y = min(x_dt$value, na.rm=TRUE), label = date, colour = Phenology),
+          aes(x = date, y = min(x_dt$value, na.rm=TRUE), label = date, colour = Phenology),
           angle = 90, vjust = -0.25, hjust = 0, size = 3
         )
     }
   }
   if (exists("pheno_dt") & plot_elements$cuts == TRUE) {
     out <- out + 
-      ggplot2::geom_vline(
+      geom_vline(
         data = pheno_dt,
-        ggplot2::aes(xintercept = as.numeric(begin)), colour = "black"
+        aes(xintercept = as.numeric(begin)), colour = "black"
       ) +
-      ggplot2::geom_vline(
+      geom_vline(
         data = pheno_dt,
-        ggplot2::aes(xintercept = as.numeric(end)), colour = "black"
+        aes(xintercept = as.numeric(end)), colour = "black"
       )
     if ("cycles" %in% plot_dates) {
       out <- out + 
-        ggplot2::geom_text(
+        geom_text(
           data = pheno_dt,
-          ggplot2::aes(x = begin, y = max(x_dt$value, na.rm=TRUE), label = begin), colour = "black",
+          aes(x = begin, y = max(x_dt$value, na.rm=TRUE), label = begin), colour = "black",
           angle = 90, vjust = 1.25, hjust = 1, size = 3
         ) +
-        ggplot2::geom_text(
+        geom_text(
           data = pheno_dt,
-          ggplot2::aes(x = end, y = max(x_dt$value, na.rm=TRUE), label = end), colour = "black",
+          aes(x = end, y = max(x_dt$value, na.rm=TRUE), label = end), colour = "black",
           angle = 90, vjust = -0.25, hjust = 1, size = 3
         )
     }
@@ -279,7 +274,7 @@ plot.s2ts <- function(
   if (plot_elements$fitted == TRUE) {
     for (sel_year in fitted_dt[,unique(year)]) {
       for (sel_cycle in fitted_dt[year == sel_year, unique(cycle)]) {
-        out <- out + ggplot2::geom_line(
+        out <- out + geom_line(
           data = fitted_dt[year == sel_year & cycle == sel_cycle,], 
           colour = "red", alpha = 0.5
         )
@@ -289,21 +284,21 @@ plot.s2ts <- function(
   
   # Add smoothed line
   if (plot_elements$smoothedline == TRUE) {
-    out <- out + ggplot2::geom_line(data = x_dt_smooth[!is.na(value),], alpha = 0.5)
+    out <- out + geom_line(data = x_dt_smooth[!is.na(value),], alpha = 0.5)
   }
   
   # Add points
   if (plot_elements$points == TRUE) {
-    out <- out + ggplot2::geom_point(
+    out <- out + geom_point(
       data = x_dt_raw, 
-      if (!is.null(x_dt$QA)) {ggplot2::aes(fill = QA)}, 
+      if (!is.null(x_dt$QA)) {aes(fill = QA)}, 
       shape = 21, colour = "#00000000"
     )
   }
   
   # Facet in case of multiple IDs
   if (length(unique(x_dt$id)) > 0) {
-    out <- out + ggplot2::facet_wrap(
+    out <- out + facet_wrap(
       ~id, 
       ncol = round(sqrt(length(unique(x_dt$id))/2))
       # ncol = max(1, round(length(unique(x_dt$id))/4))
@@ -312,16 +307,16 @@ plot.s2ts <- function(
   
   # Format options
   out <- out +
-    ggplot2::scale_x_date(name = "Date") +
-    ggplot2::scale_y_continuous(name = NULL) +
-    ggplot2::theme_light()
+    scale_x_date(name = "Date") +
+    scale_y_continuous(name = NULL) +
+    theme_light()
   if (plot_elements$points == TRUE) {
-    out <- out + ggplot2::scale_fill_viridis_c(
+    out <- out + scale_fill_viridis_c(
       option = "inferno", direction = -1
     )
   }
   if (exists("pheno_dt")) {
-    out <- out + ggplot2::scale_colour_brewer(palette = "Set2")
+    out <- out + scale_colour_brewer(palette = "Set2")
   }
   
   # date_range <- range(x_dt$date)
