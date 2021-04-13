@@ -84,7 +84,7 @@ General Public License version
 3](https://www.gnu.org/licenses/gpl-3.0.html) (GPL‑3).
 
 The [sen2rts
-logo](https://github.com/ranghetti/sen2rts/raw/master/man/figures/sen2rts_logo_200px.png),
+logo](https://github.com/ranghetti/sen2rts/raw/master/man/figures/sen2rts_logo_250px.png),
 partially derived from the [R logo](https://www.r-project.org/logo), is
 released under the [Creative Commons Attribution-ShareAlike 4.0
 International license](https://creativecommons.org/licenses/by-sa/4.0)
