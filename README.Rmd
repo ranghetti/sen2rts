@@ -15,6 +15,7 @@ knitr::opts_chunk$set(
   fig.width = 9, fig.asp = 0.5, out.width = "100%", fig.align = "center",
   collapse = TRUE, comment = "#>", fig.path = "man/figures/README/"
 )
+invisible(try(suppressWarnings(Sys.setlocale("LC_ALL", "en_GB")), silent = TRUE))
 ```
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.4682829.svg)](https://doi.org/10.5281/zenodo.4682829)
@@ -105,7 +106,7 @@ is released under the [Creative Commons Attribution-ShareAlike 4.0 International
 To cite this library, please use the entry reported below.
 
 L.\ Ranghetti (2021).
-**"sen2rts: Build and Analyse Sentinel-2 Time Series**.
+**"sen2rts: Build and Analyse Sentinel-2 Time Series"**.
 R package version `r packageVersion("sen2rts")`.
 doi: <a href="https://doi.org/10.5281/zenodo.4682829" target="_blank">`10.5281/zenodo.4682829`</a>,
 URL: <a href="https://sen2rts.ranghetti.info" target="_blank">`https://sen2rts.ranghetti.info`</a>.

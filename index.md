@@ -92,8 +92,8 @@ International license](https://creativecommons.org/licenses/by-sa/4.0)
 
 To cite this library, please use the entry reported below.
 
-L. Ranghetti (2021). **"sen2rts: Build and Analyse Sentinel-2 Time
-Series**. R package version 0.4.0. doi:
+L. Ranghetti (2021). **“sen2rts: Build and Analyse Sentinel-2 Time
+Series”**. R package version 0.4.0. doi:
 <a href="https://doi.org/10.5281/zenodo.4682829" target="_blank">`10.5281/zenodo.4682829`</a>,
 URL:
 <a href="https://sen2rts.ranghetti.info" target="_blank">`https://sen2rts.ranghetti.info`</a>.
