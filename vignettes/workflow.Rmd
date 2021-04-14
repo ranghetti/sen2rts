@@ -12,6 +12,7 @@ knitr::opts_chunk$set(
   echo = TRUE, message = TRUE, warning = FALSE,
   fig.width = 9, fig.asp = 0.618, out.width = "100%", fig.align = "center"
 )
+invisible(try(suppressWarnings(Sys.setlocale("LC_ALL", "en_GB")), silent = TRUE))
 options(width = 100)
 library(sen2r)
 library(sen2rts)
