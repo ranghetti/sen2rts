@@ -12,7 +12,8 @@ extract_s2ts(
   scl_paths,
   cld_paths,
   scl_w,
-  fun_w = "mean"
+  fun_w = "mean",
+  naming_convention = "sen2r"
 )
 }
 \arguments{
@@ -52,6 +53,11 @@ See details for the conversion between SCL and weights.}
 
 \item{fun_w}{(optional) function to be used to aggregate quality flags
 in case of polygonal \code{in_sf} features. Default is \code{mean}.}
+
+\item{naming_convention}{(optional) the naming convention used to extract
+information from \code{in_paths}, \code{scl_paths} and \code{cld_paths}
+(see \code{sen2r::sen2r_getElements()} for details).
+It takes effect only if sen2r version is > 1.5.0.}
 }
 \value{
 The output time series in \code{s2ts} format.
