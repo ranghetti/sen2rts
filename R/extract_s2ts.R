@@ -164,6 +164,11 @@ extract_s2ts <- function(
       "summarise(group_by(in_sf, ",in_sf_id,"))"
     )))
   }
+
+  # if ID is a numeric, convert to text
+  if (inherits(in_sf[[in_sf_id]], c("integer","numeric"))) {
+    in_sf[[in_sf_id]] <- as.character(in_sf[[in_sf_id]])
+  }
   
   ## Read in_paths ----
   
