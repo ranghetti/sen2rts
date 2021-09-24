@@ -26,6 +26,7 @@ Imports:
   dplyr,
   phenopix,
   ggplot2,
+  polylabelr,
   zoo
 Suggests:
   MASS,
@@ -37,5 +38,5 @@ Suggests:
   testthat (>= 2.1.0)
 VignetteBuilder: knitr
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.1.1
+RoxygenNote: 7.1.2
 Language: en-GB
