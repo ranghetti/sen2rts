@@ -10,6 +10,8 @@
 #'  start of cycle (see `pop_seasons` for details about the format).
 #' @param diff_thr First threshold to detect forages (TODO improve description)
 #' @param ncuts_thr Second threshold to detect forages (TODO improve description)
+#' @param sliding Length (in days) of the sliding window in which `diff_thr` 
+#'  and `ncuts_thr` must be evaluated.
 #' @param reldiff Logical: should argument `diff_thr` refer to relative (default)
 #'  or absolute values?
 #' @param byyear Logical: compute aggregation by year (default) or globally
@@ -27,6 +29,7 @@ detect_forages <- function(
   win = NULL, # window,
   diff_thr = 5,
   ncuts_thr = 10,
+  sliding = 90,
   reldiff = TRUE,
   byyear = TRUE
 ) {
@@ -70,7 +73,11 @@ detect_forages <- function(
   tsd[bg0|es0, bg1 := bg0 & !c(NA,bg0[-length(bg0)]), by = id]
   tsd[bg0|es0, es1 := es0 & !c(es0[-1],NA), by = id]
   tsd[, c("cut","bg0","es0") := list(bg1|es1,NULL,NULL)]
-  
+
+  ## Sliding windows
+  ref_variable <- if (reldiff==TRUE) {"relval"} else {"value"}
+  tsd[,rollval:=frollmean(abs(get(ref_variable)), sliding, align="center"), by = list(id)]
+
   ## Subsample ts into relevant cycles
   tsd_sub_l <- lapply(seq_len(nrow(pheno_sub)), function(j) {
     tsd[id == pheno_sub[j,id] & date>=pheno_sub[j,begin] & date<pheno_sub[j,end],][
@@ -81,9 +88,8 @@ detect_forages <- function(
   
   
   # TODO assunti (da passare a argomenti): relval/value, byyear
-  ref_variable <- if (reldiff==TRUE) {"relval"} else {"value"}
   diffsum <- tsd_sub[,list(
-    diff = mean(abs(get(ref_variable)),na.rm=TRUE)*365,
+    diff = quantile(rollval,0.75,na.rm=TRUE)*365,
     ncuts = sum(bg1|es1,na.rm=TRUE)/.N*365
   ),by = list(id,year)]
   # diffsum[,aa := agreah_sel[match(id, agreah_sel$uid),]$aa]
@@ -100,7 +106,7 @@ detect_forages <- function(
   pheno_diffsum <- merge(
     pheno_sub1, 
     tsd_sub[,list(
-      diff = mean(abs(get(ref_variable)),na.rm=TRUE)*365
+      diff = quantile(rollval,0.75,na.rm=TRUE)*365
     ),by = list(id,year,cycle)], 
     by=c("id","year","cycle"), all.x=TRUE
   )
