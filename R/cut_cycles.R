@@ -78,58 +78,6 @@
 #' plot(ts_filled, pheno = dt_cycles_2)
 
 
-# Define internal function used to clean minima/maxima
-clean_maxmin_ts <- function(
-  ts_dt, # DT which is DIRECTLY modified
-  which_peak, # name of the logical variable with peaks
-  which_cut, # name of the logical variable with peaks
-  ids, # ID to check
-  check_peaks = TRUE, # if FALSE, check only cuts
-  check_cuts = TRUE # if FALSE, check only peaks
-) {
-  # Avoid check notes for data.table related variables
-  id <- uid <- relval <- NULL
-  if (missing(ids)) {ids <- unique(ts_dt$id)}
-  for (sel_id in ids) {
-    # Check peaks among cuts (one peak per couple of cuts)
-    sel_ts_peakscuts <- ts_dt[
-      id == sel_id & (get(which_peak) | get(which_cut)), 
-      list(uid, peak=get(which_peak), cut=get(which_cut))]
-    
-    if (check_peaks) {
-      # Find which peaks are not preceded and followed by cuts
-      cut_nrows <- sel_ts_peakscuts[,which(cut)]
-      cut_nrows <- cut_nrows[which(diff(c(0, cut_nrows)) > 2)]
-      cuts_id <- c(-Inf, sel_ts_peakscuts[cut == TRUE, uid], Inf)
-      cuts_id_tocheck <- c(sel_ts_peakscuts[cut_nrows, uid], Inf)
-      # Cycle only where needed
-      for (cut_r in cuts_id_tocheck) {
-        cut_l <- cuts_id[which(cuts_id == cut_r)-1]
-        peak_uids_torm <- ts_dt[id == sel_id & uid >= cut_l & uid <= cut_r & get(which_peak),][order(relval, decreasing = TRUE), uid]
-        if (all(is.finite(c(cut_l,cut_r)))) {peak_uids_torm <- peak_uids_torm[-1]}
-        ts_dt[uid %in% peak_uids_torm, c(which_peak) := FALSE]
-      }
-    }
-    # Check cuts among peaks (one cut per couple of peaks)
-    if (check_cuts) {
-      # Find which peaks are not preceded and followed by cuts
-      peak_nrows <- sel_ts_peakscuts[,which(peak)]
-      peak_nrows <- peak_nrows[which(diff(c(0, peak_nrows)) > 2)]
-      peaks_id <- c(-Inf, sel_ts_peakscuts[peak == TRUE, uid], Inf)
-      peaks_id_tocheck <- c(sel_ts_peakscuts[peak_nrows, uid], Inf)
-      # Cycle only where needed
-      for (peak_r in peaks_id_tocheck) {
-        peak_l <- peaks_id[which(peaks_id == peak_r)-1]
-        cut_uids_torm <- ts_dt[id == sel_id & uid >= peak_l & uid <= peak_r & get(which_cut),][order(relval, decreasing = FALSE), uid]
-        cut_uids_torm <- cut_uids_torm[-1]
-        ts_dt[uid %in% cut_uids_torm, c(which_cut) := FALSE]
-      }
-    }
-  }
-  return(invisible(NULL))
-}
-
-
 cut_cycles <- function(
   ts,
   n_cycles = Inf,
@@ -410,4 +358,56 @@ cut_cycles <- function(
   attr(pheno_dt, "weight") <- weight_metric
   pheno_dt
   
+}
+
+
+# Define internal function used to clean minima/maxima
+clean_maxmin_ts <- function(
+  ts_dt, # DT which is DIRECTLY modified
+  which_peak, # name of the logical variable with peaks
+  which_cut, # name of the logical variable with peaks
+  ids, # ID to check
+  check_peaks = TRUE, # if FALSE, check only cuts
+  check_cuts = TRUE # if FALSE, check only peaks
+) {
+  # Avoid check notes for data.table related variables
+  id <- uid <- relval <- NULL
+  if (missing(ids)) {ids <- unique(ts_dt$id)}
+  for (sel_id in ids) {
+    # Check peaks among cuts (one peak per couple of cuts)
+    sel_ts_peakscuts <- ts_dt[
+      id == sel_id & (get(which_peak) | get(which_cut)), 
+      list(uid, peak=get(which_peak), cut=get(which_cut))]
+    
+    if (check_peaks) {
+      # Find which peaks are not preceded and followed by cuts
+      cut_nrows <- sel_ts_peakscuts[,which(cut)]
+      cut_nrows <- cut_nrows[which(diff(c(0, cut_nrows)) > 2)]
+      cuts_id <- c(-Inf, sel_ts_peakscuts[cut == TRUE, uid], Inf)
+      cuts_id_tocheck <- c(sel_ts_peakscuts[cut_nrows, uid], Inf)
+      # Cycle only where needed
+      for (cut_r in cuts_id_tocheck) {
+        cut_l <- cuts_id[which(cuts_id == cut_r)-1]
+        peak_uids_torm <- ts_dt[id == sel_id & uid >= cut_l & uid <= cut_r & get(which_peak),][order(relval, decreasing = TRUE), uid]
+        if (all(is.finite(c(cut_l,cut_r)))) {peak_uids_torm <- peak_uids_torm[-1]}
+        ts_dt[uid %in% peak_uids_torm, c(which_peak) := FALSE]
+      }
+    }
+    # Check cuts among peaks (one cut per couple of peaks)
+    if (check_cuts) {
+      # Find which peaks are not preceded and followed by cuts
+      peak_nrows <- sel_ts_peakscuts[,which(peak)]
+      peak_nrows <- peak_nrows[which(diff(c(0, peak_nrows)) > 2)]
+      peaks_id <- c(-Inf, sel_ts_peakscuts[peak == TRUE, uid], Inf)
+      peaks_id_tocheck <- c(sel_ts_peakscuts[peak_nrows, uid], Inf)
+      # Cycle only where needed
+      for (peak_r in peaks_id_tocheck) {
+        peak_l <- peaks_id[which(peaks_id == peak_r)-1]
+        cut_uids_torm <- ts_dt[id == sel_id & uid >= peak_l & uid <= peak_r & get(which_cut),][order(relval, decreasing = FALSE), uid]
+        cut_uids_torm <- cut_uids_torm[-1]
+        ts_dt[uid %in% cut_uids_torm, c(which_cut) := FALSE]
+      }
+    }
+  }
+  return(invisible(NULL))
 }

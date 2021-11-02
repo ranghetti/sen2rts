@@ -8,8 +8,9 @@ detect_forages(
   ts,
   pheno,
   win = NULL,
-  diff_thr = 5,
+  diff_thr = 10,
   ncuts_thr = 10,
+  sliding = 90,
   reldiff = TRUE,
   byyear = TRUE
 )
@@ -26,6 +27,9 @@ start of cycle (see \code{pop_seasons} for details about the format).}
 \item{diff_thr}{First threshold to detect forages (TODO improve description)}
 
 \item{ncuts_thr}{Second threshold to detect forages (TODO improve description)}
+
+\item{sliding}{Length (in days) of the sliding window in which \code{diff_thr}
+and \code{ncuts_thr} must be evaluated.}
 
 \item{reldiff}{Logical: should argument \code{diff_thr} refer to relative (default)
 or absolute values?}

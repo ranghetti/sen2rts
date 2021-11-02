@@ -27,7 +27,7 @@ detect_forages <- function(
   ts,
   pheno,
   win = NULL, # window,
-  diff_thr = 5,
+  diff_thr = 10,
   ncuts_thr = 10,
   sliding = 90,
   reldiff = TRUE,
