@@ -63,7 +63,7 @@ detect_forages <- function(
   
   ## Build relative TS
   tsd <- as.data.table(copy(ts))
-  setnames(tsd, "value", "indexvalue")
+  setnames(tsd, "value", "indexvalue", skip_absent = TRUE)
   tsd[,relindexval := (indexvalue - min(indexvalue, na.rm=TRUE)) / 
         diff(range(indexvalue, na.rm=TRUE)), by = id]
   tsd[,value := c(NA, diff(indexvalue)), by = id]

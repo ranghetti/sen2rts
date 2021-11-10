@@ -292,7 +292,7 @@ cut_cycles <- function(
   # DT with records of end of the cycle
   end_dt <- begin_dt[s1 > 1,]
   end_dt[,s1 := s1-1]
-  setnames(end_dt, "begin", "end")
+  setnames(end_dt, "begin", "end", skip_absent = TRUE)
   # remove false begins of the cycle (dates only corresponding to ends)
   if (nrow(begin_dt) > 0) {
     begin_dt <- begin_dt[begin_dt[, .I[s1 < max(s1)], by = id]$V1,]
