@@ -180,6 +180,7 @@ extract_s2ts <- function(
     sen2r_getElements(in_paths)
   }
   inraster_meta <- raster_metadata(in_paths[1], format = "list")[[1]]
+  # TODO check inputs integrity (now the first one is taken as reference)
   # reproject
   if (st_crs(in_sf) != inraster_meta$proj) {
     in_sf <- st_transform(in_sf, inraster_meta$proj)
@@ -204,6 +205,7 @@ extract_s2ts <- function(
     source = in_paths,
     destination = vrt_path <- tempfile(fileext = ".vrt"),
     options = c(
+      "-te",inraster_meta$bbox,
       "-separate",
       "-resolution", "highest"
     ),
