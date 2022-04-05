@@ -1,6 +1,5 @@
 
 <!-- IMPORTANT: do NOT edit README.Rmd! Edit index.Rmd instead, -->
-
 <!-- and generate README.Rmd using utils/code/create_README.sh  -->
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.4682829.svg)](https://doi.org/10.5281/zenodo.4682829)
@@ -84,7 +83,7 @@ General Public License version
 3](https://www.gnu.org/licenses/gpl-3.0.html) (GPL‑3).
 
 The [sen2rts
-logo](https://github.com/ranghetti/sen2rts/raw/master/man/figures/sen2rts_logo_250px.png),
+logo](https://github.com/ranghetti/sen2rts/raw/main/man/figures/sen2rts_logo_250px.png),
 partially derived from the [R logo](https://www.r-project.org/logo), is
 released under the [Creative Commons Attribution-ShareAlike 4.0
 International license](https://creativecommons.org/licenses/by-sa/4.0)
@@ -93,7 +92,7 @@ International license](https://creativecommons.org/licenses/by-sa/4.0)
 To cite this library, please use the entry reported below.
 
 L. Ranghetti (2021). **“sen2rts: Build and Analyse Sentinel-2 Time
-Series”**. R package version 0.4.0. doi:
+Series”**. R package version 0.4.0.9000. doi:
 <a href="https://doi.org/10.5281/zenodo.4682829" target="_blank">`10.5281/zenodo.4682829`</a>,
 URL:
 <a href="https://sen2rts.ranghetti.info" target="_blank">`https://sen2rts.ranghetti.info`</a>.
@@ -105,7 +104,7 @@ URL:
   year = {2021},
   doi = {10.5281/zenodo.4682829},
   url = {https://sen2rts.ranghetti.info},
-  note = {R package version 0.4.0},
+  note = {R package version 0.4.0.9000},
 }
 ```
 
