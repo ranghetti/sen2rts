@@ -171,7 +171,7 @@ smooth_s2ts <- function(
     }, USE.NAMES = TRUE, simplify = FALSE),
     idcol = "id"
   )
-  setnames(ts_dt_teor, "mission", "sensor")
+  setnames(ts_dt_teor, "mission", "sensor", skip_absent = TRUE)
   ts_dt_filled <- merge(
     ts_dt,
     ts_dt_teor,

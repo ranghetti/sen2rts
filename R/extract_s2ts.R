@@ -30,6 +30,10 @@
 #'  See details for the conversion between SCL and weights.
 #' @param fun_w (optional) function to be used to aggregate quality flags
 #'  in case of polygonal `in_sf` features. Default is `mean`.
+#' @param naming_convention (optional) the naming convention used to extract 
+#'  information from `in_paths`, `scl_paths` and `cld_paths` 
+#'  (see `sen2r::sen2r_getElements()` for details).
+#'  It takes effect only if sen2r version is > 1.5.0.
 #' @return The output time series in `s2ts` format.
 #' @details To generate pixel weights, SCL and/or CLD layers can be used.
 #' 
@@ -116,7 +120,8 @@ extract_s2ts <- function(
   scl_paths,
   cld_paths,
   scl_w,
-  fun_w = "mean"
+  fun_w = "mean",
+  naming_convention = "sen2r"
 ) {
   
   # Avoid check notes for data.table related variables
@@ -159,13 +164,23 @@ extract_s2ts <- function(
       "summarise(group_by(in_sf, ",in_sf_id,"))"
     )))
   }
+
+  # if ID is a numeric, convert to text
+  if (inherits(in_sf[[in_sf_id]], c("integer","numeric"))) {
+    in_sf[[in_sf_id]] <- as.character(in_sf[[in_sf_id]])
+  }
   
   ## Read in_paths ----
   
   ## Obtain rasterIO from in_sf
   # read grid metadata
-  in_meta <- sen2r_getElements(in_paths)
+  in_meta <- if (packageVersion("sen2r") > package_version("1.5.0")) {
+    sen2r_getElements(in_paths, naming_convention = naming_convention)
+  } else {
+    sen2r_getElements(in_paths)
+  }
   inraster_meta <- raster_metadata(in_paths[1], format = "list")[[1]]
+  # TODO check inputs integrity (now the first one is taken as reference)
   # reproject
   if (st_crs(in_sf) != inraster_meta$proj) {
     in_sf <- st_transform(in_sf, inraster_meta$proj)
@@ -190,6 +205,7 @@ extract_s2ts <- function(
     source = in_paths,
     destination = vrt_path <- tempfile(fileext = ".vrt"),
     options = c(
+      "-te",inraster_meta$bbox,
       "-separate",
       "-resolution", "highest"
     ),
@@ -208,7 +224,7 @@ extract_s2ts <- function(
     ## Obtain rasterIO from in_sf
     
     # read grid metadata
-    scl_meta <- sen2r_getElements(scl_paths)
+    scl_meta <- sen2r_getElements(scl_paths, naming_convention = naming_convention)
     
     # Check consistency between in_cube and scl_cube
     if (anyNA(match(in_meta$sensing_date, scl_meta$sensing_date))) {
@@ -283,7 +299,7 @@ extract_s2ts <- function(
     ## Obtain rasterIO from in_sf
     
     # read grid metadata
-    cld_meta <- sen2r_getElements(cld_paths)
+    cld_meta <- sen2r_getElements(cld_paths, naming_convention = naming_convention)
     
     # Check consistency between in_cube and cld_cube
     if (anyNA(match(in_meta$sensing_date, cld_meta$sensing_date))) {

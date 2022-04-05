@@ -21,6 +21,8 @@
 <![endif]-->
 </head>
 <body data-spy="scroll" data-target="#toc">
+    
+
     <div class="container template-home">
       <header><div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
   <div class="container">
@@ -33,7 +35,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">sen2rts</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.4.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.4.1</span>
       </span>
     </div>
 
@@ -42,40 +44,40 @@
 <ul class="nav navbar-nav navbar-right">
 <li>
   <a href="index.html">
-    <span class="fas fa-home fa-lg"></span>
+    <span class="fa fa-home fa-lg"></span>
      
   </a>
 </li>
 <li>
   <a href="reference/index.html">
-    <span class="fas fa-file-code"></span>
+    <span class="fa fa-file-code"></span>
      
      Reference
   </a>
 </li>
 <li>
   <a href="articles/workflow.html">
-    <span class="fas fa-book"></span>
+    <span class="fa fa-book"></span>
      
      The sen2rts workflow
   </a>
 </li>
 <li>
   <a href="news/index.html">
-    <span class="fas fa-newspaper"></span>
+    <span class="fa fa-newspaper"></span>
      
      Changelog
   </a>
 </li>
 <li>
-  <a href="http://luigi.ranghetti.info">
-    <span class="fas fa-user"></span>
+  <a href="http://luigi.ranghetti.info" class="external-link">
+    <span class="fa fa-user"></span>
      
   </a>
 </li>
 <li>
-  <a href="https://github.com/ranghetti/sen2rts/">
-    <span class="fas fa-github fa-lg"></span>
+  <a href="https://github.com/ranghetti/sen2rts/" class="external-link">
+    <span class="fa fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -93,28 +95,40 @@
   <div class="contents col-md-9">
 
 
-<div id="build-and-analyse-sentinel-2-time-series" class="section level1">
-<div class="page-header"><h1 class="hasAnchor">
-<a href="#build-and-analyse-sentinel-2-time-series" class="anchor"></a>Build and Analyse Sentinel-2 Time Series</h1></div>
+<div class="section level1">
+<div class="page-header"><h1 id="build-and-analyse-sentinel-2-time-series">Build and Analyse Sentinel-2 Time Series<a class="anchor" aria-label="anchor" href="#build-and-analyse-sentinel-2-time-series"></a>
+</h1></div>
 <p><img src="reference/figures/sen2rts_logo_250px.png" width="250" height="250" align="right"></p>
-<p><a href="https://sen2rts.ranghetti.info">sen2rts</a> is an R library which helps to extract and manage time series from Sentinel-2 archives created with the package <a href="https://sen2r.ranghetti.info">sen2r</a>.</p>
+<p><a href="https://sen2rts.ranghetti.info" class="external-link">sen2rts</a> is an R library which helps to extract and
+manage time series from Sentinel-2 archives created with the package
+<a href="https://sen2r.ranghetti.info" class="external-link">sen2r</a>.</p>
 <p>This package is currently under development (beta version).</p>
-<p>Functionalities currently implemented in the package are summarised below. A wider overview is presented in the vignette <a href="articles/workflow.html">“The sen2rts workflows”</a>, which shows a simple, reproducible use case to obtain a smoothed equally-weighted time series, isolate cycles and extract metrics, explaining how the currently implemented functions can be used to perform a common workflow. For documentation about specific functions, see the <a href="./reference">Reference</a> page.</p>
-<div id="installation" class="section level2">
-<h2 class="hasAnchor">
-<a href="#installation" class="anchor"></a>Installation</h2>
-<p>Currently <a href="https://sen2rts.ranghetti.info">sen2rts</a> is not on CRAN; it can be installed from GitHub:</p>
+<p>Functionalities currently implemented in the package are summarised
+below. A wider overview is presented in the vignette <a href="articles/workflow.html">“The sen2rts workflows”</a>, which shows a
+simple, reproducible use case to obtain a smoothed equally-weighted time
+series, isolate cycles and extract metrics, explaining how the currently
+implemented functions can be used to perform a common workflow. For
+documentation about specific functions, see the <a href="./reference">Reference</a> page.</p>
+<div class="section level2">
+<h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
+</h2>
+<p>Currently <a href="https://sen2rts.ranghetti.info" class="external-link">sen2rts</a> is not on CRAN; it can be installed
+from GitHub:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"remotes"</span><span class="op">)</span>
-<span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html">install_github</a></span><span class="op">(</span><span class="st">"ranghetti/sen2rts"</span><span class="op">)</span></code></pre></div>
-<p>In case of troubles related to the installation of <a href="https://sen2r.ranghetti.info">sen2r</a>, whose <a href="https://sen2rts.ranghetti.info">sen2rts</a> depends, refer to <a href="https://sen2r.ranghetti.info/articles/installation.html">sen2r installation page</a>.</p>
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"remotes"</span><span class="op">)</span>
+<span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"ranghetti/sen2rts"</span><span class="op">)</span></code></pre></div>
+<p>In case of troubles related to the installation of
+<a href="https://sen2r.ranghetti.info" class="external-link">sen2r</a>, whose <a href="https://sen2rts.ranghetti.info" class="external-link">sen2rts</a> depends, refer to <a href="https://sen2r.ranghetti.info/articles/installation.html" class="external-link">sen2r
+installation page</a>.</p>
 </div>
-<div id="usage" class="section level2">
-<h2 class="hasAnchor">
-<a href="#usage" class="anchor"></a>Usage</h2>
-<p>The following minimal example synthetically shows how to perform the main steps provided by the package; refer to <a href="articles/workflow.html">this vignette</a> for a wider explanation.</p>
+<div class="section level2">
+<h2 id="usage">Usage<a class="anchor" aria-label="anchor" href="#usage"></a>
+</h2>
+<p>The following minimal example synthetically shows how to perform the
+main steps provided by the package; refer to <a href="articles/workflow.html">this vignette</a> for a wider
+explanation.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://sen2rts.ranghetti.info">sen2rts</a></span><span class="op">)</span>
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://sen2rts.ranghetti.info" class="external-link">sen2rts</a></span><span class="op">)</span>
 
 <span class="co">## Create a Sentinel-2 derived archive using sen2r</span>
 <span class="co">#  (see sen2r documentation at https://sen2r.ranghetti.info/ )</span>
@@ -125,7 +139,7 @@
 <span class="va">sen2r_scl_paths</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/sample_paths.html">sample_paths</a></span><span class="op">(</span><span class="st">"SCL"</span><span class="op">)</span>   <span class="co"># SCL images (quality flag)</span>
 
 <span class="co">## Extract, smooth and gap fill time series</span>
-<span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span><span class="op">(</span><span class="st">"sampleroi"</span><span class="op">)</span> <span class="co"># Sample spatial features for data extraction</span>
+<span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"sampleroi"</span><span class="op">)</span> <span class="co"># Sample spatial features for data extraction</span>
 <span class="va">ts_raw</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/extract_s2ts.html">extract_s2ts</a></span><span class="op">(</span><span class="va">sen2r_ndvi_paths</span>, <span class="va">sampleroi</span>, scl_paths <span class="op">=</span> <span class="va">sen2r_scl_paths</span><span class="op">)</span>
 <span class="co"># extract time series over sampleroi extension</span>
 <span class="va">ts_smoothed</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/smooth_s2ts.html">smooth_s2ts</a></span><span class="op">(</span><span class="va">ts_raw</span><span class="op">)</span> <span class="co"># smooth time series</span>
@@ -140,27 +154,38 @@
 <span class="fu"><a href="reference/plot.html">plot</a></span><span class="op">(</span><span class="va">ts_filled</span>, pheno <span class="op">=</span> <span class="va">dt_pheno</span>, plot_points <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
 <p><img src="reference/figures/README/tsfinal-1.png" width="100%" style="display: block; margin: auto;"></p>
 </div>
-<div id="credits" class="section level2">
-<h2 class="hasAnchor">
-<a href="#credits" class="anchor"></a>Credits</h2>
-<p><a href="http://www.irea.cnr.it" target="_blank"><img src="reference/figures/irea_logo_200px.png" width="129" height="100" align="left"></a></p>
-<p><a href="https://sen2rts.ranghetti.info">sen2rts</a> is being developed by Luigi Ranghetti (<a href="http://www.irea.cnr.it">IREA-CNR</a>), and it is released under the <a href="https://www.gnu.org/licenses/gpl-3.0.html">GNU General Public License version 3</a> (GPL‑3).</p>
-<p>The <a href="https://github.com/ranghetti/sen2rts/raw/master/man/figures/sen2rts_logo_250px.png">sen2rts logo</a>, partially derived from the <a href="https://www.r-project.org/logo">R logo</a>, is released under the <a href="https://creativecommons.org/licenses/by-sa/4.0">Creative Commons Attribution-ShareAlike 4.0 International license</a> (CC-BY-SA 4.0).</p>
+<div class="section level2">
+<h2 id="credits">Credits<a class="anchor" aria-label="anchor" href="#credits"></a>
+</h2>
+<p><a href="http://www.irea.cnr.it" target="_blank" class="external-link"><img src="reference/figures/irea_logo_200px.png" width="129" height="100" align="left"></a></p>
+<p><a href="https://sen2rts.ranghetti.info" class="external-link">sen2rts</a> is being developed by Luigi Ranghetti (<a href="http://www.irea.cnr.it" class="external-link">IREA-CNR</a>), and it is released under
+the <a href="https://www.gnu.org/licenses/gpl-3.0.html" class="external-link">GNU General
+Public License version 3</a> (GPL‑3).</p>
+<p>The <a href="https://github.com/ranghetti/sen2rts/raw/main/man/figures/sen2rts_logo_250px.png" class="external-link">sen2rts
+logo</a>, partially derived from the <a href="https://www.r-project.org/logo" class="external-link">R logo</a>, is released under the
+<a href="https://creativecommons.org/licenses/by-sa/4.0" class="external-link">Creative
+Commons Attribution-ShareAlike 4.0 International license</a> (CC-BY-SA
+4.0).</p>
 <p>To cite this library, please use the entry reported below.</p>
-<p>L. Ranghetti (2021). <strong>“sen2rts: Build and Analyse Sentinel-2 Time Series”</strong>. R package version 0.4.0. doi: <a href="https://doi.org/10.5281/zenodo.4682829" target="_blank"><code>10.5281/zenodo.4682829</code></a>, URL: <a href="https://sen2rts.ranghetti.info" target="_blank"><code>https://sen2rts.ranghetti.info</code></a>.</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode bibtex"><code class="sourceCode bibtex"><span id="cb3-1"><a href="#cb3-1"></a><span class="va">@Manual</span>{<span class="ot">sen2rts_manual</span>,</span>
-<span id="cb3-2"><a href="#cb3-2"></a>  <span class="dt">author</span> = {Luigi Ranghetti},</span>
-<span id="cb3-3"><a href="#cb3-3"></a>  <span class="dt">title</span> = {sen2rts: Build and Analyse Sentinel-2 Time Series},</span>
-<span id="cb3-4"><a href="#cb3-4"></a>  <span class="dt">year</span> = {2021},</span>
-<span id="cb3-5"><a href="#cb3-5"></a>  <span class="dt">doi</span> = {10.5281/zenodo.4682829},</span>
-<span id="cb3-6"><a href="#cb3-6"></a>  <span class="dt">url</span> = {https://sen2rts.ranghetti.info},</span>
-<span id="cb3-7"><a href="#cb3-7"></a>  <span class="dt">note</span> = {R package version 0.4.0},</span>
-<span id="cb3-8"><a href="#cb3-8"></a>}</span></code></pre></div>
+<p>L. Ranghetti (2021). <strong>“sen2rts: Build and Analyse Sentinel-2
+Time Series”</strong>. R package version 0.4.0.9000. doi:
+<a href="https://doi.org/10.5281/zenodo.4682829" target="_blank" class="external-link"><code>10.5281/zenodo.4682829</code></a>,
+URL:
+<a href="https://sen2rts.ranghetti.info" target="_blank" class="external-link"><code>https://sen2rts.ranghetti.info</code></a>.</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode bibtex"><code class="sourceCode bibtex"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="va">@Manual</span>{<span class="ot">sen2rts_manual</span>,</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">author</span> = {Luigi Ranghetti},</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">title</span> = {sen2rts: Build and Analyse Sentinel-2 Time Series},</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">year</span> = {2021},</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  <span class="dt">doi</span> = {10.5281/zenodo.4682829},</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  <span class="dt">url</span> = {https://sen2rts.ranghetti.info},</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>  <span class="dt">note</span> = {R package version 0.4.0.9000},</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
 </div>
-<div id="contributing" class="section level2">
-<h2 class="hasAnchor">
-<a href="#contributing" class="anchor"></a>Contributing</h2>
-<p>This project is released with a <a href="CODE-OF-CONDUCT.html">Contributor Code of Conduct</a>. By participating in this project you agree to abide by its terms.</p>
+<div class="section level2">
+<h2 id="contributing">Contributing<a class="anchor" aria-label="anchor" href="#contributing"></a>
+</h2>
+<p>This project is released with a <a href="CODE-OF-CONDUCT.html">Contributor Code of Conduct</a>. By
+participating in this project you agree to abide by its terms.</p>
 </div>
 </div>
 
@@ -168,52 +193,58 @@
 
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <div class="links">
-<h2>Links</h2>
+<h2 data-toc-skip>Links</h2>
 <ul class="list-unstyled">
-<li>Browse source code at <br><a href="https://github.com/ranghetti/sen2rts/">https://​github.com/​ranghetti/​sen2rts/​</a>
-</li>
-<li>Report a bug at <br><a href="https://github.com/ranghetti/sen2rts/issues">https://​github.com/​ranghetti/​sen2rts/​issues</a>
-</li>
-</ul>
-</div>
-<div class="license">
-<h2>License</h2>
-<ul class="list-unstyled">
-<li><a href="LICENSE.html">Full license</a></li>
-<li><small><a href="https://www.r-project.org/Licenses/GPL-3">GPL-3</a></small></li>
-</ul>
-</div>
-<div class="citation">
-<h2>Citation</h2>
-<ul class="list-unstyled">
-<li><a href="authors.html">Citing sen2rts</a></li>
-</ul>
-</div>
-<div class="developers">
-<h2>Developers</h2>
-<ul class="list-unstyled">
-<li>Luigi Ranghetti <br><small class="roles"> Author, maintainer </small> <a href="https://orcid.org/0000-0001-6207-5188" target="orcid.widget" aria-label="ORCID"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a> </li>
+<li><a href="https://github.com/ranghetti/sen2rts/" class="external-link">Browse source code</a></li>
+<li><a href="https://github.com/ranghetti/sen2rts/issues" class="external-link">Report a bug</a></li>
 </ul>
 </div>
 
-  <div class="dev-status">
-<h2>Dev status</h2>
+<div class="license">
+<h2 data-toc-skip>License</h2>
 <ul class="list-unstyled">
-<li><a href="https://doi.org/10.5281/zenodo.4682829"><img src="https://zenodo.org/badge/DOI/10.5281/zenodo.4682829.svg" alt="DOI"></a></li>
-<li><a href="http://www.gnu.org/licenses/gpl-3.0"><img src="https://img.shields.io/badge/License-GPL%20v3-blue.svg" alt="License: GPL v3"></a></li>
+<li><a href="LICENSE.html">Full license</a></li>
+<li><small><a href="https://www.r-project.org/Licenses/GPL-3" class="external-link">GPL-3</a></small></li>
+</ul>
+</div>
+
+
+<div class="citation">
+<h2 data-toc-skip>Citation</h2>
+<ul class="list-unstyled">
+<li><a href="authors.html#citation">Citing sen2rts</a></li>
+</ul>
+</div>
+
+<div class="developers">
+<h2 data-toc-skip>Developers</h2>
+<ul class="list-unstyled">
+<li>Luigi Ranghetti <br><small class="roles"> Author, maintainer </small> <a href="https://orcid.org/0000-0001-6207-5188" target="orcid.widget" aria-label="ORCID" class="external-link"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a> </li>
+</ul>
+</div>
+
+<div class="dev-status">
+<h2 data-toc-skip>Dev status</h2>
+<ul class="list-unstyled">
+<li><a href="https://doi.org/10.5281/zenodo.4682829" class="external-link"><img src="https://zenodo.org/badge/DOI/10.5281/zenodo.4682829.svg" alt="DOI"></a></li>
+<li><a href="http://www.gnu.org/licenses/gpl-3.0" class="external-link"><img src="https://img.shields.io/badge/License-GPL%20v3-blue.svg" alt="License: GPL v3"></a></li>
 <li><a href="CODE-OF-CONDUCT.html"><img src="https://img.shields.io/badge/Contributor%20Covenant-v1.4%20adopted-ff69b4.svg" alt="Contributor Covenant"></a></li>
 </ul>
 </div>
-</div>
+
+  </div>
 </div>
 
 
       <footer><div class="copyright">
-  <p>Developed by Luigi Ranghetti.</p>
+  <p></p>
+<p>Developed by Luigi Ranghetti.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
+  <p></p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a>
+2.0.2.</p>
 </div>
 
       </footer>
@@ -221,6 +252,8 @@
 
   
 
+
+  
 
   </body>
 </html>

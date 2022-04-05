@@ -291,11 +291,17 @@ plot.s2ts <- function(
   
   # Add points
   if (plot_elements$points == TRUE) {
-    out <- out + geom_point(
-      data = x_dt_raw, 
-      if (!is.null(x_dt$QA)) {aes(fill = QA)}, 
-      shape = 21, colour = "#00000000"
-    )
+    if (is.null(x_dt$QA)) {
+      out <- out + geom_point(
+        data = x_dt_raw, 
+        fill = "grey30", shape = 21, colour = "#00000000"
+      )
+    } else {
+      out <- out + geom_point(
+        data = x_dt_raw, aes(fill = QA), 
+        shape = 21, colour = "#00000000"
+      )
+    }
   }
   
   # Facet in case of multiple IDs

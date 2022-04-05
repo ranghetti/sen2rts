@@ -70,6 +70,13 @@ aggregate_pheno <- function(
   ## Check arguments
   # TODO
   
+  # Check for empty pheno
+  if (nrow(pheno) == 0) {
+    return(data.table(
+      id = character(), year = character(), cycle = character(), value = numeric()
+    ))
+  }
+
   # Check for duplicates in pheno
   pheno_uids <- table(table(pheno[,paste(id, year, cycle)]))
   if (length(pheno_uids) > 1 || names(pheno_uids) != "1") {
