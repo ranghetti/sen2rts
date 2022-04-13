@@ -18,10 +18,6 @@
 #'  (used for filtering among `inpath` content).
 #' @param bbox (optional) object of class `sf`, `sfc` or `bbox` used to import
 #'  a subset of the original raster extent.
-#' @param naming_convention (optional) the naming convention used to extract 
-#'  information from file names contained in `inpath`
-#'  (see `sen2r::sen2r_getElements()` for details).
-#'  It takes effect only if sen2r version is > 1.5.0.
 #' @param .use_vrt (optional) pass through a temporary VRT before creating `stars`?
 #' @return The output raster cube in the selected format.
 #' @author Luigi Ranghetti, PhD (2020) \email{luigi@@ranghetti.info}
@@ -61,7 +57,6 @@ load_s2paths <- function(
   s2_sensors,
   file_ext,
   bbox,
-  naming_convention = "sen2r",
   .use_vrt = FALSE
 ) {
   
@@ -74,11 +69,7 @@ load_s2paths <- function(
   in_paths <- list.files(inpath, full.names = TRUE, recursive = TRUE)
   in_paths <- in_paths[!grepl("((thumbnails)|(\\.aux\\.xml$)|(\\.hdr$))", in_paths)]
   in_meta <- data.table(suppressWarnings(
-    if (packageVersion("sen2r") > package_version("1.5.0")) {
-      sen2r_getElements(in_paths, naming_convention = naming_convention, abort = FALSE)
-    } else {
-      sen2r_getElements(in_paths, abort = FALSE)
-    }
+    sen2r_getElements(in_paths, abort = FALSE)
   ))
   in_meta[,path:=in_paths]
   in_meta <- in_meta[order(sensing_date),]
