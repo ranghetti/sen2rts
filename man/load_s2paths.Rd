@@ -13,7 +13,6 @@ load_s2paths(
   s2_sensors,
   file_ext,
   bbox,
-  naming_convention = "sen2r",
   .use_vrt = FALSE
 )
 }
@@ -40,11 +39,6 @@ load_s2paths(
 
 \item{bbox}{(optional) object of class \code{sf}, \code{sfc} or \code{bbox} used to import
 a subset of the original raster extent.}
-
-\item{naming_convention}{(optional) the naming convention used to extract
-information from file names contained in \code{inpath}
-(see \code{sen2r::sen2r_getElements()} for details).
-It takes effect only if sen2r version is > 1.5.0.}
 
 \item{.use_vrt}{(optional) pass through a temporary VRT before creating \code{stars}?}
 }

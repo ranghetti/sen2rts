@@ -94,8 +94,7 @@ extracted archive (see arguments <code>scl_paths</code> and <code>cld_paths</cod
   <span class="va">scl_paths</span>,
   <span class="va">cld_paths</span>,
   <span class="va">scl_w</span>,
-  fun_w <span class="op">=</span> <span class="st">"mean"</span>,
-  naming_convention <span class="op">=</span> <span class="st">"sen2r"</span>
+  fun_w <span class="op">=</span> <span class="st">"mean"</span>
 <span class="op">)</span></code></pre></div>
     </div>
 
@@ -136,11 +135,6 @@ See details for the conversion between SCL and weights.</p></dd>
 <dt>fun_w</dt>
 <dd><p>(optional) function to be used to aggregate quality flags
 in case of polygonal <code>in_sf</code> features. Default is <code>mean</code>.</p></dd>
-<dt>naming_convention</dt>
-<dd><p>(optional) the naming convention used to extract
-information from <code>in_paths</code>, <code>scl_paths</code> and <code>cld_paths</code>
-(see <code><a href="https://sen2r.ranghetti.info/reference/sen2r_getElements.html" class="external-link">sen2r::sen2r_getElements()</a></code> for details).
-It takes effect only if sen2r version is &gt; 1.5.0.</p></dd>
 </dl></div>
     <div id="value">
     <h2>Value</h2>
