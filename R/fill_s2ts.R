@@ -7,7 +7,7 @@
 #'  - `daily`: daily frequency (default);
 #'  - `dop` (Days Of Passage): values are returned corresponding to 
 #'      the theoretic Sentinel-2 dates of passage.
-#' @param method (optional) Argument passed to `spline()`.
+#' @param method (optional) Argument passed to `spline()` or `approx()`.
 #' @param max_na_days (optional) maximum number of consecutive days with missing
 #'  values which can be filled (in case of longer time windows with missing data,
 #'  NA are returned).
@@ -18,7 +18,7 @@
 #'  out of original range (relative value).
 #'  Default is 0.1 (+10%). Set to Inf in order not to set any constraint.
 #' @return The output time series in tabular format (see `extract_ts()`).
-#' @importFrom stats spline
+#' @importFrom stats spline approx
 #' @importFrom methods as
 #' @author Luigi Ranghetti, PhD (2020) \email{luigi@@ranghetti.info}
 #' @export
@@ -117,11 +117,15 @@ fill_s2ts <- function(
       }
     }
     valid_xrange <- unique(valid_xrange)
-    sel_spline <- spline(
-      ts_dt[id == sel_id & date %in% valid_xrange, date],
-      ts_dt[id == sel_id & date %in% valid_xrange, value],
-      xout = ts_dt_out2[date %in% valid_xrange, date],
-      method = method
+    fill_fun <- if (method %in% c("linear", "constant")) {approx} else {spline}
+    sel_spline <- do.call(
+      fill_fun, 
+      list(
+        ts_dt[id == sel_id & date %in% valid_xrange, date],
+        ts_dt[id == sel_id & date %in% valid_xrange, value],
+        xout = ts_dt_out2[date %in% valid_xrange, date],
+        method = method
+      )
     )
     # sel_spline$x <- as.Date(sel_spline$x, origin = "1970-01-01")
     ts_dt_out2[date %in% valid_xrange, value := sel_spline$y]
