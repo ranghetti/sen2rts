@@ -227,6 +227,7 @@ smooth_s2ts <- function(
   
   # Restore non-smoothed values
   ts_dt <- merge(ts_dt, ts_dt_full, by = names(ts_dt_full), all = TRUE)
+  ts_dt <- ts_dt[!duplicated(paste(id,date)),]
   
   ## Return output
   ts_dt$rawval <- ts_dt$value
