@@ -38,16 +38,16 @@
 
 
 fill_s2ts <- function(
-  ts,
-  frequency = "daily",
-  method = "fmm",
-  max_na_days = Inf,
-  max_extrapolation = 0.1
+    ts,
+    frequency = "daily",
+    method = "fmm",
+    max_na_days = Inf,
+    max_extrapolation = 0.1
 ) {
   
   # Avoid check notes for data.table related variables
   id <- orbit <- sensor <- interpolated <- value <- NULL
-
+  
   ## Define Greater Common Divisor
   gcd <- function(x) {
     if (length(x) == 2) {
@@ -81,64 +81,64 @@ fill_s2ts <- function(
       mission = ts_dt[id == sel_id, unique(sensor)]
     )
     if (nrow(ts_dop) > 0) {
-    
-    # Define output dates
-    ts_dt_out0 <- data.table(
-      "date" = if (frequency == "dop") {
-        ts_dop$date
-      } else if (frequency == "daily") {
-        seq(min(ts_dop$date), max(ts_dop$date), by = 1)
-      } else if (frequency == "gcd") {
-        diffdate <- gcd(as.integer(diff(ts_dop$date)))
-        seq(min(ts_dop$date), max(ts_dop$date), by = diffdate)
-      }
-    )
-    # ts_dt_out1 <- merge(ts_dt_out0, ts_dop, by = "date", all = TRUE)
-    
-    # ts_dt_out2 <- merge(
-    #   ts_dt[id == sel_id,], ts_dt_out1, 
-    #   by.x = c("date", "sensor", "orbit"), by.y = c("date", "mission", "orbit"), 
-    #   all = TRUE
-    # )
-    ts_dt_out2 <- merge(
-      ts_dt[id == sel_id,], ts_dt_out0, 
-      by = "date", 
-      all = TRUE
-    )
-    ts_dt_out2[,interpolated := is.na(value)]
-    ts_dt_out2[,id := sel_id]
-    
-    # Interpolate (without extrapolating)
-    valid_dates <- ts_dt[id == sel_id,][!is.na(value), date]
-    valid_yrange <- ts_dt[id == sel_id, range(value, na.rm=TRUE)]
-    valid_xrange <- as.Date(character(0))
-    for (i in seq(length(valid_dates)-1)) {
-      if (diff(valid_dates[i:(i+1)]) <= max_na_days) {
-        valid_xrange <- c(valid_xrange, seq(valid_dates[i], valid_dates[i+1], 1))
-      }
-    }
-    valid_xrange <- unique(valid_xrange)
-    fill_fun <- if (method %in% c("linear", "constant")) {approx} else {spline}
-    sel_spline <- do.call(
-      fill_fun, 
-      list(
-        ts_dt[id == sel_id & date %in% valid_xrange, date],
-        ts_dt[id == sel_id & date %in% valid_xrange, value],
-        xout = ts_dt_out2[date %in% valid_xrange, date],
-        method = method
+      
+      # Define output dates
+      ts_dt_out0 <- data.table(
+        "date" = if (frequency == "dop") {
+          ts_dop$date
+        } else if (frequency == "daily") {
+          seq(min(ts_dop$date), max(ts_dop$date), by = 1)
+        } else if (frequency == "gcd") {
+          diffdate <- gcd(as.integer(diff(ts_dop$date)))
+          seq(min(ts_dop$date), max(ts_dop$date), by = diffdate)
+        }
       )
-    )
-    # sel_spline$x <- as.Date(sel_spline$x, origin = "1970-01-01")
-    ts_dt_out2[date %in% valid_xrange, value := sel_spline$y]
-    
-    # Coerce to original min/max ranges
-    if (max_extrapolation < Inf) {
-      ts_dt_out2[,value := sapply(value, max, valid_yrange[1] - diff(valid_yrange) * max_extrapolation), by = id]
-      ts_dt_out2[,value := sapply(value, min, valid_yrange[2] + diff(valid_yrange) * max_extrapolation), by = id]
-    }
-    
-    ts_list[[sel_id]] <- ts_dt_out2
-
+      # ts_dt_out1 <- merge(ts_dt_out0, ts_dop, by = "date", all = TRUE)
+      
+      # ts_dt_out2 <- merge(
+      #   ts_dt[id == sel_id,], ts_dt_out1, 
+      #   by.x = c("date", "sensor", "orbit"), by.y = c("date", "mission", "orbit"), 
+      #   all = TRUE
+      # )
+      ts_dt_out2 <- merge(
+        ts_dt[id == sel_id,], ts_dt_out0, 
+        by = "date", 
+        all = TRUE
+      )
+      ts_dt_out2[,interpolated := is.na(value)]
+      ts_dt_out2[,id := sel_id]
+      
+      # Interpolate (without extrapolating)
+      valid_dates <- ts_dt[id == sel_id,][!is.na(value), date]
+      valid_yrange <- ts_dt[id == sel_id, range(value, na.rm=TRUE)]
+      valid_xrange <- as.Date(character(0))
+      for (i in seq(length(valid_dates)-1)) {
+        if (diff(valid_dates[i:(i+1)]) <= max_na_days) {
+          valid_xrange <- c(valid_xrange, seq(valid_dates[i], valid_dates[i+1], 1))
+        }
+      }
+      valid_xrange <- unique(valid_xrange)
+      fill_fun <- if (method %in% c("linear", "constant")) {approx} else {spline}
+      sel_spline <- do.call(
+        fill_fun, 
+        list(
+          ts_dt[id == sel_id & date %in% valid_xrange, date],
+          ts_dt[id == sel_id & date %in% valid_xrange, value],
+          xout = ts_dt_out2[date %in% valid_xrange, date],
+          method = method
+        )
+      )
+      # sel_spline$x <- as.Date(sel_spline$x, origin = "1970-01-01")
+      ts_dt_out2[date %in% valid_xrange, value := sel_spline$y]
+      
+      # Coerce to original min/max ranges
+      if (max_extrapolation < Inf) {
+        ts_dt_out2[,value := sapply(value, max, valid_yrange[1] - diff(valid_yrange) * max_extrapolation), by = id]
+        ts_dt_out2[,value := sapply(value, min, valid_yrange[2] + diff(valid_yrange) * max_extrapolation), by = id]
+      }
+      
+      ts_list[[sel_id]] <- ts_dt_out2
+      
     } # enf of length > 0 IF cycle
   } # end of id FOR cycle
   
