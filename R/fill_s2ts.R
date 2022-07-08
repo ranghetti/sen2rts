@@ -80,6 +80,7 @@ fill_s2ts <- function(
       timewindow = ts_dt[id == sel_id, range(date)],
       mission = ts_dt[id == sel_id, unique(sensor)]
     )
+    if (nrow(ts_dop) > 0) {
     
     # Define output dates
     ts_dt_out0 <- data.table(
@@ -138,6 +139,7 @@ fill_s2ts <- function(
     
     ts_list[[sel_id]] <- ts_dt_out2
 
+    } # enf of length > 0 IF cycle
   } # end of id FOR cycle
   
   ts_out <- as(rbindlist(ts_list), "s2ts")

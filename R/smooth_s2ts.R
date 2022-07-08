@@ -181,13 +181,15 @@ smooth_s2ts <- function(
   # Recompute low-quality and missing values
   for (sel_id in unique(ts_dt_filled$id)) { # cycle on IDs
     valid_range <- range(ts_dt_filled[id == sel_id & !is.na(value), date])
-    ts_dt_interp <- approx(
+    ts_dt_interp <- try(approx(
       ts_dt_filled[id == sel_id & !is.na(value), date],
       ts_dt_filled[id == sel_id & !is.na(value), value],
       xout = ts_dt_filled[id == sel_id & date >= valid_range[1] & date <= valid_range[2], date]
-    )
-    ts_dt_filled[id == sel_id & date >= valid_range[1] & date <= valid_range[2],
-                 value0 := ts_dt_interp$y]
+    ))
+    if (!inherits(ts_dt_interp, "try-error")) {
+      ts_dt_filled[id == sel_id & date >= valid_range[1] & date <= valid_range[2],
+                   value0 := ts_dt_interp$y]
+    }
   }
   # ts_dt_filled[is.na(value), c("value0","qa0"):=list(0,0)]
   ts_dt_filled <- ts_dt_filled[is.na(value), "qa0" := 1e-2]
@@ -201,7 +203,7 @@ smooth_s2ts <- function(
     ) * 2 + 1
     qa <- ts_dt_filled[id == sel_id, qa0]
     value <- value_sg <- ts_dt_filled[id == sel_id, value0]
-    for (i in seq_len(sg_n)) {
+    for (i in seq_len(sg_n)) {try({
       qa <- (rank(value-value_sg) - 1) / (ts_dt_filled[,sum(id == sel_id)] - 1) * qa
       value_sg <- w_savgol(
         value, 
@@ -210,7 +212,7 @@ smooth_s2ts <- function(
         window = sg_window, 
         polynom = sg_polynom
       )
-    }
+    })}
     ts_dt_filled[id == sel_id, value_smoothed := value_sg]
   } # end of id FOR cycle
   ts_dt <- ts_dt_filled[
