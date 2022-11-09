@@ -22,7 +22,7 @@ fill_s2ts(
 the theoretic Sentinel-2 dates of passage.
 }}
 
-\item{method}{(optional) Argument passed to \code{spline()}.}
+\item{method}{(optional) Argument passed to \code{spline()} or \code{approx()}.}
 
 \item{max_na_days}{(optional) maximum number of consecutive days with missing
 values which can be filled (in case of longer time windows with missing data,

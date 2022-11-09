@@ -189,7 +189,30 @@ cut_cycles <- function(
     
   # Remove maxima corresponding to removed minima
   clean_maxmin_ts(ts_dt, "peak1", "cut1", check_peaks = TRUE, check_cuts = FALSE, ids = ids)
-  ts_dt[, c("peak2", "cut2") := list(peak1, cut1)]
+  ts_dt[, c("peak1a", "cut1a") := list(peak1, cut1)]
+  
+  # Remove minima with less than min_win days
+  for (sel_id in unique(ts_dt$id)) {
+    sel_ts_uidmin <- ts_dt[id == sel_id & cut1, uid]
+    for (i in sel_ts_uidmin[-1]) {
+      ii <- which(sel_ts_uidmin == i)
+      if (all(
+        length(ii) > 0,
+        ts_dt[uid %in% sel_ts_uidmin[c(ii-1,ii)], diff(date)] < min_win
+      )) {
+        if (ts_dt[uid == sel_ts_uidmin[ii-1], relval] < ts_dt[uid == i, relval]) {
+          ts_dt[uid == i, cut1a := FALSE]
+          sel_ts_uidmin <- sel_ts_uidmin[-ii]
+        } else {
+          ts_dt[uid == sel_ts_uidmin[ii-1], cut1a := FALSE]
+          sel_ts_uidmin <- sel_ts_uidmin[-(ii-1)]
+        }
+      }
+    }
+  }
+  # Remove maxima corresponding to removed minima
+  clean_maxmin_ts(ts_dt, "peak1a", "cut1a", check_peaks = TRUE, check_cuts = FALSE)
+  ts_dt[, c("peak2", "cut2") := list(peak1a, cut1a)]
   
   # Remove maxima with less than min_peakvalue
   ts_dt[peak2 & relval < min_peakvalue, peak2 := FALSE]

@@ -1,3 +1,20 @@
+# Version 0.4.1
+
+## New functions
+- New internal function `st_poi()` (pseudo-centroid)
+- `detect_forages()` (experiment)
+
+## Minor changes
+- Adding argument `naming_convention` to various functions
+- Force ID to be character
+- Plot points without QA
+- Speed-up `cut_cycles()`
+- Check for empty inputs in `aggregate_pheno()`
+- Rename default branch `master` to `main` according to
+    [Git and Branch Naming](https://sfconservancy.org/news/2020/jun/23/gitbranchname/)
+- Update documentation
+
+
 # Version 0.4.0
 
 First `{sen2rts}` beta version.
