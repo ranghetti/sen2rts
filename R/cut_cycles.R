@@ -286,7 +286,12 @@ cut_cycles <- function(
   ## Return output
   
   # DT with records of peaks
-  peak_dt <- ts_dt[peak3 == TRUE, list(s1 = seq_len(.N), maxval = date), by = id]
+  ts_firstcutdate <- ts_dt[cut3==TRUE, list(firstcut=min(date)), by=id]
+  ts_dt[,firstcutdate := ts_firstcutdate[match(ts_dt$id, ts_firstcutdate$id), firstcut]]
+  peak_dt <- ts_dt[
+    peak3 == TRUE & date > firstcutdate, 
+    list(s1 = seq_len(.N), maxval = date), by = id
+  ]
   # DT with records of begin of the cycle
   begin_dt <- ts_dt[cut3 == TRUE, list(s1 = seq_len(.N), begin = date), by = id]
   # DT with records of end of the cycle
