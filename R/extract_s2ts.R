@@ -391,7 +391,7 @@ extract_s2ts <- function(
           )
         } else if (all(!missing(scl_paths), missing(cld_paths))) {
           w_cube_scl[in_sf[in_sf[[in_sf_id]] == id,]][[1]]
-        } else if (all(missing(scl_paths), missing(!cld_paths))) {
+        } else if (all(missing(scl_paths), !missing(cld_paths))) {
           w_cube_cld[in_sf[in_sf[[in_sf_id]] == id,]][[1]]
         }
         ts_list[[id]] <- data.table(
