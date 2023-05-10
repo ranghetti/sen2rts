@@ -305,6 +305,45 @@ cut_cycles <- function(
   # }
   # }
   
+  # Reassign begin-end in presence of ground
+  if (TRUE) {
+    ts_dt[,c("cut4","cut_begin","cut_end") := list(cut3,FALSE,FALSE)]
+    for (sel_id in unique(ts_dt$id)) {
+      sel_ts_uidcut <- ts_dt[id == sel_id & cut3, uid]
+      for (i in sel_ts_uidcut) {
+        # compute ID of adjacent confirmed maxima
+        suppressWarnings(
+          uid_cutbegin <- ts_dt[
+            id == sel_id & uid > i & cutground == -1 & 
+              uid < min(sel_ts_uidcut[sel_ts_uidcut>i]), 
+            uid
+          ]
+        )
+        suppressWarnings(
+          uid_cutend <- ts_dt[
+            id == sel_id & uid < i & cutground == 1 & 
+              uid > max(sel_ts_uidcut[sel_ts_uidcut<i]), 
+            uid
+          ]
+        )
+        if (length(uid_cutbegin) > 0) {
+          ts_dt[uid==i, cut4 := FALSE]
+          ts_dt[uid==min(uid_cutbegin), cut_begin := TRUE]
+        }
+        if (length(uid_cutend) > 0) {
+          ts_dt[uid==i, cut4 := FALSE]
+          ts_dt[uid==max(uid_cutend), cut_end := TRUE]
+        }
+      }
+      # Assign cut_begin-cut_end also for cut4
+      ts_dt[id == sel_id & cut4 == TRUE, cut_begin := TRUE]
+      ts_dt[uid %in% ts_dt[id == sel_id & cut4 == TRUE, uid-1], cut_end := TRUE]
+      # Clear starting cut_end / ending cut_begin
+      ts_dt[id == sel_id & cut_end == TRUE, max(uid)]
+      ts_dt[id == sel_id & uid < ts_dt[id == sel_id & cut_begin == TRUE, min(uid)], cut_end := FALSE]
+      ts_dt[id == sel_id & uid > ts_dt[id == sel_id & cut_end == TRUE, max(uid)], cut_begin := FALSE]
+    }
+  }
   
   ## Return output
   
@@ -316,15 +355,17 @@ cut_cycles <- function(
     list(s1 = seq_len(.N), maxval = date), by = id
   ]
   # DT with records of begin of the cycle
-  begin_dt <- ts_dt[cut3 == TRUE, list(s1 = seq_len(.N), begin = date), by = id]
-  # DT with records of end of the cycle
-  end_dt <- begin_dt[s1 > 1,]
-  end_dt[,s1 := s1-1]
-  setnames(end_dt, "begin", "end", skip_absent = TRUE)
-  # remove false begins of the cycle (dates only corresponding to ends)
-  if (nrow(begin_dt) > 0) {
-    begin_dt <- begin_dt[begin_dt[, .I[s1 < max(s1)], by = id]$V1,]
-  }
+  # begin_dt <- ts_dt[cut3 == TRUE, list(s1 = seq_len(.N), begin = date), by = id]
+  begin_dt <- ts_dt[cut_begin == TRUE, list(s1 = seq_len(.N), begin = date), by = id]
+  end_dt <- ts_dt[cut_end == TRUE, list(s1 = seq_len(.N), end = date), by = id]
+  # # DT with records of end of the cycle
+  # end_dt <- begin_dt[s1 > 1,]
+  # end_dt[,s1 := s1-1]
+  # setnames(end_dt, "begin", "end", skip_absent = TRUE)
+  # # remove false begins of the cycle (dates only corresponding to ends)
+  # if (nrow(begin_dt) > 0) {
+  #   begin_dt <- begin_dt[begin_dt[, .I[s1 < max(s1)], by = id]$V1,]
+  # }
   # bind DTs
   pheno_dt <- merge(merge(begin_dt, end_dt, by = c("id", "s1")), peak_dt, by = c("id", "s1"))
   
