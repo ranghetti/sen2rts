@@ -17,6 +17,8 @@ st_warp_fixing(src, dest, ...)
 Internal function to bypass an encountered error:
 sometimes (apparently with large stacks) returns stars_proxy
 instead than stars: in this case, manually build a stars object.
+Temporary file paths created on source (this occurs reading VRT) are
+stored in the attribute "tempsourcepath".
 }
 \author{
 Luigi Ranghetti, PhD (2020) \email{luigi@ranghetti.info}
