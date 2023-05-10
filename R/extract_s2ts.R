@@ -413,8 +413,6 @@ extract_s2ts <- function(
         )
       }
     }
-    if (exists("w_cube_scl")) {file.remove(attr(w_cube_scl, "tempsourcepath"))}
-    if (exists("w_cube_cld")) {file.remove(attr(w_cube_cld, "tempsourcepath"))}
     ts_dt <- rbindlist(ts_list)
     ts_dt <- ts_dt[!is.na(value),]
     ts_out <- as(ts_dt, "s2ts")
