@@ -125,6 +125,11 @@ cut_cycles <- function(
   }
   # TODO
   ts_dt <- as.data.table(ts)[order(id,date),]
+  if (ts_dt[!is.na(value),diff(date),by=id][,all(V1==1)]) {
+    ts_dt <- ts_dt[!is.na(value),]
+  } else {
+    # TODO implement a better method to remove initial/final NA per ID
+  }
   ts_dt[,uid := seq_len(nrow(ts_dt))]
   
   # Compute relative values, if needed
