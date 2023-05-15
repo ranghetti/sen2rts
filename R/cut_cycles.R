@@ -312,41 +312,50 @@ cut_cycles <- function(
   
   # Reassign begin-end in presence of ground
   if (TRUE) {
-    ts_dt[,c("cut4","cut_begin","cut_end") := list(cut3,FALSE,FALSE)]
+    ts_dt[,c("cut_begin","cut_end") := list(FALSE,FALSE)]
     for (sel_id in unique(ts_dt$id)) {
       sel_ts_uidcut <- ts_dt[id == sel_id & cut3, uid]
       for (i in sel_ts_uidcut) {
         # compute ID of adjacent confirmed maxima
-        suppressWarnings(
-          uid_cutbegin <- ts_dt[
-            id == sel_id & uid > i & cutground == -1 & 
-              uid < min(sel_ts_uidcut[sel_ts_uidcut>i]), 
-            uid
-          ]
-        )
-        suppressWarnings(
-          uid_cutend <- ts_dt[
-            id == sel_id & uid < i & cutground == 1 & 
-              uid > max(sel_ts_uidcut[sel_ts_uidcut<i]), 
-            uid
-          ]
-        )
-        if (length(uid_cutbegin) > 0) {
-          ts_dt[uid==i, cut4 := FALSE]
-          ts_dt[uid==min(uid_cutbegin), cut_begin := TRUE]
+        if (i != max(sel_ts_uidcut)) {
+          suppressWarnings(
+            uid_cutbegin <- ts_dt[
+              id == sel_id & uid > i & cutground == -1 & 
+                uid < min(sel_ts_uidcut[sel_ts_uidcut>i]), 
+              uid
+            ]
+          )
+          if (
+            length(uid_cutbegin) > 0 &&
+            ts_dt[uid>=i & uid<min(uid_cutbegin), all(ground==TRUE)]
+          ) {
+            ts_dt[uid==min(uid_cutbegin), cut_begin := TRUE]
+          } else {
+            ts_dt[uid==i, cut_begin := TRUE]
+          }
         }
-        if (length(uid_cutend) > 0) {
-          ts_dt[uid==i, cut4 := FALSE]
-          ts_dt[uid==max(uid_cutend), cut_end := TRUE]
+        if (i != min(sel_ts_uidcut)) {
+          suppressWarnings(
+            uid_cutend <- ts_dt[
+              id == sel_id & uid < i & cutground == 1 & 
+                uid > max(sel_ts_uidcut[sel_ts_uidcut<i]), 
+              uid
+            ]
+          )
+          if (
+            length(uid_cutend) > 0 &&
+            ts_dt[uid>max(uid_cutend) & uid<=i, all(ground==TRUE)]
+          ) {
+            ts_dt[uid==max(uid_cutend), cut_end := TRUE]
+          } else {
+            ts_dt[uid==i-1, cut_end := TRUE]
+          }
         }
       }
-      # Assign cut_begin-cut_end also for cut4
-      ts_dt[id == sel_id & cut4 == TRUE, cut_begin := TRUE]
-      ts_dt[uid %in% ts_dt[id == sel_id & cut4 == TRUE, uid-1], cut_end := TRUE]
-      # Clear starting cut_end / ending cut_begin
-      ts_dt[id == sel_id & cut_end == TRUE, max(uid)]
-      ts_dt[id == sel_id & uid < ts_dt[id == sel_id & cut_begin == TRUE, min(uid)], cut_end := FALSE]
-      ts_dt[id == sel_id & uid > ts_dt[id == sel_id & cut_end == TRUE, max(uid)], cut_begin := FALSE]
+      # # Clear starting cut_end / ending cut_begin
+      # ts_dt[id == sel_id & cut_end == TRUE, max(uid)]
+      # ts_dt[id == sel_id & uid < ts_dt[id == sel_id & cut_begin == TRUE, min(uid)], cut_end := FALSE]
+      # ts_dt[id == sel_id & uid > ts_dt[id == sel_id & cut_end == TRUE, max(uid)], cut_begin := FALSE]
     }
   }
   
