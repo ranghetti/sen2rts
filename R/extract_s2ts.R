@@ -69,7 +69,8 @@
 #' @importFrom sen2r raster_metadata sen2r_getElements
 #' @importFrom sf gdal_utils st_as_sfc st_bbox st_buffer st_crs st_intersection
 #'  st_sf st_transform 
-#' @importFrom stars read_stars st_get_dimension_values st_set_dimensions st_warp
+#' @importFrom stars read_stars st_get_dimension_values st_set_dimensions
+#'  st_warp st_redimension
 #' @importFrom stats weighted.mean
 #' @importFrom dplyr group_by summarise
 #' @importFrom methods as
@@ -205,8 +206,10 @@ extract_s2ts <- function(
   
   ## Read in_cube
   in_cube <- read_stars(vrt_path, RasterIO = in_RasterIO, proxy = FALSE)
-  in_cube <- st_set_dimensions(in_cube, "band", in_meta$sensing_date)
-  in_cube <- st_set_dimensions(in_cube, names = c("x", "y", "time"))
+  if (length(dim(in_cube)) == 2) {
+    in_cube <- st_redimension(c(in_cube,in_cube))[,,,1]
+  }
+  in_cube <- st_set_dimensions(in_cube, 3, in_meta$sensing_date, names = "time")
   
   
   ## Read scl_paths ----
@@ -280,6 +283,9 @@ extract_s2ts <- function(
     
     # Reshape it
     w_cube_scl <- st_warp_fixing(w_cube_scl_raw, in_cube, method = "near", use_gdal = TRUE)
+    if (length(dim(w_cube_scl)) == 2) {
+      w_cube_scl <- st_redimension(c(w_cube_scl,w_cube_scl))[,,,1]
+    }
 
   }
   
@@ -361,6 +367,9 @@ extract_s2ts <- function(
     
     # Reshape it
     w_cube_cld <- st_warp_fixing(w_cube_cld_raw, in_cube, method = "near", use_gdal = TRUE)
+    if (length(dim(w_cube_cld)) == 2) {
+      w_cube_cld <- st_redimension(c(w_cube_cld,w_cube_cld))[,,,1]
+    }
     
   }
   
