@@ -7,7 +7,8 @@
 #'  - `daily`: daily frequency (default);
 #'  - `dop` (Days Of Passage): values are returned corresponding to 
 #'      the theoretic Sentinel-2 dates of passage.
-#' @param method (optional) Argument passed to `spline()` or `approx()`.
+#' @param method (optional) Argument passed to `spline()` or `approx()`;
+#'  if `method = "hermite"`, `pracma::pchip()` is used.
 #' @param max_na_days (optional) maximum number of consecutive days with missing
 #'  values which can be filled (in case of longer time windows with missing data,
 #'  NA are returned).
@@ -20,6 +21,7 @@
 #' @return The output time series in tabular format (see `extract_ts()`).
 #' @importFrom stats spline approx
 #' @importFrom methods as
+#' @importFrom pracma pchip
 #' @author Luigi Ranghetti, PhD (2020) \email{luigi@@ranghetti.info}
 #' @export
 #' @examples
@@ -118,18 +120,26 @@ fill_s2ts <- function(
         }
       }
       valid_xrange <- unique(valid_xrange)
-      fill_fun <- if (method %in% c("linear", "constant")) {approx} else {spline}
-      sel_spline <- do.call(
-        fill_fun, 
-        list(
-          ts_dt[id == sel_id & date %in% valid_xrange, date],
-          ts_dt[id == sel_id & date %in% valid_xrange, value],
-          xout = ts_dt_out2[date %in% valid_xrange, date],
-          method = method
+      if (method == "hermite") {
+        sel_spline <- pchip(
+          as.numeric(ts_dt[id == sel_id & date %in% valid_xrange & !is.na(value), date]),
+          ts_dt[id == sel_id & date %in% valid_xrange & !is.na(value), value],
+          as.numeric(ts_dt_out2[date %in% valid_xrange, date])
         )
-      )
+      } else {
+        fill_fun <- if (method %in% c("linear", "constant")) {approx} else {spline}
+        sel_spline <- do.call(
+          fill_fun, 
+          list(
+            ts_dt[id == sel_id & date %in% valid_xrange, date],
+            ts_dt[id == sel_id & date %in% valid_xrange, value],
+            xout = ts_dt_out2[date %in% valid_xrange, date],
+            method = method
+          )
+        )$y
+      }
       # sel_spline$x <- as.Date(sel_spline$x, origin = "1970-01-01")
-      ts_dt_out2[date %in% valid_xrange, value := sel_spline$y]
+      ts_dt_out2[date %in% valid_xrange, value := sel_spline]
       
       # Coerce to original min/max ranges
       if (max_extrapolation < Inf) {
