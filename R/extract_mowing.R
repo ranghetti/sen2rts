@@ -61,6 +61,8 @@ extract_mowing <- function(
     # min_sen = 0.7, # soglia massima (assoluta o relativa; se relativa, tra il picco -1- e il valore minimo dopo il picco -0-) per considerare il prato come non ancora tagliato poiché senescente
     # max_bs = 0.1, # soglia massima (come sopra) per considerare il prato come completamente tagliato
     min_diff = 0.5, # minima differenza (assoluta o relativa) nella finestra mow come definita in base ai due parametri successivi
+    max_post = 0.3, # massimo valore (assoluto o relativo) raggiungibile dopo il taglio
+    max_length = 20, # numero massimo di giorni tra un pre e un post taglio
     max_n_mow = 3, # massimo numero di immagini tra il taglio non iniziato e il taglio finito
     max_d_mow = 10, # numero massimo di giorni tra un'immagine a taglio in corso e una a taglio non iniziato o finito
     value_type = "relative",
@@ -68,7 +70,7 @@ extract_mowing <- function(
 ) {
   
   # Avoid check notes for data.table related variables
-
+  
   ## Check arguments
   # TODO
   
@@ -104,41 +106,49 @@ extract_mowing <- function(
         for (sel_date in sel_ts_sen$date) {
           sel_maxval <- sel_ts_sen[date==sel_date,relval]
           sel_firstmowdate <- sel_ts_sen[date>sel_date & relval<sel_maxval-min_diff,][1, date]
-          sel_mowing <- sel_ts_sen[date>sel_date & date<sel_firstmowdate,]
-          sel_mowing_n <- sel_mowing[, .N]
-          # sel_mowing_d <- sel_mowing[, as.integer(diff(range(date)))]
-          sel_ts_sen[
-            date==sel_date, 
-            start_mow := !is.na(sel_firstmowdate) & 
-              sel_mowing_n <= max_n_mow & 
-              (max(as.integer(sel_mowing$date - sel_date)) <= max_d_mow |
-                 max(as.integer(sel_firstmowdate - sel_mowing$date)) <= max_d_mow)
-          ]
+          if (is.na(sel_firstmowdate)) {
+            sel_ts_sen[date==sel_date, start_mow := FALSE]
+          } else {
+            sel_mowing <- sel_ts_sen[date>sel_date & date<sel_firstmowdate,]
+            sel_mowing_n <- sel_mowing[, .N]
+            # sel_mowing_d <- sel_mowing[, as.integer(diff(range(date)))]
+            sel_ts_sen[
+              date==sel_date, 
+              start_mow := sel_mowing_n <= max_n_mow & 
+                relval == sel_ts_sen[date>=sel_date, max(relval)] &
+                sel_ts_sen[date==sel_firstmowdate,relval] <= max_post &
+                (max(as.integer(sel_mowing$date - sel_date)) <= max_d_mow |
+                   max(as.integer(sel_firstmowdate - sel_mowing$date)) <= max_d_mow)
+            ]
+          }
           sel_ts_sen[date==sel_date & start_mow==TRUE, end_mow := sel_firstmowdate]
           sel_ts_sen[date==sel_date & start_mow==TRUE, relval_min := sel_ts_sen[date==sel_firstmowdate, relval]]
           sel_ts_sen[date==sel_date & start_mow==TRUE, mow_w := relval - relval_min]
-        }
-        # interpolale
-        # sel_ts_record <- sel_ts_sen[mow_w==max(mow_w,na.rm=TRUE),] # criterio della masisma differenza
-        sel_ts_record <- sel_ts_sen[relval_min==min(relval_min,na.rm=TRUE),] # criterio del minimo minimo
-        sel_ts_mow <- sel_ts_sen[
-          date >= sel_ts_record[, date] &
-            date <= sel_ts_record[, end_mow],
-          list(date, relval)
-        ]
-        if (nrow(sel_ts_mow)>1) {
-        sel_ts_mow_spline <- as.data.table(approx(
-          x = sel_ts_mow$date,
-          y = sel_ts_mow$relval,
-          xout = seq(min(sel_ts_mow$date),max(sel_ts_mow$date),by=1)
-        ))
-        cycles[
-          id == sel_id & year == sel_year & cycle == sel_cycle, 
-          c("mowing","mowing_start","mowing_end") := list(
-            sel_ts_mow_spline[y <= mean(sel_ts_mow[c(1,.N),relval]),][1,x],
-            sel_ts_mow_spline[1,x], sel_ts_mow_spline[.N,x]
-          )
-        ]
+          # interpolale
+          # sel_ts_record <- sel_ts_sen[mow_w==max(mow_w,na.rm=TRUE),] # criterio della massima differenza
+          if (sel_ts_sen[,sum(!is.na(relval_min))] > 0) {
+            sel_ts_record <- sel_ts_sen[relval_min==min(relval_min,na.rm=TRUE),] # criterio del minimo minimo
+            sel_ts_mow <- sel_ts_sen[
+              date >= sel_ts_record[, date] &
+                date <= sel_ts_record[, end_mow],
+              list(date, relval)
+            ]
+            # if (nrow(sel_ts_mow)>1) {
+            if (as.integer(sel_ts_mow[.N,date] - sel_ts_mow[1,date]) < max_length) {
+              sel_ts_mow_spline <- as.data.table(approx(
+                x = sel_ts_mow$date,
+                y = sel_ts_mow$relval,
+                xout = seq(min(sel_ts_mow$date),max(sel_ts_mow$date),by=1)
+              ))
+              cycles[
+                id == sel_id & year == sel_year & cycle == sel_cycle, 
+                c("mowing","mowing_start","mowing_end") := list(
+                  sel_ts_mow_spline[y <= mean(sel_ts_mow[c(1,.N),relval]),][1,x],
+                  sel_ts_mow_spline[1,x], sel_ts_mow_spline[.N,x]
+                )
+              ]
+            }
+          }
         }
       } # end of sel_cycle FOR cycle
     } # end of sel_year FOR cycle
