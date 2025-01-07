@@ -5,11 +5,11 @@
 #'  eventually filtered using [`assign_season()`]).
 #' @param value_type (optional) Character: 
 #'  - if `"absolute"`, value set with argument `min_diff` is an absolute value;
-#'  - if `"senescence"` (default), value set with argument `min_diff` is a 
+#'  - if `"senescence"`, value set with argument `min_diff` is a 
 #'      a relative measure among the maximum (peak) and the minimum (after drop);
 #'  - if `"cycle"` (default), value set with argument `min_diff` is a 
 #'      a relative measure among the range of the specific cycle;
-#'  - if `"season"` (default), value set with argument `min_diff` is a 
+#'  - if `"season"`, value set with argument `min_diff` is a 
 #'      a relative measure among the range of the crop season;
 #' @param min_qa (optional) minimum 0-1 quality value
 #'  (points with `qa < min_qa` are not used, while `qa` values
@@ -63,7 +63,7 @@ extract_mowing <- function(
     min_diff = 0.5, # minima differenza (assoluta o relativa) nella finestra mow come definita in base ai due parametri successivi
     max_n_mow = 3, # massimo numero di immagini tra il taglio non iniziato e il taglio finito
     max_d_mow = 10, # numero massimo di giorni tra un'immagine a taglio in corso e una a taglio non iniziato o finito
-    value_type = "relative",
+    value_type = "cycle",
     min_qa = 0.6
 ) {
   
@@ -71,6 +71,9 @@ extract_mowing <- function(
 
   ## Check arguments
   # TODO
+  if (!value_type %in% c("cycle", "season", "senescence", "absolute")) {
+    stop('"value_type" not recognized.')
+  }
   
   # Fit for each ID/cycle
   ts_dt <- if (attr(ts, "gen_by") == "smooth_s2ts") {
