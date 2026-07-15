@@ -70,7 +70,7 @@
 plot.s2ts <- function(
   x, pheno, fitted, 
   plot_points, plot_rawline, plot_smoothed, plot_fitted, plot_cuts,
-  plot_cycles = TRUE, plot_dates = FALSE, pheno_metrics, 
+  plot_cycles, plot_dates = FALSE, pheno_metrics, 
   ...
 ) {
   
@@ -113,6 +113,11 @@ plot.s2ts <- function(
     plot_cuts
   } else {
     TRUE # meaning to plot if existing
+  }
+  plot_elements$cycles <- if (!missing(plot_cycles)) {
+    plot_cycles
+  } else {
+    plot_elements$cuts
   }
   plot_elements$pheno_method <- if (!missing(pheno)) {
     attr(pheno, "info")$method
@@ -198,7 +203,7 @@ plot.s2ts <- function(
   out <- ggplot(x_dt, aes(x = date, y = value))
   
   # Add background bands
-  if (exists("pheno_dt") & plot_elements$cuts == TRUE & plot_cycles == TRUE) {
+  if (exists("pheno_dt") & plot_elements$cycles == TRUE) {
     out <- out +
       geom_rect(
         data = pheno_dt,

@@ -2,7 +2,7 @@
 % Please edit documentation in R/st_poi.R
 \name{st_poi}
 \alias{st_poi}
-\title{Extract phenological metrics}
+\title{Pole of inaccessibility (visual centre) of a polygon}
 \usage{
 st_poi(x, ..., precision)
 }
@@ -24,6 +24,10 @@ accepting an input in the same format of \code{sf_centroid()}
 (\code{sf}, \code{sfc} or \code{sfg})
 and returning an output in the same format of \code{x}.
 }
+\note{
+Internal helper, not yet wired into the exported functions.
+}
 \author{
 Luigi Ranghetti, PhD (2021) \email{luigi@ranghetti.info}
 }
+\keyword{internal}

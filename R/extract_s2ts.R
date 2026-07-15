@@ -66,10 +66,10 @@
 #' @author Luigi Ranghetti, PhD (2020) \email{luigi@@ranghetti.info}
 #' @import data.table
 #' @importFrom methods as
-#' @importFrom sen2r raster_metadata sen2r_getElements
 #' @importFrom sf gdal_utils st_as_sfc st_bbox st_buffer st_crs st_intersection
 #'  st_sf st_transform 
-#' @importFrom stars read_stars st_get_dimension_values st_set_dimensions st_warp
+#' @importFrom stars read_stars st_get_dimension_values st_set_dimensions
+#'  st_warp st_redimension
 #' @importFrom stats weighted.mean
 #' @importFrom dplyr group_by summarise
 #' @importFrom methods as
@@ -205,8 +205,10 @@ extract_s2ts <- function(
   
   ## Read in_cube
   in_cube <- read_stars(vrt_path, RasterIO = in_RasterIO, proxy = FALSE)
-  in_cube <- st_set_dimensions(in_cube, "band", in_meta$sensing_date)
-  in_cube <- st_set_dimensions(in_cube, names = c("x", "y", "time"))
+  if (length(dim(in_cube)) == 2) {
+    in_cube <- st_redimension(c(in_cube,in_cube))[,,,1]
+  }
+  in_cube <- st_set_dimensions(in_cube, 3, in_meta$sensing_date, names = "time")
   
   
   ## Read scl_paths ----
@@ -227,7 +229,7 @@ extract_s2ts <- function(
     scl_paths <- scl_paths[match(in_meta$sensing_date, scl_meta$sensing_date)]
     scl_meta <- scl_meta[match(in_meta$sensing_date, sensing_date)]
     
-    sclraster_meta <- sen2r::raster_metadata(scl_paths[1], format = "list")[[1]]
+    sclraster_meta <- raster_metadata(scl_paths[1], format = "list")[[1]]
     
     # check bbox format
     scl_bbox <- st_bbox(suppressWarnings(st_intersection(
@@ -280,6 +282,9 @@ extract_s2ts <- function(
     
     # Reshape it
     w_cube_scl <- st_warp_fixing(w_cube_scl_raw, in_cube, method = "near", use_gdal = TRUE)
+    if (length(dim(w_cube_scl)) == 2) {
+      w_cube_scl <- st_redimension(c(w_cube_scl,w_cube_scl))[,,,1]
+    }
 
   }
   
@@ -302,7 +307,7 @@ extract_s2ts <- function(
     cld_paths <- cld_paths[match(in_meta$sensing_date, cld_meta$sensing_date)]
     cld_meta <- cld_meta[match(in_meta$sensing_date, sensing_date)]
     
-    cldraster_meta <- sen2r::raster_metadata(cld_paths[1], format = "list")[[1]]
+    cldraster_meta <- raster_metadata(cld_paths[1], format = "list")[[1]]
     
     # check bbox format
     cld_bbox <- st_bbox(suppressWarnings(st_intersection(
@@ -361,6 +366,9 @@ extract_s2ts <- function(
     
     # Reshape it
     w_cube_cld <- st_warp_fixing(w_cube_cld_raw, in_cube, method = "near", use_gdal = TRUE)
+    if (length(dim(w_cube_cld)) == 2) {
+      w_cube_cld <- st_redimension(c(w_cube_cld,w_cube_cld))[,,,1]
+    }
     
   }
   
@@ -391,7 +399,7 @@ extract_s2ts <- function(
           )
         } else if (all(!missing(scl_paths), missing(cld_paths))) {
           w_cube_scl[in_sf[in_sf[[in_sf_id]] == id,]][[1]]
-        } else if (all(missing(scl_paths), missing(!cld_paths))) {
+        } else if (all(missing(scl_paths), !missing(cld_paths))) {
           w_cube_cld[in_sf[in_sf[[in_sf_id]] == id,]][[1]]
         }
         ts_list[[id]] <- data.table(

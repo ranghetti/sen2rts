@@ -14,7 +14,7 @@
   plot_smoothed,
   plot_fitted,
   plot_cuts,
-  plot_cycles = TRUE,
+  plot_cycles,
   plot_dates = FALSE,
   pheno_metrics,
   ...
