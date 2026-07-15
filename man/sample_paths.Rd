@@ -12,7 +12,7 @@ factor).
 
 Data size is very small (13x4 pixels per each image) in order not to be heavy
 in terms of data size and to ensure examples to be rapidly runnable.
-The vignette \href{../articles/workflow.html}{"The sen2rts workflow"} makes use
+The vignette \href{https://sen2rts.ranghetti.info/articles/workflow.html}{"The sen2rts workflow"} makes use
 of a larger dataset in order to show a more plausible use case.
 }
 \usage{

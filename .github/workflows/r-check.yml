@@ -1,0 +1,61 @@
+name: R CMD check
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  R-CMD-check:
+    runs-on: ubuntu-latest
+    name: ubuntu-latest (R release)
+    timeout-minutes: 40
+
+    env:
+      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+      R_KEEP_PKG_SOURCE: yes
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: r-lib/actions/setup-pandoc@v2
+
+      - uses: r-lib/actions/setup-r@v2
+        with:
+          r-version: release
+          use-public-rspm: true
+
+      - uses: r-lib/actions/setup-r-dependencies@v2
+        with:
+          # "hard" = Depends + Imports + LinkingTo only. sen2r (a Suggests,
+          # installed from GitHub) is not needed to run the checks: it is only
+          # used by the vignette and by examples, and the analysis code was
+          # made independent of it. Test/check tooling is supplied explicitly.
+          dependencies: '"hard"'
+          extra-packages: |
+            any::rcmdcheck
+            any::lintr
+            any::testthat
+            any::knitr
+            any::rmarkdown
+
+      # setup-r-dependencies@v2 may leave an `renv/` directory in the source
+      # tree with broken symlinks; rcmdcheck's source copy does not honour
+      # .Rbuildignore and would choke on them. Remove it before the check.
+      - name: Remove renv/ artefact created by setup-r-dependencies
+        run: rm -rf renv
+
+      - name: Lint package (advisory)
+        run: |
+          Rscript -e 'lints <- lintr::lint_package(); print(lints); if (any(vapply(lints, function(l) identical(l$type, "error"), logical(1)))) quit(status = 1)'
+
+      # Vignettes are not built in CI: they download the sample archive from
+      # Zenodo and require sen2r, which is out of scope for the check.
+      - uses: r-lib/actions/check-r-package@v2
+        with:
+          args: 'c("--no-manual", "--no-build-vignettes")'
+          error-on: '"warning"'
+          upload-snapshots: true

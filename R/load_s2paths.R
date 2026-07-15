@@ -24,7 +24,6 @@
 #' @export
 #' @import data.table
 #' @importFrom sf gdal_utils st_as_sfc st_bbox st_crs st_transform
-#' @importFrom sen2r normalize_path sen2r_getElements
 #' @importFrom stars read_stars st_redimension st_set_dimensions
 #'
 #' @examples
@@ -142,7 +141,7 @@ load_s2paths <- function(
   if (!missing(bbox)) {
     
     # read grid metadata
-    inraster_meta <- sen2r::raster_metadata(in_meta$path[1], format = "list")[[1]]
+    inraster_meta <- raster_metadata(in_meta$path[1], format = "list")[[1]]
     
     # check bbox format
     if (inherits(bbox, c("sf", "sfc"))) {

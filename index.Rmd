@@ -48,8 +48,10 @@ install.packages("remotes")
 remotes::install_github("ranghetti/sen2rts")
 ```
 
-In case of troubles related to the installation of `{sen2r}`, whose 
-`{sen2rts}` depends, refer to 
+`{sen2rts}` no longer depends on `{sen2r}`: the analysis functions are
+self-contained. `{sen2r}` is only an optional companion (a suggested package)
+used to produce the Sentinel-2 raster archive that `{sen2rts}` reads; install
+it separately if you need to build such an archive, referring to the
 [sen2r installation page](https://sen2r.ranghetti.info/articles/installation.html).
 
 ## Usage

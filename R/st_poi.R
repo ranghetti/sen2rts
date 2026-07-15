@@ -1,6 +1,6 @@
-#' @title Extract phenological metrics
+#' @title Pole of inaccessibility (visual centre) of a polygon
 #' @description This function computes and returns the approximate pole of
-#'  inaccessibility (visual centre) for a polygon using the quadtree-based 
+#'  inaccessibility (visual centre) for a polygon using the quadtree-based
 #'  algorithm implemented in `polylabelr::poi()`,
 #'  accepting an input in the same format of `sf_centroid()`
 #'  (`sf`, `sfc` or `sfg`)
@@ -12,6 +12,8 @@
 #'  If missing, by default it is used the 1/1000 of the mean square root of the
 #'  area of inputs.
 #' @author Luigi Ranghetti, PhD (2021) \email{luigi@@ranghetti.info}
+#' @note Internal helper, not yet wired into the exported functions.
+#' @keywords internal
 #' @importFrom polylabelr poi
 #' @importFrom sf st_set_geometry st_sfc st_area st_point st_crs
 

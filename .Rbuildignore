@@ -9,3 +9,8 @@
 ^cran\-comments\.md$
 ^CRAN-RELEASE$
 ^_pkgdown\.yaml$
+^\.RData$
+^\.Rhistory$
+^CLAUDE\.md$
+^\.lintr$
+^\.claude$

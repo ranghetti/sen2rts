@@ -52,25 +52,24 @@
 #' @author Luigi Ranghetti, PhD (2020) \email{luigi@@ranghetti.info}
 #' @importFrom methods as setAs
 #' @export
-#' @examples 
+#' @examples
 #' ## Create a s2ts object from raw
-#' library(sen2r)
-#' sample_dt <- sen2r::s2_dop(
-#'   timewindow = c("2020-01-01", "2020-01-31"), 
-#'   s2_orbit = 22
+#' sample_dt <- data.frame(
+#'   date = seq(as.Date("2020-01-01"), as.Date("2020-01-31"), by = 5),
+#'   mission = "2A"
 #' )
 #' sample_dt$ndvi <- runif(nrow(sample_dt), 0, 1)
 #' sample_dt$qa <- sqrt(sample_dt$ndvi)
-#' 
+#'
 #' # Minimum example (including dates and values)
 #' s2ts(value = sample_dt$ndvi, date = sample_dt$date, id = "1")
-#' 
+#'
 #' # Example with additional information (including quality flags)
 #' sample_ts <- s2ts(
-#'   value = sample_dt$ndvi, 
-#'   date = sample_dt$date, 
+#'   value = sample_dt$ndvi,
+#'   date = sample_dt$date,
 #'   id = "1",
-#'   qa = sample_dt$qa, 
+#'   qa = sample_dt$qa,
 #'   sensor = sample_dt$mission
 #' )
 #' sample_ts
@@ -231,6 +230,7 @@ as.s2ts <- function(x, ...) {
   UseMethod("as.s2ts")
 }
 
+#' @exportS3Method as.s2ts numeric
 as.s2ts.numeric <- function(x, ...) {
   # Accept a named vector with values, names being dates
   # and optional additional arguments
@@ -247,6 +247,7 @@ setAs("numeric", "s2ts", function(from) {
   as.s2ts.numeric(from)
 })
 
+#' @exportS3Method as.s2ts integer
 as.s2ts.integer <- function(x, ...) {
   as.s2ts.numeric(x, ...)
 }
@@ -255,6 +256,7 @@ setAs("integer", "s2ts", function(from) {
 })
 
 
+#' @exportS3Method as.s2ts data.frame
 as.s2ts.data.frame <- function(x, ...) {
   as.s2ts(as.list(x))
 }
@@ -262,6 +264,7 @@ setAs("data.frame", "s2ts", function(from) {
   as.s2ts.data.frame(from)
 })
 
+#' @exportS3Method as.s2ts list
 as.s2ts.list <- function(x, ...) {
   for (a in names(attributes(x))[names(attributes(x)) != "names"]) {
     x[[a]] <- attr(x, a)

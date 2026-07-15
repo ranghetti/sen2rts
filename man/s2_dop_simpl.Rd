@@ -4,7 +4,7 @@
 \alias{s2_dop_simpl}
 \title{Simplified \code{sen2r::s2_dop()} for internal use}
 \usage{
-s2_dop_simpl(s2_orbits, timewindow, mission)
+s2_dop_simpl(s2_orbits, timewindow, mission, filter_launch = FALSE)
 }
 \arguments{
 \item{s2_orbits}{A vector of Sentinel-2 orbits (as integer numbers
@@ -15,6 +15,11 @@ of length 2 (time window).}
 
 \item{mission}{(optional) Vector with the desired Sentinel-2 missions
 ("2A", "2B" or both).}
+
+\item{filter_launch}{(optional) Logical: if TRUE, theoretical passages
+occurring before each satellite launch (2015-06-27 for S2A, 2017-06-29
+for S2B) are removed, reproducing the behaviour of \code{sen2r::s2_dop()};
+if FALSE (default), they are kept (this is required by \code{smooth_s2ts()}).}
 }
 \value{
 A data table with the dates (column "date"), the missions
@@ -29,6 +34,10 @@ Sentinel-2 launch can also be returned, since this is required by
 }
 \note{
 License: GPL 3.0
+
+The database of orbits and days of passage is read from the JSON file
+\code{inst/extdata/settings/doybase.json}, a static copy of the one shipped
+with \code{{sen2r}} (both packages are GPL-3, same author).
 }
 \author{
 Luigi Ranghetti, PhD (2021) \email{luigi@ranghetti.info}

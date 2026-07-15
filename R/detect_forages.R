@@ -35,8 +35,11 @@ detect_forages <- function(
 ) {
   
   # Avoid check notes for data.table related variables
-  # ...
-  
+  id <- value <- maxval <- min_maxval <- max_maxval <-
+    relval <- relindexval <- indexvalue <- rollval <-
+    begin <- end <- cycle <- weight <- ncuts <-
+    forage <- forage1 <- bg0 <- bg1 <- es0 <- es1 <- NULL
+
   ## Check arguments
   # TODO
   if (is.null(win)) {win <- c("01-01","12-31")}
