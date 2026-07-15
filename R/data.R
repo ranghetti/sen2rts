@@ -4,7 +4,7 @@
 #'  the farm [_Bonifiche Ferraresi_](https://bonificheferraresi.it/it/home) 
 #'  located in the estate of Jolanda di Savoia (FE, Italy),
 #'  which are used in the vignette
-#'  ["The sen2rts workflow"](../articles/workflow.html).
+#'  ["The sen2rts workflow"](https://sen2rts.ranghetti.info/articles/workflow.html).
 #' @docType data
 #' @usage data(samplecrops)
 #' @rdname samplecrops
@@ -46,7 +46,7 @@
 #'  
 #'  Data size is very small (13x4 pixels per each image) in order not to be heavy
 #'  in terms of data size and to ensure examples to be rapidly runnable.
-#'  The vignette ["The sen2rts workflow"](../articles/workflow.html) makes use
+#'  The vignette ["The sen2rts workflow"](https://sen2rts.ranghetti.info/articles/workflow.html) makes use
 #'  of a larger dataset in order to show a more plausible use case.
 #' @return `sample_paths()` returns the paths of the sample archive
 #'  (NDVI or SCL, depending on argument `prod`).

@@ -21,7 +21,7 @@
 #' @param prefix,initial Prefix for each line / for the first line.
 #' @return Message (in the defined format).
 #' @author Luigi Ranghetti, PhD (2020)
-#' @note Originally from package {sen2r} (GPL-3).
+#' @note Originally from package sen2r (GPL-3).
 #' @keywords internal
 
 print_message <- function(
@@ -76,7 +76,7 @@ print_message <- function(
 #' @param ... additional parameters passed to [normalizePath] (i.e. `mustWork`).
 #' @return The paths normalized.
 #' @author Luigi Ranghetti, PhD (2019)
-#' @note Originally from package {sen2r} (GPL-3).
+#' @note Originally from package sen2r (GPL-3).
 #' @keywords internal
 #' @importFrom utils shortPathName
 
@@ -104,7 +104,7 @@ normalize_path <- function(path, ...) {
 #'  in case any of `s2_names` is not recognised; if FALSE, a warning is shown.
 #' @return A data.table, data.frame or list of the output metadata.
 #' @author Luigi Ranghetti, PhD (2019)
-#' @note Originally from package {sen2r} (GPL-3).
+#' @note Originally from package sen2r (GPL-3).
 #' @keywords internal
 #' @import data.table
 
@@ -257,7 +257,7 @@ sen2r_getElements <- function(
 #' @param format Only `"list"` is supported.
 #' @return A list of the output metadata.
 #' @author Luigi Ranghetti, PhD (2019)
-#' @note Originally from package {sen2r} (GPL-3); reduced for {sen2rts}.
+#' @note Originally from package sen2r (GPL-3); reduced for sen2rts.
 #' @keywords internal
 #' @importFrom stars read_stars st_dimensions
 #' @importFrom sf st_bbox gdal_crs

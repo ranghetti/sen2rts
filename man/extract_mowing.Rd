@@ -71,6 +71,9 @@ the cycle as computed by \code{cut_cycles()};
 }
 \description{
 Extract mowing dates from a raw or smoothed time series.
+
+\strong{Experimental:} this function is still under active development;
+its arguments and outputs may change in future releases.
 }
 \examples{
 # Load input data

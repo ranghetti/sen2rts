@@ -25,7 +25,7 @@ supports \code{format = "list"} and returns the metadata \code{res}, \code{bbox}
 \code{proj} (plus \code{path} and \code{valid}).
 }
 \note{
-Originally from package {sen2r} (GPL-3); reduced for {sen2rts}.
+Originally from package sen2r (GPL-3); reduced for sen2rts.
 }
 \author{
 Luigi Ranghetti, PhD (2019)

@@ -31,7 +31,7 @@ This accessory function extracts metadata included in
 the name of a Sentinel-2 product which follows the sen2r naming convention.
 }
 \note{
-Originally from package {sen2r} (GPL-3).
+Originally from package sen2r (GPL-3).
 }
 \author{
 Luigi Ranghetti, PhD (2019)

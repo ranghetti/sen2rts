@@ -19,7 +19,7 @@ Accessory function wrapper for \code{normalizePath()} in Linux
 and \code{shortPathName(normalizePath())} in Windows.
 }
 \note{
-Originally from package {sen2r} (GPL-3).
+Originally from package sen2r (GPL-3).
 }
 \author{
 Luigi Ranghetti, PhD (2019)

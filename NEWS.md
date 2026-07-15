@@ -1,8 +1,4 @@
-# Version 0.4.1
-
-## New functions
-- New internal function `st_poi()` (pseudo-centroid)
-- `detect_forages()` (experiment)
+# Version 0.5.0
 
 ## Dependencies
 - `{sen2r}` is no longer a mandatory dependency (moved from `Imports` to
@@ -11,6 +7,19 @@
     runtime (`print_message()`, `normalize_path()`, `sen2r_getElements()`,
     a reduced `raster_metadata()` and `s2_dop()`, plus the `doybase.json`
     database) are now bundled as internals within `{sen2rts}`.
+- Declared `utils` among the imported packages.
+
+## Robustness and packaging
+- `R CMD check` now passes with no NOTEs, WARNINGs or ERRORs.
+- Added a `testthat` (edition 3) test suite covering the analysis pipeline,
+    the `s2ts` class and the internalised helpers; the raster-reading entry
+    points are exercised behind skip guards.
+- Added a `lintr` configuration and a GitHub Actions `R CMD check` workflow.
+- `extract_mowing()` and `detect_forages()` are documented as experimental.
+
+## New functions
+- New internal function `st_poi()` (pseudo-centroid)
+- `detect_forages()` (experiment)
 
 ## Minor changes
 - Adding argument `naming_convention` to various functions

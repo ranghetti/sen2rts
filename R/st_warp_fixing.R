@@ -1,4 +1,4 @@
-#' @title Extract phenological metrics
+#' @title Fix stars::st_warp() occasionally returning a proxy object
 #' @description Internal function to bypass an encountered error:
 #' sometimes (apparently with large stacks) returns stars_proxy 
 #' instead than stars: in this case, manually build a stars object.
@@ -7,6 +7,7 @@
 #' @param ... Additional arguments passed to `stars::st_warp()`.
 #' @author Luigi Ranghetti, PhD (2020) \email{luigi@@ranghetti.info}
 #' @importFrom stars st_warp st_redimension
+#' @importFrom utils capture.output
 
 st_warp_fixing <- function(src, dest, ...) {
   rawpaths <- capture.output({

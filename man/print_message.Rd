@@ -42,7 +42,7 @@ Message (in the defined format).
 A common interface for printing messages of several types.
 }
 \note{
-Originally from package {sen2r} (GPL-3).
+Originally from package sen2r (GPL-3).
 }
 \author{
 Luigi Ranghetti, PhD (2020)

@@ -1,0 +1,10 @@
+# Baseline lintr configuration for sen2rts.
+#
+# `object_name_linter` and `line_length_linter` are disabled: the codebase
+# mixes several naming styles and contains long legacy lines that would
+# otherwise produce hundreds of advisory notes. They can be re-enabled once
+# naming has been normalised.
+linters: linters_with_defaults(
+    object_name_linter = NULL,
+    line_length_linter = NULL
+  )

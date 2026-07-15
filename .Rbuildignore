@@ -12,3 +12,5 @@
 ^\.RData$
 ^\.Rhistory$
 ^CLAUDE\.md$
+^\.lintr$
+^\.claude$

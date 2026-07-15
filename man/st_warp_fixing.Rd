@@ -2,7 +2,7 @@
 % Please edit documentation in R/st_warp_fixing.R
 \name{st_warp_fixing}
 \alias{st_warp_fixing}
-\title{Extract phenological metrics}
+\title{Fix stars::st_warp() occasionally returning a proxy object}
 \usage{
 st_warp_fixing(src, dest, ...)
 }

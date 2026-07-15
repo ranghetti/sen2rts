@@ -99,8 +99,10 @@ cut_cycles <- function(
     cut0_l <- cut0_r <- cut0_p <- cut0 <-
     ground <- cutground <- 
     peak1 <- cut1 <- peak2 <- cut2 <- peak3 <- cut3 <- 
-    s1 <- y1 <- maxval <- maxyear <- weight <- 
-    begin <- end <- cycle <- newyear <- 
+    s1 <- y1 <- maxval <- maxyear <- weight <-
+    begin <- end <- cycle <- newyear <-
+    V1 <- cut1a <- peak1a <- cut_begin <- cut_end <-
+    firstcut <- firstcutdate <-
     NULL
   
   ## Check arguments
@@ -454,7 +456,7 @@ clean_maxmin_ts <- function(
   check_cuts = TRUE # if FALSE, check only peaks
 ) {
   # Avoid check notes for data.table related variables
-  id <- uid <- relval <- NULL
+  id <- uid <- relval <- peak <- NULL
   if (missing(ids)) {ids <- unique(ts_dt$id)}
   for (sel_id in ids) {
     # Check peaks among cuts (one peak per couple of cuts)
