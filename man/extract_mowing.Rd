@@ -12,7 +12,7 @@ extract_mowing(
   max_length = Inf,
   max_n_mow = 3,
   max_d_mow = 10,
-  value_type = "senescence",
+  value_type = "cycle",
   min_qa = 0.6
 )
 }
@@ -42,9 +42,9 @@ a pre- or post-event date (default: 10).}
 \item{value_type}{(optional) Character:
 \itemize{
 \item if \code{"absolute"}, value set with argument \code{min_diff} is an absolute value;
-\item if \code{"senescence"} (default) value set with argument \code{min_diff} is a
+\item if \code{"senescence"}, value set with argument \code{min_diff} is a
 a relative measure among the maximum (peak) and the minimum (after drop);
-\item if \code{"cycle"} value set with argument \code{min_diff} is a
+\item if \code{"cycle"} (default), value set with argument \code{min_diff} is a
 a relative measure among the range of the specific cycle;
 \item if \code{"season"} value set with argument \code{min_diff} is a
 a relative measure among the range of the crop season;

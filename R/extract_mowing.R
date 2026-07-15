@@ -17,12 +17,12 @@
 #'  a pre- or post-event date (default: 10).
 #' @param value_type (optional) Character: 
 #'  - if `"absolute"`, value set with argument `min_diff` is an absolute value;
-#'  - if `"senescence"` (default) value set with argument `min_diff` is a 
-#'      a relative measure among the maximum (peak) and the minimum (after drop);
-#'  - if `"cycle"` value set with argument `min_diff` is a 
-#'      a relative measure among the range of the specific cycle;
-#'  - if `"season"` value set with argument `min_diff` is a 
-#'      a relative measure among the range of the crop season;
+#'  - if `"senescence"`, value set with argument `min_diff` is a
+#'      relative measure among the maximum (peak) and the minimum (after drop);
+#'  - if `"cycle"` (default), value set with argument `min_diff` is a
+#'      relative measure among the range of the specific cycle;
+#'  - if `"season"`, value set with argument `min_diff` is a
+#'      relative measure among the range of the crop season;
 #' @param min_qa (optional) minimum 0-1 quality value
 #'  (points with `qa < min_qa` are not used, while `qa` values
 #'  in the range `min_qa` to 1 are reshaped into the range 0 to 1).
@@ -60,7 +60,7 @@ extract_mowing <- function(
     max_length = Inf,
     max_n_mow = 3,
     max_d_mow = 10,
-    value_type = "senescence",
+    value_type = "cycle",
     min_qa = 0.6
 ) {
   
@@ -68,8 +68,8 @@ extract_mowing <- function(
   
   ## Check arguments
   # TODO
-  if (!value_type %in% c("absolute", "senescence", "cycle", "season")) {
-    stop("Argument 'value_type' not recignised.")
+  if (!value_type %in% c("cycle", "season", "senescence", "absolute")) {
+    stop('"value_type" not recognized.')
   }
   
   # Fit for each ID/cycle
