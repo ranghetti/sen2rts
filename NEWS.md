@@ -4,6 +4,14 @@
 - New internal function `st_poi()` (pseudo-centroid)
 - `detect_forages()` (experiment)
 
+## Dependencies
+- `{sen2r}` is no longer a mandatory dependency (moved from `Imports` to
+    `Suggests`, where it is only used by the vignette and some examples to
+    produce the raster archive). The `{sen2r}` functions previously used at
+    runtime (`print_message()`, `normalize_path()`, `sen2r_getElements()`,
+    a reduced `raster_metadata()` and `s2_dop()`, plus the `doybase.json`
+    database) are now bundled as internals within `{sen2rts}`.
+
 ## Minor changes
 - Adding argument `naming_convention` to various functions
 - Force ID to be character

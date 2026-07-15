@@ -10,21 +10,32 @@
 #'  of length 2 (time window).
 #' @param mission (optional) Vector with the desired Sentinel-2 missions
 #'  ("2A", "2B" or both).
+#' @param filter_launch (optional) Logical: if TRUE, theoretical passages
+#'  occurring before each satellite launch (2015-06-27 for S2A, 2017-06-29
+#'  for S2B) are removed, reproducing the behaviour of `sen2r::s2_dop()`;
+#'  if FALSE (default), they are kept (this is required by `smooth_s2ts()`).
 #' @return A data table with the dates (column "date"), the missions
 #' (column "mission") and the orbits (column "orbit").
 #' @author Luigi Ranghetti, PhD (2021) \email{luigi@@ranghetti.info}
 #' @note License: GPL 3.0
+#'
+#'  The database of orbits and days of passage is read from the JSON file
+#'  `inst/extdata/settings/doybase.json`, a static copy of the one shipped
+#'  with `{sen2r}` (both packages are GPL-3, same author).
 #' @import data.table
 #' @importFrom jsonlite fromJSON
 
 
-s2_dop_simpl <- function(s2_orbits, timewindow, mission) {
-  
+s2_dop_simpl <- function(s2_orbits, timewindow, mission, filter_launch = FALSE) {
+
   # Avoid check notes for data.table related variables
-  type <- orbit <- doybase <- orbit <- json_path <- NULL
-  
-  # generate doybase.json if missing
-  eval(parse(text = "json_path <- sen2r:::create_s2_dop()"))
+  # (do NOT include 'mission': it is a function argument)
+  type <- orbit <- doybase <- date <- NULL
+
+  # read the static database of orbits and days of passage
+  json_path <- system.file(
+    "extdata/settings/doybase.json", package = "sen2rts"
+  )
   s2_dop_dt <- data.table(jsonlite::fromJSON(json_path)$dop)
   
   dates_all <- seq(timewindow[1], timewindow[2], by = "day")
@@ -56,6 +67,14 @@ s2_dop_simpl <- function(s2_orbits, timewindow, mission) {
   if (nrow(s2_data) > 0) {
     # Order data
     setorder(s2_data, date, mission, orbit)
+    # Optionally remove theoretical passages before satellite launches
+    # (as sen2r::s2_dop() does)
+    if (filter_launch == TRUE) {
+      s2_data <- s2_data[
+        mission == "2A" & date >= "2015-06-27" |
+          mission == "2B" & date >= "2017-06-29"
+      ]
+    }
     return(s2_data)
   } else {
     return(

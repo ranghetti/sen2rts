@@ -77,10 +77,11 @@ fill_s2ts <- function(
   for (sel_id in unique(ts_dt$id)) { # cycle on IDs
     
     # Create filled datatable
-    ts_dop <- sen2r::s2_dop(
-      s2_orbits = ts_dt[id == sel_id, unique(orbit)], 
+    ts_dop <- s2_dop_simpl(
+      s2_orbits = ts_dt[id == sel_id, unique(orbit)],
       timewindow = ts_dt[id == sel_id, range(date)],
-      mission = ts_dt[id == sel_id, unique(sensor)]
+      mission = ts_dt[id == sel_id, unique(sensor)],
+      filter_launch = TRUE
     )
     if (nrow(ts_dop) > 0) {
       

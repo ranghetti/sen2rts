@@ -52,25 +52,24 @@
 #' @author Luigi Ranghetti, PhD (2020) \email{luigi@@ranghetti.info}
 #' @importFrom methods as setAs
 #' @export
-#' @examples 
+#' @examples
 #' ## Create a s2ts object from raw
-#' library(sen2r)
-#' sample_dt <- sen2r::s2_dop(
-#'   timewindow = c("2020-01-01", "2020-01-31"), 
-#'   s2_orbit = 22
+#' sample_dt <- data.frame(
+#'   date = seq(as.Date("2020-01-01"), as.Date("2020-01-31"), by = 5),
+#'   mission = "2A"
 #' )
 #' sample_dt$ndvi <- runif(nrow(sample_dt), 0, 1)
 #' sample_dt$qa <- sqrt(sample_dt$ndvi)
-#' 
+#'
 #' # Minimum example (including dates and values)
 #' s2ts(value = sample_dt$ndvi, date = sample_dt$date, id = "1")
-#' 
+#'
 #' # Example with additional information (including quality flags)
 #' sample_ts <- s2ts(
-#'   value = sample_dt$ndvi, 
-#'   date = sample_dt$date, 
+#'   value = sample_dt$ndvi,
+#'   date = sample_dt$date,
 #'   id = "1",
-#'   qa = sample_dt$qa, 
+#'   qa = sample_dt$qa,
 #'   sensor = sample_dt$mission
 #' )
 #' sample_ts

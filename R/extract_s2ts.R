@@ -66,7 +66,6 @@
 #' @author Luigi Ranghetti, PhD (2020) \email{luigi@@ranghetti.info}
 #' @import data.table
 #' @importFrom methods as
-#' @importFrom sen2r raster_metadata sen2r_getElements
 #' @importFrom sf gdal_utils st_as_sfc st_bbox st_buffer st_crs st_intersection
 #'  st_sf st_transform 
 #' @importFrom stars read_stars st_get_dimension_values st_set_dimensions
@@ -230,7 +229,7 @@ extract_s2ts <- function(
     scl_paths <- scl_paths[match(in_meta$sensing_date, scl_meta$sensing_date)]
     scl_meta <- scl_meta[match(in_meta$sensing_date, sensing_date)]
     
-    sclraster_meta <- sen2r::raster_metadata(scl_paths[1], format = "list")[[1]]
+    sclraster_meta <- raster_metadata(scl_paths[1], format = "list")[[1]]
     
     # check bbox format
     scl_bbox <- st_bbox(suppressWarnings(st_intersection(
@@ -308,7 +307,7 @@ extract_s2ts <- function(
     cld_paths <- cld_paths[match(in_meta$sensing_date, cld_meta$sensing_date)]
     cld_meta <- cld_meta[match(in_meta$sensing_date, sensing_date)]
     
-    cldraster_meta <- sen2r::raster_metadata(cld_paths[1], format = "list")[[1]]
+    cldraster_meta <- raster_metadata(cld_paths[1], format = "list")[[1]]
     
     # check bbox format
     cld_bbox <- st_bbox(suppressWarnings(st_intersection(
